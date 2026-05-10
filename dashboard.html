@@ -152,7 +152,7 @@
     <button class="nav-item" onclick="showPage('nutrition')"><span class="nav-icon">🥗</span>Nutrition</button>
     <button class="nav-item" onclick="showPage('sleep')"><span class="nav-icon">😴</span>Sleep</button>
     <button class="nav-item" onclick="showPage('water')"><span class="nav-icon">💧</span>Water</button>
-    <button class="nav-item" onclick="showPage('skincare')"><span class="nav-icon">🫧</span>Skincare</button>
+    <button class="nav-item" onclick="showPage('skincare')"><span class="nav-icon">🫧</span>Skincare & Profile</button>
     <button class="nav-item" onclick="showPage('chat')"><span class="nav-icon">💬</span>AI Coach</button>
     <button class="nav-item" onclick="showPage('research')"><span class="nav-icon">🔬</span>Research</button>
     <button class="nav-item" onclick="showPage('analytics')"><span class="nav-icon">📊</span>Analytics</button>
@@ -160,11 +160,14 @@
   </nav>
 
   <div class="mt-auto space-y-2">
-    <!-- Upgrade CTA -->
-    <div class="glass p-4" style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(236,72,153,0.08))">
+    <!-- Upgrade CTA (hidden for premium users via JS) -->
+    <div id="sidebarUpgradeCTA" class="glass p-4" style="background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(236,72,153,0.08))">
       <div class="text-xs font-bold text-purple-300 mb-1">✨ Upgrade to Premium</div>
       <div class="text-xs text-gray-400 mb-3">Unlock full AI plans, nutrition tracker & gym programs</div>
       <button class="btn-primary w-full text-xs py-2" onclick="openUpgrade()">Upgrade — $4.99/mo</button>
+    </div>
+    <div id="sidebarPremiumBadge" class="hidden glass p-3 text-center" style="background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(236,72,153,0.1))">
+      <div class="text-xs font-bold text-purple-300">✨ Premium Active</div>
     </div>
     <a href="index.html" class="nav-item text-xs"><span class="nav-icon">←</span>Back to Home</a>
   </div>
@@ -750,7 +753,7 @@
     </div>
 
     <div class="card" style="background:rgba(6,182,212,0.06);border-color:rgba(6,182,212,0.2)">
-      <div class="text-sm text-gray-300"><strong class="text-cyan-400">💡 Reminder tip:</strong> You're 1.1L short of your daily goal. Try drinking 500ml before dinner and 300ml after. Your next smart reminder is at 5:30pm.</div>
+      <div class="text-sm text-gray-300" id="waterTip"><strong class="text-cyan-400">💡 Hydration tip:</strong> Aim to drink a glass of water before each meal. Staying on top of your daily goal supports energy, focus, and recovery.</div>
     </div>
   </div>
 
@@ -761,9 +764,9 @@
     <div class="card mb-4 flex flex-col" style="height:420px;position:relative">
       <div id="chatLockedOverlay" style="position:absolute;inset:0;background:rgba(5,5,8,0.92);backdrop-filter:blur(8px);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:20px;padding:32px;text-align:center">
         <div class="text-5xl mb-4">🤖</div>
-        <h3 class="text-xl font-black mb-2">AI Coach — <span class="grad-text">Coming Soon</span></h3>
-        <p class="text-gray-400 text-sm mb-6 max-w-xs">Your personal AI health coach is in development. Premium members will get access first when it launches.</p>
-        <button onclick="openUpgrade()" class="btn-primary">Join Premium — Get Early Access</button>
+        <h3 class="text-xl font-black mb-2">Unlimited AI Coach — <span class="grad-text">Premium</span></h3>
+        <p class="text-gray-400 text-sm mb-6 max-w-xs">Upgrade to Premium for unlimited personalised coaching. The AI coach uses your plan, progress, and history to give tailored advice.</p>
+        <button onclick="openUpgrade()" class="btn-primary">Upgrade to Premium — $4.99/mo</button>
       </div>
       <div class="flex-1 overflow-y-auto flex flex-col gap-0 p-2" id="chatMessages">
         <div class="chat-bubble chat-ai">
@@ -1055,10 +1058,10 @@
     <div class="section-header">📊 Analytics</div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <div class="card-sm text-center"><div class="text-2xl font-black grad-text">78</div><div class="text-xs text-gray-400 mt-1">Glow Score</div><div class="text-xs text-green-400 mt-0.5">↑ +4 this week</div></div>
-      <div class="card-sm text-center"><div class="text-2xl font-black text-orange-400">🔥 12</div><div class="text-xs text-gray-400 mt-1">Day Streak</div></div>
-      <div class="card-sm text-center"><div class="text-2xl font-black text-purple-400">4,250</div><div class="text-xs text-gray-400 mt-1">Total XP</div></div>
-      <div class="card-sm text-center"><div class="text-2xl font-black text-white">87%</div><div class="text-xs text-gray-400 mt-1">Habit Rate</div><div class="text-xs text-green-400 mt-0.5">↑ +12% vs last week</div></div>
+      <div class="card-sm text-center"><div class="text-2xl font-black grad-text">—</div><div class="text-xs text-gray-400 mt-1">Glow Score</div><div class="text-xs text-green-400 mt-0.5">↑ grows with activity</div></div>
+      <div class="card-sm text-center"><div class="text-2xl font-black text-orange-400">🔥 —</div><div class="text-xs text-gray-400 mt-1">Day Streak</div></div>
+      <div class="card-sm text-center"><div class="text-2xl font-black text-purple-400">—</div><div class="text-xs text-gray-400 mt-1">Total XP</div></div>
+      <div class="card-sm text-center"><div class="text-2xl font-black text-white">—</div><div class="text-xs text-gray-400 mt-1">Habit Rate</div></div>
     </div>
 
     <div class="card mb-6">
@@ -1100,7 +1103,8 @@
           <div id="settingsPlan" class="text-xs text-purple-400 mt-1">Free Plan</div>
         </div>
       </div>
-      <button onclick="openUpgrade()" class="btn-primary w-full mb-2">✨ Upgrade to Premium — $4.99/mo</button>
+      <div id="settingsUpgradeBtn"><button onclick="openUpgrade()" class="btn-primary w-full mb-2">✨ Upgrade to Premium — $4.99/mo</button></div>
+      <div id="settingsPremiumActive" class="hidden text-center p-3 rounded-xl mb-2" style="background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(236,72,153,0.1));border:1px solid rgba(139,92,246,0.3)"><span class="text-sm font-bold text-purple-300">✨ Premium Active — Thank you!</span></div>
     </div>
 
     <div class="card mb-4">
@@ -1125,16 +1129,16 @@
       <div class="font-bold mb-4">Integrations</div>
       <div class="space-y-3">
         <div class="flex items-center justify-between py-2">
-          <div class="flex items-center gap-3"><div class="text-xl">❤️</div><div><div class="text-sm font-medium">Apple Health</div><div class="text-xs text-gray-400">Sync steps, sleep & workouts</div></div></div>
-          <button onclick="openUpgrade()" class="lock-badge">🔒 Premium</button>
+          <div class="flex items-center gap-3"><div class="text-xl">🔔</div><div><div class="text-sm font-medium">Push Notifications</div><div class="text-xs text-gray-400">Daily reminders & habit nudges</div></div></div>
+          <span class="text-xs text-green-400 font-semibold">Active</span>
         </div>
         <div class="flex items-center justify-between py-2">
-          <div class="flex items-center gap-3"><div class="text-xl">🗓</div><div><div class="text-sm font-medium">Google Calendar</div><div class="text-xs text-gray-400">Add workouts to calendar</div></div></div>
-          <button onclick="openUpgrade()" class="lock-badge">🔒 Premium</button>
+          <div class="flex items-center gap-3"><div class="text-xl">☁️</div><div><div class="text-sm font-medium">Cloud Sync</div><div class="text-xs text-gray-400">Your data syncs across devices via Firebase</div></div></div>
+          <span class="text-xs text-green-400 font-semibold">Active</span>
         </div>
         <div class="flex items-center justify-between py-2">
-          <div class="flex items-center gap-3"><div class="text-xl">📅</div><div><div class="text-sm font-medium">Apple Calendar</div><div class="text-xs text-gray-400">Sync your glow up schedule</div></div></div>
-          <button onclick="openUpgrade()" class="lock-badge">🔒 Premium</button>
+          <div class="flex items-center gap-3"><div class="text-xl">📱</div><div><div class="text-sm font-medium">Install as App</div><div class="text-xs text-gray-400">Add to home screen for app-like experience</div></div></div>
+          <button onclick="installPWA()" class="lock-badge" style="cursor:pointer">Install</button>
         </div>
       </div>
     </div>
@@ -1194,11 +1198,11 @@
     <div class="space-y-2 mb-6 text-sm">
       <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Full 90-day personalised AI plan</span></div>
       <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Unlimited AI Coach messages</span></div>
-      <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Complete nutrition tracker + barcode scanner</span></div>
+      <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Complete nutrition tracker</span></div>
       <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Full gym tracking & progressive overload</span></div>
       <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Advanced analytics & body metrics</span></div>
-      <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Apple Health & Calendar sync</span></div>
-      <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Full research library (127 articles)</span></div>
+      <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Weekly AI check-ins & plan updates</span></div>
+      <div class="flex items-center gap-2"><span class="text-purple-400">✓</span><span>Full research library</span></div>
     </div>
     <a href="https://square.link/u/LrHypQJU" target="_blank" onclick="showPostPayment()" class="btn-primary w-full text-lg py-3 mb-3 block text-center" style="text-decoration:none">Pay $4.99/mo via Square →</a>
     <a href="https://square.link/u/LrHypQJU" target="_blank" class="btn-outline w-full mb-3 block text-center" style="text-decoration:none">Annual Plan — $34.99/year (Save 42%)</a>
@@ -1458,6 +1462,18 @@ function initDashboard() {
   setText('nutCarbsGoal',   '/ ' + cfg.carbs   + 'g goal');
   setText('nutFatGoal',     '/ ' + cfg.fat      + 'g goal');
 
+  // Show/hide upgrade CTA based on premium
+  const upgCTA = document.getElementById('sidebarUpgradeCTA');
+  const premBadge = document.getElementById('sidebarPremiumBadge');
+  const settingsUpBtn = document.getElementById('settingsUpgradeBtn');
+  const settingsPremActive = document.getElementById('settingsPremiumActive');
+  if (user.isPremium) {
+    if (upgCTA) upgCTA.style.display = 'none';
+    if (premBadge) premBadge.classList.remove('hidden');
+    if (settingsUpBtn) settingsUpBtn.style.display = 'none';
+    if (settingsPremActive) settingsPremActive.classList.remove('hidden');
+  }
+
   updateXPDisplay();
   loadHabitStates();
   initWater();
@@ -1507,13 +1523,16 @@ function loadHabitStates() {
     const check = el.querySelector('.habit-check');
     el.classList.toggle('done', isDone);
     if (check) check.textContent = isDone ? '✓' : '';
+    // Reset any previously applied premium styling
+    el.style.opacity = '';
+    const badge = el.querySelector('.text-xs');
+    if (badge) badge.innerHTML = badge.innerHTML.replace(/\s*·\s*<span[^>]*>🔒 Premium<\/span>/, '');
   });
-  // Lock premium habits for free users
+  // Mark premium habits for free users — they are still clickable (they show upgrade modal)
   if (!isPremium) {
     ['h3','h4','h5','h6'].forEach(id => {
       document.querySelectorAll('[data-habit-id="' + id + '"]').forEach(el => {
-        el.style.opacity = '0.4';
-        el.style.cursor = 'pointer';
+        el.style.opacity = '0.5';
         const badge = el.querySelector('.text-xs');
         if (badge && !badge.innerHTML.includes('Premium')) {
           badge.innerHTML = badge.innerHTML + ' · <span style="color:#c4b5fd">🔒 Premium</span>';
@@ -1533,7 +1552,8 @@ function toggleTask(el) {
     openUpgrade(); return;
   }
   const willBeDone = !el.classList.contains('done');
-  const def = GlowData.habits.defs().find(h => h.id === id);
+  const defs = GlowData.habits.defs();
+  const def = defs.find(h => h.id === id);
 
   document.querySelectorAll('[data-habit-id="' + id + '"]').forEach(item => {
     item.classList.toggle('done', willBeDone);
@@ -1543,15 +1563,15 @@ function toggleTask(el) {
 
   GlowData.habits.set(id, willBeDone);
 
-  if (def) {
-    GlowData.xp.add(willBeDone ? def.xp : -def.xp);
-    if (willBeDone) {
-      GlowUtils.toast('+' + def.xp + ' XP · ' + def.text + ' ✓');
-      GlowData.streak.touch();
-      const sk = GlowData.streak.get();
-      setText('streakCount', sk.count + ' day streak');
-      setText('mobileStreak', '🔥 ' + sk.count + ' days');
-    }
+  const xpAmt = def ? def.xp : 10;
+  const label = def ? def.text : 'Habit';
+  GlowData.xp.add(willBeDone ? xpAmt : -xpAmt);
+  if (willBeDone) {
+    GlowUtils.toast('+' + xpAmt + ' XP · ' + label + ' ✓');
+    GlowData.streak.touch();
+    const sk = GlowData.streak.get();
+    setText('streakCount', sk.count + ' day streak');
+    setText('mobileStreak', '🔥 ' + sk.count + ' days');
   }
 
   updateXPDisplay();
@@ -1603,7 +1623,7 @@ function initWater() {
 }
 
 function addWater(ml) {
-  _waterMl = Math.min(_waterMl + ml, 2500);
+  _waterMl = Math.min(_waterMl + ml, 5000);
   GlowData.water.set(_waterMl);
   updateWaterUI();
   updateWaterWeekChart();
@@ -1627,6 +1647,19 @@ function updateWaterUI() {
   setText('waterAmount', (_waterMl / 1000).toFixed(1) + 'L');
   const bar = document.getElementById('waterBar');
   if (bar) bar.style.width = Math.min(100, _waterMl / 2500 * 100) + '%';
+  // Update tip dynamically
+  const tip = document.getElementById('waterTip');
+  if (tip) {
+    const remaining = Math.max(0, 2500 - _waterMl);
+    const litersLeft = (remaining / 1000).toFixed(1);
+    if (remaining <= 0) {
+      tip.innerHTML = '<strong style="color:#06b6d4">💧 Goal reached!</strong> You\'ve hit your daily hydration target — great work!';
+    } else if (remaining <= 500) {
+      tip.innerHTML = '<strong style="color:#06b6d4">💡 Almost there!</strong> Just ' + litersLeft + 'L to go. Have a glass now to finish strong.';
+    } else {
+      tip.innerHTML = '<strong style="color:#06b6d4">💡 Hydration tip:</strong> You have ' + litersLeft + 'L left to reach your goal. Try a glass before your next meal.';
+    }
+  }
 }
 
 // ============================================================
@@ -1787,15 +1820,30 @@ function showPostPayment() {
 }
 
 function activateTrial() {
-  GlowAuth.startPremiumTrial();
-  closeUpgrade();
-  GlowUtils.toast('🎉 Premium activated! Welcome to GlowAI Premium.');
-  const user = GlowAuth.getUser();
-  if (user) {
+  GlowAuth.startPremiumTrial().then(() => {
+    closeUpgrade();
+    GlowUtils.toast('🎉 Premium activated! Welcome to GlowAI Premium.');
     setText('sidebarPlan', '✨ Premium');
     setText('settingsPlan', '✨ Premium');
+    // Reload habit states to unlock premium habits
+    loadHabitStates();
+    updateHabitsCount();
+    updateStats();
+  });
+}
+
+function installPWA() {
+  if (window._pwaPrompt) {
+    window._pwaPrompt.prompt();
+  } else {
+    GlowUtils.toast('To install: tap Share → Add to Home Screen (iOS) or browser menu → Install App (Android/Chrome)', 'info');
   }
 }
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  window._pwaPrompt = e;
+});
 
 // ============================================================
 // WEEKLY CHECK-IN
@@ -1805,8 +1853,13 @@ function closeCheckin() { document.getElementById('checkinOverlay').classList.re
 function submitCheckin() {
   closeCheckin();
   GlowData.xp.add(50);
+  const newScore = GlowData.recordCheckin();
   updateXPDisplay();
-  setTimeout(() => GlowUtils.toast('✨ Check-in saved! +50 XP · Your plan has been updated'), 300);
+  if (newScore) {
+    const allVals = document.querySelectorAll('#page-analytics .card-sm .text-2xl');
+    if (allVals[0]) allVals[0].textContent = newScore;
+  }
+  setTimeout(() => GlowUtils.toast('✨ Check-in saved! +50 XP · Glow Score updated'), 300);
 }
 
 // ============================================================
@@ -2007,18 +2060,21 @@ function initAnalyticsCharts() {
   const ctx1 = document.getElementById('glowChart');
   if (ctx1 && !ctx1.chart) {
     const profile = GlowData.profile.get();
-    const baseScore = profile.glowScore || 65;
+    const initialScore = profile.glowScore || 55;
+    const currentScore = GlowData.calcGlowScore();
     const dayN = GlowData.dayNumber();
     const pts = Math.min(7, dayN);
     const labels = [], data = [];
     for (let i = pts - 1; i >= 0; i--) {
       labels.push('Day ' + (dayN - i));
-      data.push(Math.min(100, Math.round(baseScore + (pts - i) * 1.5)));
+      // Linear interpolation from initial to current score over the days
+      const t = pts > 1 ? (pts - 1 - i) / (pts - 1) : 1;
+      data.push(Math.min(100, Math.round(initialScore + (currentScore - initialScore) * t)));
     }
     ctx1.chart = new Chart(ctx1, {
       type:'line',
       data:{labels,datasets:[{label:'Glow Score',data,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,0.1)',fill:true,tension:0.4,borderWidth:2,pointBackgroundColor:'#8b5cf6'}]},
-      options:{responsive:true,plugins:{legend:{labels:{color:'#9ca3af',font:{size:11}}}},scales:{x:{ticks:{color:'#6b7280'},grid:{color:'rgba(255,255,255,0.05)'}},y:{min:50,max:100,ticks:{color:'#6b7280'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+      options:{responsive:true,plugins:{legend:{labels:{color:'#9ca3af',font:{size:11}}}},scales:{x:{ticks:{color:'#6b7280'},grid:{color:'rgba(255,255,255,0.05)'}},y:{min:0,max:100,ticks:{color:'#6b7280'},grid:{color:'rgba(255,255,255,0.05)'}}}}
     });
   }
   const ctx2 = document.getElementById('habitChart');
@@ -2041,7 +2097,8 @@ function initAnalyticsCharts() {
   const allVals = document.querySelectorAll('#page-analytics .card-sm .text-2xl');
   const profile = GlowData.profile.get();
   const sk = GlowData.streak.get();
-  if (allVals[0]) allVals[0].textContent = profile.glowScore || '—';
+  const liveScore = GlowData.calcGlowScore();
+  if (allVals[0]) allVals[0].textContent = liveScore || profile.glowScore || '—';
   if (allVals[1]) allVals[1].textContent = '🔥 ' + sk.count;
   if (allVals[2]) allVals[2].textContent = GlowData.xp.total().toLocaleString();
   if (allVals[3]) {
@@ -2317,7 +2374,65 @@ function loadSkincarePage() {
   const content = document.getElementById('skincareContent');
   if (!content) return;
 
-  content.innerHTML = `
+  // Height prediction section for young users
+  let heightPredictionHtml = '';
+  const ageGroup = answers.age || '';
+  const gender = answers.gender || '';
+  const bodyStats = answers.body_stats || {};
+  const heightCm = bodyStats.heightCm;
+  const isYoung = ageGroup === 'Under 18' || ageGroup === '18–24';
+  const isBelowMaxHeight = (gender === 'Female' && ageGroup === 'Under 18') ||
+                            (gender === 'Male' && (ageGroup === 'Under 18' || ageGroup === '18–24'));
+  if (isBelowMaxHeight && heightCm) {
+    const prediction = GlowUtils.predictHeight(heightCm, ageGroup, gender,
+      answers.father_height ? parseFloat(answers.father_height) : null,
+      answers.mother_height ? parseFloat(answers.mother_height) : null);
+    if (prediction) {
+      const ftTotal = prediction.cm / 30.48;
+      const ft = Math.floor(ftTotal);
+      const inches = Math.round((ftTotal - ft) * 12);
+      const rangeFt1 = Math.floor(prediction.range[0] / 30.48);
+      const rangeIn1 = Math.round(((prediction.range[0] / 30.48) - rangeFt1) * 12);
+      const rangeFt2 = Math.floor(prediction.range[1] / 30.48);
+      const rangeIn2 = Math.round(((prediction.range[1] / 30.48) - rangeFt2) * 12);
+      heightPredictionHtml = `
+        <div class="card mb-6" style="background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(139,92,246,0.06))">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="text-2xl">📏</div>
+            <div><div class="font-bold">Predicted Adult Height</div><div class="text-xs text-gray-400">Based on your current height and age</div></div>
+          </div>
+          <div class="text-center py-4">
+            <div class="text-4xl font-black grad-text mb-1">${prediction.cm} cm</div>
+            <div class="text-lg text-gray-300 mb-2">${ft}'${inches}"</div>
+            <div class="text-xs text-gray-400">Estimated range: ${prediction.range[0]}–${prediction.range[1]} cm (${rangeFt1}'${rangeIn1}"–${rangeFt2}'${rangeIn2}")</div>
+          </div>
+          <div class="mt-3 p-3 rounded-xl text-xs text-gray-300 leading-relaxed" style="background:rgba(99,102,241,0.08)">
+            ${prediction.method === 'mid-parental'
+              ? '📊 This prediction uses the mid-parental height method, which is approximately 68% accurate within 5cm of adult height.'
+              : '📊 This estimate is based on your current height and typical growth patterns for your age and sex. Add parent heights below for a more accurate prediction.'}
+          </div>
+          ${prediction.method !== 'mid-parental' ? `
+          <div class="mt-4">
+            <div class="text-xs font-semibold text-gray-300 mb-2">Add parent heights for a better prediction (optional):</div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-gray-400 mb-1 block">Father's height (cm)</label>
+                <input id="fatherHeight" type="number" placeholder="e.g. 180" value="${answers.father_height || ''}"
+                  class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+              </div>
+              <div>
+                <label class="text-xs text-gray-400 mb-1 block">Mother's height (cm)</label>
+                <input id="motherHeight" type="number" placeholder="e.g. 165" value="${answers.mother_height || ''}"
+                  class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+              </div>
+            </div>
+            <button onclick="updateHeightPrediction()" class="btn-primary w-full mt-3 text-sm py-2">Update Prediction</button>
+          </div>` : ''}
+        </div>`;
+    }
+  }
+
+  content.innerHTML = heightPredictionHtml + `
     <div class="card mb-6" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.06))">
       <div class="font-bold mb-1">Your Skin Profile</div>
       <div class="text-xs text-gray-400">Based on your quiz answers</div>
@@ -2393,6 +2508,20 @@ function getSkinRoutine(skinType, concerns, timeAvail) {
   ];
 
   return { am, pm, tips };
+}
+
+// ============================================================
+// HEIGHT PREDICTION
+// ============================================================
+function updateHeightPrediction() {
+  const fh = parseFloat(document.getElementById('fatherHeight')?.value);
+  const mh = parseFloat(document.getElementById('motherHeight')?.value);
+  if (!fh || !mh) { GlowUtils.toast('Please enter both parent heights', 'error'); return; }
+  const profile = GlowData.profile.get();
+  const answers = (profile && profile.answers) ? profile.answers : {};
+  GlowData.profile.set({ answers: Object.assign({}, answers, { father_height: fh, mother_height: mh }) });
+  GlowUtils.toast('Parent heights saved — reloading prediction...');
+  loadSkincarePage();
 }
 
 // ============================================================
