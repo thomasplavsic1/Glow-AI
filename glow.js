@@ -92,9 +92,10 @@ const GlowAuth = (() => {
   };
 
   const logout = async () => {
-    if (_fbAuth) await _fbAuth.signOut();
+    if (_fbAuth) try { await _fbAuth.signOut(); } catch(e) {}
     _cache = null;
-    localStorage.removeItem(LOCAL_KEY);
+    localStorage.removeItem(LOCAL_KEY);      // gai_fb_user
+    localStorage.removeItem('gai_session');  // onboarding auth key
     window.location.href = 'index.html';
   };
 
@@ -112,12 +113,16 @@ const GlowAuth = (() => {
   };
 
   const onReady = cb => {
-    if (!_fbAuth) { cb(_load()); return; }
+    // localStorage-first: if we already have a user cached locally, use it immediately
+    // This ensures the dashboard works even when Firebase auth state hasn't loaded
+    const cached = _load();
+    if (cached) { _cache = cached; cb(cached); return; }
+    if (!_fbAuth) { cb(null); return; }
     _fbAuth.onAuthStateChanged(async fbUser => {
       if (fbUser) {
-        const cached = _load();
-        if (!cached || cached.id !== fbUser.uid) await _pullFirestore(fbUser.uid);
-        else _cache = cached;
+        const c = _load();
+        if (!c || c.id !== fbUser.uid) await _pullFirestore(fbUser.uid);
+        else _cache = c;
         cb(getUser());
       } else {
         _cache = null; cb(null);
