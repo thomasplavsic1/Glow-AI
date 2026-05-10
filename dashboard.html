@@ -1245,14 +1245,11 @@
 ================================================================ -->
 <script>
 // ============================================================
-// AUTH GUARD
+// DEMO USER (auth disabled for testing)
 // ============================================================
-(function() {
-  if (!GlowAuth.getUser()) {
-    window.location.href = 'onboarding.html?login=1';
-    throw new Error('unauthenticated');
-  }
-})();
+if (!GlowAuth.getUser()) {
+  GlowAuth.register('Demo User', 'demo@glowai.app', 'glowai123');
+}
 
 // ============================================================
 // HELPERS
