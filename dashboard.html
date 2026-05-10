@@ -369,7 +369,7 @@
 
         <!-- AI Insight -->
         <div class="mt-4 p-3 rounded-xl text-xs text-gray-300 leading-relaxed" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.15)">
-          🤖 <strong style="color:#c4b5fd">AI Insight:</strong> You slept 7.2 hours last night — great for recovery. Your energy today should be high, which is perfect for your strength session.
+          🤖 <strong style="color:#c4b5fd">AI Insight:</strong> <span id="aiInsightText">You slept 7.2 hours last night — great for recovery. Your energy today should be high, which is perfect for your strength session.</span>
         </div>
       </div>
 
@@ -580,7 +580,7 @@
     <div class="grid md:grid-cols-3 gap-4 mb-6">
       <div class="card-sm text-center">
         <div class="text-2xl mb-1">💪</div>
-        <div class="text-xl font-black">Push Day</div>
+        <div id="gymSessionType" class="text-xl font-black">Push Day</div>
         <div class="text-xs text-gray-400 mt-1">Today's session</div>
       </div>
       <div class="card-sm text-center">
@@ -598,7 +598,7 @@
     <!-- Today's workout -->
     <div class="card mb-6">
       <div class="flex items-center justify-between mb-4">
-        <div class="font-bold">Today's Workout — Push A</div>
+        <div id="gymSessionHeader" class="font-bold">Today's Workout — Push A</div>
         <button class="btn-primary text-xs py-1.5 px-4">▶ Start Session</button>
       </div>
 
@@ -696,7 +696,7 @@
           <div class="text-xs text-gray-400">Net</div>
         </div>
         <div>
-          <div class="text-2xl font-black text-gray-300">2100</div>
+          <div id="nutCalGoalDisplay" class="text-2xl font-black text-gray-300">2100</div>
           <div class="text-xs text-gray-400">Goal</div>
         </div>
       </div>
@@ -711,19 +711,19 @@
       <div class="card-sm text-center">
         <div class="text-xs text-gray-400 mb-1">Protein</div>
         <div id="nutProtein" class="text-xl font-black text-purple-400">0g</div>
-        <div class="text-xs text-gray-500 mt-1">/ 150g goal</div>
+        <div id="nutProteinGoal" class="text-xs text-gray-500 mt-1">/ 150g goal</div>
         <div class="xp-bar mt-2"><div id="nutProteinBar" style="width:0%;height:4px;background:#8b5cf6;border-radius:50px"></div></div>
       </div>
       <div class="card-sm text-center">
         <div class="text-xs text-gray-400 mb-1">Carbs</div>
         <div id="nutCarbs" class="text-xl font-black text-yellow-400">0g</div>
-        <div class="text-xs text-gray-500 mt-1">/ 240g goal</div>
+        <div id="nutCarbsGoal" class="text-xs text-gray-500 mt-1">/ 240g goal</div>
         <div class="xp-bar mt-2"><div id="nutCarbsBar" style="width:0%;height:4px;background:#f59e0b;border-radius:50px"></div></div>
       </div>
       <div class="card-sm text-center">
         <div class="text-xs text-gray-400 mb-1">Fat</div>
         <div id="nutFat" class="text-xl font-black text-pink-400">0g</div>
-        <div class="text-xs text-gray-500 mt-1">/ 75g goal</div>
+        <div id="nutFatGoal" class="text-xs text-gray-500 mt-1">/ 75g goal</div>
         <div class="xp-bar mt-2"><div id="nutFatBar" style="width:0%;height:4px;background:#ec4899;border-radius:50px"></div></div>
       </div>
     </div>
@@ -1288,6 +1288,79 @@ function setMobileActive(el) {
 }
 
 // ============================================================
+// PERSONALISATION — reads quiz answers and returns config
+// ============================================================
+function getPersonalizedConfig() {
+  var profile = GlowData.profile.get();
+  var a = (profile && profile.answers) ? profile.answers : {};
+
+  // Calorie goal
+  var cals = a.gender === 'Female' ? 1700 : a.gender === 'Male' ? 2200 : 1950;
+  if (a.activity === 'Very active — exercise 5+x/week') cals += 400;
+  else if (a.activity === 'Moderately active — exercise 2–3x/week') cals += 200;
+  else if (a.activity === 'Sedentary — mostly sitting') cals -= 200;
+  if (a.primary_goal === 'Lose fat & get lean') cals -= 300;
+  else if (a.primary_goal === 'Build muscle & strength') cals += 300;
+  cals = Math.round(cals / 50) * 50;
+
+  // Macro splits
+  var proteinPct = 0.25, carbPct = 0.45, fatPct = 0.30;
+  if (a.primary_goal === 'Lose fat & get lean')      { proteinPct = 0.35; carbPct = 0.35; fatPct = 0.30; }
+  else if (a.primary_goal === 'Build muscle & strength') { proteinPct = 0.30; carbPct = 0.45; fatPct = 0.25; }
+  var protein = Math.round((cals * proteinPct) / 4);
+  var carbs   = Math.round((cals * carbPct)    / 4);
+  var fat     = Math.round((cals * fatPct)     / 9);
+
+  // Workout type (rotates by day of week)
+  var day = new Date().getDay(); // 0=Sun … 6=Sat
+  var goal = a.primary_goal || '';
+  var exp  = a.gym_exp || '';
+  var workoutType, workoutHeader;
+  if (goal === 'Build muscle & strength') {
+    var types   = ['Active Recovery','Push Day','Pull Day','Leg Day','Push Day','Pull Day','Active Recovery'];
+    var headers = ['Active Recovery','Push A — Chest & Triceps','Pull A — Back & Biceps','Leg Day — Quads, Hams & Glutes','Push B — Shoulders Focus','Pull B — Back & Arms','Active Recovery'];
+    workoutType   = types[day];
+    workoutHeader = 'Today\'s Workout — ' + headers[day];
+  } else if (goal === 'Lose fat & get lean') {
+    var types   = ['LISS Cardio','HIIT Circuit','Strength + Cardio','Metabolic Circuit','HIIT Circuit','Long Cardio','Rest Day'];
+    workoutType   = types[day];
+    workoutHeader = 'Today\'s Workout — ' + types[day];
+  } else if (exp.toLowerCase().includes('beginner')) {
+    workoutType   = 'Full Body';
+    workoutHeader = 'Today\'s Workout — Full Body Starter';
+  } else {
+    var types   = ['Active Recovery','Upper Body','Lower Body','Full Body','Upper Body','Lower Body','Active Recovery'];
+    workoutType   = types[day];
+    workoutHeader = 'Today\'s Workout — ' + types[day];
+  }
+
+  // AI Insight
+  var insight;
+  var sleep = a.sleep_hours || '';
+  var stress = a.stress || '';
+  var diet = a.diet_quality || '';
+  var conf = a.confidence || '';
+  if (sleep === 'Less than 5 hours' || sleep === '5–6 hours') {
+    insight = 'You reported getting ' + sleep.toLowerCase() + ' of sleep — below optimal. Prioritise 7–8 hours tonight to boost recovery, focus, and fat metabolism.';
+  } else if (stress === 'Very high — overwhelmed often' || stress === 'High — stressed most days') {
+    insight = 'Your stress levels are elevated. High cortisol stalls fat loss and disrupts sleep. Try a 5-minute breathing exercise today — it genuinely moves the needle.';
+  } else if (diet === 'Poor — lots of junk food' || diet === 'Okay — could be better') {
+    insight = 'Your nutrition has the most room for growth right now. Focus on hitting your protein goal of ' + protein + 'g today — that single habit drives more progress than anything else.';
+  } else if (conf === 'Very low confidence' || conf === 'Low — working on it') {
+    insight = 'Confidence is built through action, not waiting. One completed workout changes your self-image more than a week of planning. Let\'s make today count.';
+  } else if (goal === 'Build muscle & strength') {
+    insight = 'Today is ' + workoutType + '. Hit at least ' + protein + 'g of protein — muscle growth is 70% recovery and nutrition, 30% training.';
+  } else if (goal === 'Lose fat & get lean') {
+    insight = 'You\'re targeting ' + cals + ' kcal today. Stay consistent with your ' + workoutType.toLowerCase() + ' session and you\'ll be on track for the week.';
+  } else {
+    var sc = profile && profile.glowScore ? profile.glowScore + '/100 Glow Score' : 'your glow up journey';
+    insight = 'You\'re at ' + sc + '. Every completed habit compounds — keep showing up daily and the results will come.';
+  }
+
+  return { cals: cals, protein: protein, carbs: carbs, fat: fat, workoutType: workoutType, workoutHeader: workoutHeader, insight: insight };
+}
+
+// ============================================================
 // INIT
 // ============================================================
 function initDashboard() {
@@ -1321,6 +1394,17 @@ function initDashboard() {
   const sk = GlowData.streak.get();
   setText('streakCount', sk.count + ' day streak');
   setText('mobileStreak', '🔥 ' + sk.count + ' days');
+
+  // Apply quiz-based personalisation
+  var cfg = getPersonalizedConfig();
+  window._glowGoal = { cal: cfg.cals, protein: cfg.protein, carbs: cfg.carbs, fat: cfg.fat };
+  setText('aiInsightText', cfg.insight);
+  setText('gymSessionType', cfg.workoutType);
+  setText('gymSessionHeader', cfg.workoutHeader);
+  setText('nutCalGoalDisplay', cfg.cals);
+  setText('nutProteinGoal', '/ ' + cfg.protein + 'g goal');
+  setText('nutCarbsGoal',   '/ ' + cfg.carbs   + 'g goal');
+  setText('nutFatGoal',     '/ ' + cfg.fat      + 'g goal');
 
   updateXPDisplay();
   loadHabitStates();
@@ -1522,7 +1606,7 @@ function removeFood(id) {
 
 function updateNutritionDisplay(list) {
   const t = GlowData.food.totals(list);
-  const GOAL = { cal:2100, protein:150, carbs:240, fat:75 };
+  const GOAL = window._glowGoal || { cal:2100, protein:150, carbs:240, fat:75 };
   const pct = (v, g) => Math.min(100, g > 0 ? v / g * 100 : 0) + '%';
   setText('nutCalEaten', t.cal);
   setText('nutCalNet', t.cal);
