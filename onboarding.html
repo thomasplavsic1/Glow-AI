@@ -531,7 +531,8 @@ function showAuthError(msg) {
 function hideOverlayAndStart() {
   document.getElementById('authOverlay').style.display = 'none';
   document.getElementById('quizContainer').classList.remove('hidden');
-  renderQuestion();
+  // renderQuestion lives in the quiz script block — safe to call only if already loaded
+  if (typeof renderQuestion === 'function') { renderQuestion(); }
 }
 
 // Background Firebase sync — called after localStorage auth succeeds
@@ -657,7 +658,10 @@ if (_sess) {
 } else {
   if (_showLogin) switchTab('login');
 }
+</script>
 
+<!-- Quiz script is isolated — even if it has errors, auth buttons above still work -->
+<script>
 // ================================================================
 // QUIZ RENDERING
 // ================================================================
@@ -1137,7 +1141,11 @@ function showResults() {
   document.getElementById('aiSummary').textContent = summary;
 }
 
-// renderQuestion() is called by hideOverlayAndStart() after auth
+// If auth already ran before this script loaded (session check case), start the quiz now
+(function() {
+  var qc = document.getElementById('quizContainer');
+  if (qc && !qc.classList.contains('hidden')) { renderQuestion(); }
+})();
 </script>
 </body>
 </html>
