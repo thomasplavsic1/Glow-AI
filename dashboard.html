@@ -132,7 +132,7 @@
 ================================================================ -->
 <aside class="sidebar">
   <div class="flex items-center gap-2 mb-8 px-2">
-    <div class="w-8 h-8 rounded-lg grad-bg flex items-center justify-center font-black text-sm">G</div>
+    <div class="w-8 h-8 rounded-lg grad-bg flex items-center justify-center text-base">✨</div>
     <span class="font-black text-xl">Glow<span class="grad-text">AI</span></span>
   </div>
 
@@ -153,7 +153,7 @@
     <button class="nav-item" onclick="showPage('sleep')"><span class="nav-icon">😴</span>Sleep</button>
     <button class="nav-item" onclick="showPage('water')"><span class="nav-icon">💧</span>Water</button>
     <button class="nav-item" onclick="showPage('skincare')"><span class="nav-icon">🫧</span>Skincare & Profile</button>
-    <button class="nav-item" onclick="showPage('chat')"><span class="nav-icon">💬</span>AI Coach</button>
+    <button class="nav-item" onclick="showPage('chat')"><span class="nav-icon">💬</span>AI Coach <span style="font-size:9px;background:rgba(139,92,246,0.3);border-radius:4px;padding:1px 5px;color:#c4b5fd;margin-left:4px">Soon</span></button>
     <button class="nav-item" onclick="showPage('research')"><span class="nav-icon">🔬</span>Research</button>
     <button class="nav-item" onclick="showPage('analytics')"><span class="nav-icon">📊</span>Analytics</button>
     <button class="nav-item" onclick="showPage('settings')"><span class="nav-icon">⚙️</span>Settings</button>
@@ -304,7 +304,7 @@
       <div class="card">
         <div class="flex items-center justify-between mb-4">
           <div class="font-bold text-sm">Today's Actions</div>
-          <div class="text-xs text-gray-400">4 of 6 done</div>
+          <div id="dashTasksCount" class="text-xs text-gray-400">0 of 6 done</div>
         </div>
         <div id="taskList">
           <div class="habit-item" data-habit-id="h1" onclick="toggleTask(this)">
@@ -437,7 +437,7 @@
       </div>
 
       <!-- Premium locked habits -->
-      <div class="mt-4 p-4 rounded-xl relative" style="background:rgba(139,92,246,0.05);border:1px dashed rgba(139,92,246,0.2)">
+      <div id="habitsPremiumLock" class="mt-4 p-4 rounded-xl relative" style="background:rgba(139,92,246,0.05);border:1px dashed rgba(139,92,246,0.2)">
         <div class="flex items-center gap-3 mb-2 opacity-40">
           <div class="habit-check"></div>
           <div class="font-medium text-sm">5 min morning meditation</div>
@@ -548,7 +548,7 @@
       </div>
 
       <!-- Premium blur -->
-      <div class="relative mt-3">
+      <div id="gymPremiumLock" class="relative mt-3">
         <div class="exercise-item opacity-30">
           <div class="font-semibold text-sm">Tricep Pushdowns + 3 more...</div>
         </div>
@@ -629,7 +629,7 @@
         <div class="text-sm text-gray-500 py-6 text-center">No food logged yet — tap + Add Food to start tracking.</div>
       </div>
       <!-- Premium -->
-      <div class="mt-4 p-4 rounded-xl text-center" style="background:rgba(139,92,246,0.06);border:1px dashed rgba(139,92,246,0.2)">
+      <div id="nutPremiumLock" class="mt-4 p-4 rounded-xl text-center" style="background:rgba(139,92,246,0.06);border:1px dashed rgba(139,92,246,0.2)">
         <div class="text-sm text-gray-400 mb-2">🔒 AI meal suggestions, grocery lists & meal planning are <strong class="text-purple-300">Premium</strong></div>
         <button onclick="openUpgrade()" class="btn-primary text-xs py-2 px-5">Unlock Premium</button>
       </div>
@@ -764,8 +764,8 @@
     <div class="card mb-4 flex flex-col" style="height:420px;position:relative">
       <div id="chatLockedOverlay" style="position:absolute;inset:0;background:rgba(5,5,8,0.92);backdrop-filter:blur(8px);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:20px;padding:32px;text-align:center">
         <div class="text-5xl mb-4">🤖</div>
-        <h3 class="text-xl font-black mb-2">Unlimited AI Coach — <span class="grad-text">Premium</span></h3>
-        <p class="text-gray-400 text-sm mb-6 max-w-xs">Upgrade to Premium for unlimited personalised coaching. The AI coach uses your plan, progress, and history to give tailored advice.</p>
+        <h3 class="text-xl font-black mb-2">AI Coach — <span class="grad-text">Premium</span></h3>
+        <p class="text-gray-400 text-sm mb-6 max-w-xs">Upgrade to Premium for personalised AI coaching tailored to your plan, progress, and history.</p>
         <button onclick="openUpgrade()" class="btn-primary">Upgrade to Premium — $4.99/mo</button>
       </div>
       <div class="flex-1 overflow-y-auto flex flex-col gap-0 p-2" id="chatMessages">
@@ -803,10 +803,10 @@
       </div>
     </div>
 
-    <!-- Free limit notice -->
-    <div class="mt-4 p-3 rounded-xl flex items-center justify-between text-sm" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2)">
-      <span class="text-gray-400">🔒 Free plan: <strong class="text-white">3 of 5</strong> messages used today</span>
-      <button onclick="openUpgrade()" class="text-purple-400 text-xs font-bold hover:text-purple-300">Unlock Unlimited</button>
+    <!-- Chat status notice -->
+    <div id="chatStatusBar" class="mt-4 p-3 rounded-xl flex items-center justify-between text-sm" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2)">
+      <span class="text-gray-400">🔒 Upgrade to Premium to access AI Coach</span>
+      <button onclick="openUpgrade()" class="text-purple-400 text-xs font-bold hover:text-purple-300">Upgrade</button>
     </div>
   </div>
 
@@ -1077,11 +1077,11 @@
     <!-- Premium analytics -->
     <div class="card relative" style="min-height:120px">
       <div class="font-bold mb-3">Body Metrics Tracking</div>
-      <div class="opacity-30">
+      <div id="analyticsLockedContent" class="opacity-30">
         <div class="flex justify-between text-sm mb-2"><span>Weight</span><span>58.4kg → 56.2kg</span></div>
         <div class="xp-bar"><div class="xp-fill" style="width:40%"></div></div>
       </div>
-      <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(5,5,8,0.7);border-radius:20px">
+      <div id="analyticsPremiumLock" class="absolute inset-0 flex items-center justify-center" style="background:rgba(5,5,8,0.7);border-radius:20px">
         <button onclick="openUpgrade()" class="flex items-center gap-2 bg-black border border-purple-500 rounded-xl px-4 py-2 text-sm font-semibold text-purple-300">
           🔒 Advanced analytics — Premium
         </button>
@@ -1462,17 +1462,8 @@ function initDashboard() {
   setText('nutCarbsGoal',   '/ ' + cfg.carbs   + 'g goal');
   setText('nutFatGoal',     '/ ' + cfg.fat      + 'g goal');
 
-  // Show/hide upgrade CTA based on premium
-  const upgCTA = document.getElementById('sidebarUpgradeCTA');
-  const premBadge = document.getElementById('sidebarPremiumBadge');
-  const settingsUpBtn = document.getElementById('settingsUpgradeBtn');
-  const settingsPremActive = document.getElementById('settingsPremiumActive');
-  if (user.isPremium) {
-    if (upgCTA) upgCTA.style.display = 'none';
-    if (premBadge) premBadge.classList.remove('hidden');
-    if (settingsUpBtn) settingsUpBtn.style.display = 'none';
-    if (settingsPremActive) settingsPremActive.classList.remove('hidden');
-  }
+  // Apply premium UI (hides all paywalls for premium users)
+  applyPremiumUI(user.isPremium);
 
   updateXPDisplay();
   loadHabitStates();
@@ -1589,6 +1580,7 @@ function updateHabitsCount() {
   const freeDone = isPremium ? allDone : freeIds.filter(id => today[id] === true).length;
   setText('habitsStat', freeDone + '/' + total);
   setText('habitsPageCount', freeDone + '/' + total + ' ✓');
+  setText('dashTasksCount', freeDone + ' of ' + total + ' done');
 }
 
 // ============================================================
@@ -1819,16 +1811,41 @@ function showPostPayment() {
   }, 2000);
 }
 
+function applyPremiumUI(isPremium) {
+  const setVis = (id, show) => { const el = document.getElementById(id); if (el) el.style.display = show ? '' : 'none'; };
+  if (isPremium) {
+    // Hide all upgrade prompts inside sections
+    setVis('gymPremiumLock', false);
+    setVis('nutPremiumLock', false);
+    setVis('habitsPremiumLock', false);
+    setVis('analyticsPremiumLock', false);
+    // Make analytics locked content fully visible
+    const alc = document.getElementById('analyticsLockedContent');
+    if (alc) alc.style.opacity = '1';
+    // Sidebar
+    setVis('sidebarUpgradeCTA', false);
+    const premBadge = document.getElementById('sidebarPremiumBadge');
+    if (premBadge) premBadge.classList.remove('hidden');
+    setVis('settingsUpgradeBtn', false);
+    const settingsPremActive = document.getElementById('settingsPremiumActive');
+    if (settingsPremActive) settingsPremActive.classList.remove('hidden');
+    setText('sidebarPlan', '✨ Premium');
+    setText('settingsPlan', '✨ Premium');
+    // Chat status bar
+    const csb = document.getElementById('chatStatusBar');
+    if (csb) csb.innerHTML = '<span class="text-purple-300 font-semibold">✨ Premium — AI Coach coming soon for you!</span>';
+  }
+}
+
 function activateTrial() {
   GlowAuth.startPremiumTrial().then(() => {
     closeUpgrade();
     GlowUtils.toast('🎉 Premium activated! Welcome to GlowAI Premium.');
-    setText('sidebarPlan', '✨ Premium');
-    setText('settingsPlan', '✨ Premium');
-    // Reload habit states to unlock premium habits
+    applyPremiumUI(true);
     loadHabitStates();
     updateHabitsCount();
     updateStats();
+    showChatPage();
   });
 }
 
@@ -1922,26 +1939,15 @@ const aiReplies = {
 };
 
 function sendChat() {
-  const input = document.getElementById('chatInput');
-  const msg = (input.value || '').trim();
-  if (!msg) return;
-  GlowData.chat.add('user', msg);
-  appendChat(msg, 'user');
-  input.value = '';
-  setTimeout(() => {
-    const lower = msg.toLowerCase();
-    let reply = "That's a great question! Based on your current plan and progress, I'd recommend focusing on your sleep quality first — it's the highest-leverage change right now. Want more specific advice?";
-    for (const key in aiReplies) {
-      if (lower.includes(key)) { reply = aiReplies[key]; break; }
-    }
-    GlowData.chat.add('ai', reply);
-    appendChat(reply, 'ai');
-  }, 800);
+  const user = GlowAuth.getUser();
+  if (!user || !user.isPremium) { openUpgrade(); return; }
+  GlowUtils.toast('🤖 AI Coach is coming soon — you\'ll be first to know!', 'info');
 }
 
 function quickChat(msg) {
-  document.getElementById('chatInput').value = msg;
-  sendChat();
+  const user = GlowAuth.getUser();
+  if (!user || !user.isPremium) { openUpgrade(); return; }
+  GlowUtils.toast('🤖 AI Coach is coming soon — you\'ll be first to know!', 'info');
 }
 
 function handleChatKey(e) {
@@ -2299,7 +2305,25 @@ function generateSleepAnalysis() {
 function showChatPage() {
   const user = GlowAuth.getUser();
   const overlay = document.getElementById('chatLockedOverlay');
-  if (overlay) overlay.style.display = user && user.isPremium ? 'none' : 'flex';
+  if (!overlay) return;
+  if (user && user.isPremium) {
+    overlay.innerHTML = `
+      <div style="text-align:center;padding:24px">
+        <div style="font-size:48px;margin-bottom:16px">🤖</div>
+        <h3 style="font-size:20px;font-weight:900;margin-bottom:8px">AI Coach — <span style="background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Coming Soon</span></h3>
+        <p style="color:#9ca3af;font-size:14px;max-width:280px;margin:0 auto;line-height:1.6">Full personalised AI coaching is in active development for Premium members. You'll be first to access it when it launches!</p>
+      </div>`;
+    overlay.style.display = 'flex';
+  } else {
+    overlay.innerHTML = `
+      <div style="text-align:center;padding:24px">
+        <div style="font-size:48px;margin-bottom:16px">🤖</div>
+        <h3 style="font-size:20px;font-weight:900;margin-bottom:8px">AI Coach — <span style="background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Premium</span></h3>
+        <p style="color:#9ca3af;font-size:14px;margin-bottom:24px;max-width:280px;line-height:1.6">Upgrade to Premium for personalised AI coaching tailored to your plan, progress, and history.</p>
+        <button onclick="openUpgrade()" style="background:linear-gradient(135deg,#7c3aed,#ec4899);border-radius:50px;padding:12px 28px;font-weight:700;font-size:14px;color:#fff;border:none;cursor:pointer;box-shadow:0 0 20px rgba(139,92,246,0.3)">Upgrade to Premium — $4.99/mo</button>
+      </div>`;
+    overlay.style.display = 'flex';
+  }
 }
 
 // ============================================================
