@@ -12,11 +12,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="glow.js"></script>
+  <!-- Firebase loads async — auth works without it via localStorage fallback -->
+  <script async src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script async src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script async src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <style>
     * { font-family: 'Inter', sans-serif; }
     body { background: #050508; color: #fff; min-height: 100vh; overflow-x: hidden; }
@@ -502,31 +501,31 @@ steps.forEach((step, si) => {
 const totalQ = flatQuestions.length;
 
 // ================================================================
-// AUTH — self-contained Firebase auth with full error handling
+// AUTH — localStorage primary, Firebase background sync
+// No external dependency required for buttons to work
 // ================================================================
+var KU = 'gai_users', KS = 'gai_session';
+
+function _loadUsers() { try { return JSON.parse(localStorage.getItem(KU)||'[]'); } catch(e) { return []; } }
+function _saveUsers(u) { try { localStorage.setItem(KU, JSON.stringify(u)); } catch(e) {} }
+function _saveSession(u) { try { localStorage.setItem(KS, JSON.stringify(u)); localStorage.setItem('gai_fb_user', JSON.stringify(u)); } catch(e) {} }
+function _getSession() { try { return JSON.parse(localStorage.getItem(KS)||localStorage.getItem('gai_fb_user')||'null'); } catch(e) { return null; } }
+
 function switchTab(tab) {
-  var isSignup = tab === 'signup';
-  document.getElementById('tabSignup').style.background = isSignup ? 'rgba(139,92,246,0.8)' : 'transparent';
-  document.getElementById('tabSignup').style.color      = isSignup ? '#fff' : '#9ca3af';
-  document.getElementById('tabLogin').style.background  = isSignup ? 'transparent' : 'rgba(139,92,246,0.8)';
-  document.getElementById('tabLogin').style.color       = isSignup ? '#9ca3af' : '#fff';
-  document.getElementById('panelSignup').classList.toggle('hidden', !isSignup);
-  document.getElementById('panelLogin').classList.toggle('hidden',  isSignup);
+  var s = tab === 'signup';
+  document.getElementById('tabSignup').style.cssText = s ? 'background:rgba(139,92,246,0.8);color:#fff' : 'background:transparent;color:#9ca3af';
+  document.getElementById('tabLogin').style.cssText  = s ? 'background:transparent;color:#9ca3af' : 'background:rgba(139,92,246,0.8);color:#fff';
+  document.getElementById('panelSignup').classList.toggle('hidden', !s);
+  document.getElementById('panelLogin').classList.toggle('hidden', s);
   document.getElementById('authError').classList.add('hidden');
 }
 
 function showAuthError(msg) {
   var el = document.getElementById('authError');
+  if (!el) { alert(msg); return; }
   el.textContent = msg;
   el.classList.remove('hidden');
-}
-function clearAuthError() { document.getElementById('authError').classList.add('hidden'); }
-
-function _setBtn(id, disabled, text) {
-  var btn = document.getElementById(id);
-  if (!btn) return;
-  btn.disabled = disabled;
-  btn.textContent = text;
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function hideOverlayAndStart() {
@@ -535,156 +534,129 @@ function hideOverlayAndStart() {
   renderQuestion();
 }
 
-function _fbErrorMsg(code) {
-  var map = {
-    'auth/email-already-in-use':    'That email is already registered — tap Log In.',
-    'auth/invalid-email':           'Please enter a valid email address.',
-    'auth/weak-password':           'Password must be at least 6 characters.',
-    'auth/user-not-found':          'No account found with that email.',
-    'auth/wrong-password':          'Incorrect password — please try again.',
-    'auth/invalid-credential':      'Incorrect email or password.',
-    'auth/network-request-failed':  'Network error — check your connection.',
-    'auth/too-many-requests':       'Too many attempts. Please wait a minute and try again.',
-    'auth/operation-not-allowed':   'Email sign-in is not enabled. Contact the app admin.'
-  };
-  return map[code] || 'Something went wrong — please try again.';
+// Background Firebase sync — called after localStorage auth succeeds
+function _syncToFirebase(userData, pw) {
+  setTimeout(function() {
+    try {
+      if (typeof firebase === 'undefined') return;
+      var cfg = { apiKey:"AIzaSyB3TGH0jfAmdNJQGU9HgKixATg8E6d5_NU", authDomain:"glow-ai-7078b.firebaseapp.com", projectId:"glow-ai-7078b", storageBucket:"glow-ai-7078b.firebasestorage.app", messagingSenderId:"1044880109233", appId:"1:1044880109233:web:b51deffcd488904850bc90" };
+      if (!firebase.apps.length) firebase.initializeApp(cfg);
+      firebase.auth().createUserWithEmailAndPassword(userData.email, pw)
+        .then(function(c) {
+          c.user.updateProfile({ displayName: userData.name });
+          // Keep local ID intact — don't overwrite with Firebase UID (that would break localStorage data keys)
+          var fbRecord = Object.assign({}, userData, { firebaseUid: c.user.uid });
+          delete fbRecord.pw; // don't store password hash in Firestore
+          firebase.firestore().collection('users').doc(c.user.uid).set(fbRecord);
+        }).catch(function() {});
+    } catch(e) {}
+  }, 500);
 }
 
-function _getFirebaseAuth() {
-  try {
-    if (typeof firebase === 'undefined') throw new Error('no-firebase');
-    if (!firebase.apps.length) {
-      firebase.initializeApp({
-        apiKey:            "AIzaSyB3TGH0jfAmdNJQGU9HgKixATg8E6d5_NU",
-        authDomain:        "glow-ai-7078b.firebaseapp.com",
-        projectId:         "glow-ai-7078b",
-        storageBucket:     "glow-ai-7078b.firebasestorage.app",
-        messagingSenderId: "1044880109233",
-        appId:             "1:1044880109233:web:b51deffcd488904850bc90"
-      });
-    }
-    return firebase.auth();
-  } catch(e) { return null; }
+function _syncLoginToFirebase(email, pw, onSuccess) {
+  setTimeout(function() {
+    try {
+      if (typeof firebase === 'undefined') { onSuccess(null); return; }
+      var cfg = { apiKey:"AIzaSyB3TGH0jfAmdNJQGU9HgKixATg8E6d5_NU", authDomain:"glow-ai-7078b.firebaseapp.com", projectId:"glow-ai-7078b", storageBucket:"glow-ai-7078b.firebasestorage.app", messagingSenderId:"1044880109233", appId:"1:1044880109233:web:b51deffcd488904850bc90" };
+      if (!firebase.apps.length) firebase.initializeApp(cfg);
+      firebase.auth().signInWithEmailAndPassword(email, pw)
+        .then(function(c) {
+          return firebase.firestore().collection('users').doc(c.user.uid).get().then(function(doc) {
+            if (doc.exists) { _saveSession(doc.data()); onSuccess(doc.data()); }
+            else { onSuccess(null); }
+          });
+        }).catch(function() { onSuccess(null); });
+    } catch(e) { onSuccess(null); }
+  }, 500);
 }
 
 function doRegister() {
-  clearAuthError();
+  document.getElementById('authError').classList.add('hidden');
   var name  = (document.getElementById('authName').value  || '').trim();
-  var email = (document.getElementById('authEmail').value || '').trim();
+  var email = (document.getElementById('authEmail').value || '').trim().toLowerCase();
   var pw    =  document.getElementById('authPass').value  || '';
 
-  if (!name)              { showAuthError('Please enter your name.');                    return; }
-  if (!email.includes('@')){ showAuthError('Please enter a valid email address.');       return; }
-  if (pw.length < 6)      { showAuthError('Password must be at least 6 characters.');   return; }
+  if (!name)               { showAuthError('Please enter your name.'); return; }
+  if (!email.includes('@')){ showAuthError('Please enter a valid email address.'); return; }
+  if (pw.length < 6)       { showAuthError('Password must be at least 6 characters.'); return; }
 
-  _setBtn('btnSignup', true, 'Creating account...');
-
-  var auth = _getFirebaseAuth();
-  if (!auth) {
-    // Firebase unavailable — fall back to localStorage
-    try {
-      var users = JSON.parse(localStorage.getItem('gai_users') || '[]');
-      if (users.find(function(u){ return u.email === email.toLowerCase(); }))
-        { showAuthError('Email already registered — tap Log In.'); _setBtn('btnSignup', false, "Create Account ✨"); return; }
-      var user = { id: 'u'+Date.now(), name:name, email:email.toLowerCase(), pw:btoa(pw), createdAt:new Date().toISOString(), isPremium:false, onboardingDone:false };
-      users.push(user);
-      localStorage.setItem('gai_users', JSON.stringify(users));
-      localStorage.setItem('gai_session', JSON.stringify(user));
-      userName = name;
-      _setBtn('btnSignup', false, "Create Account ✨");
-      hideOverlayAndStart();
-    } catch(e) { showAuthError('Storage error: '+e.message); _setBtn('btnSignup', false, "Create Account ✨"); }
-    return;
+  var users = _loadUsers();
+  if (users.find(function(u) { return u.email === email; })) {
+    showAuthError('That email is already registered — tap Log In.'); return;
   }
 
-  auth.createUserWithEmailAndPassword(email, pw)
-    .then(function(cred) {
-      return cred.user.updateProfile({ displayName: name }).then(function() {
-        var userData = { id:cred.user.uid, name:name, email:email, createdAt:new Date().toISOString(), isPremium:false, onboardingDone:false };
-        localStorage.setItem('gai_fb_user', JSON.stringify(userData));
-        // Save to Firestore if available
-        try {
-          var db = firebase.firestore();
-          db.collection('users').doc(cred.user.uid).set(userData);
-        } catch(e) {}
-        userName = name;
-        _setBtn('btnSignup', false, "Create Account ✨");
-        try { GlowData.streak.touch(); } catch(e) {}
-        hideOverlayAndStart();
-      });
-    })
-    .catch(function(err) {
-      _setBtn('btnSignup', false, "Create Account ✨");
-      showAuthError(_fbErrorMsg(err.code));
-    });
+  var user = { id:'u'+Date.now(), name:name, email:email, pw:btoa(pw), createdAt:new Date().toISOString(), isPremium:false, onboardingDone:false };
+  users.push(user);
+  _saveUsers(users);
+  _saveSession(user);
+
+  userName = name;
+  _syncToFirebase(Object.assign({},user), pw);
+  hideOverlayAndStart();
 }
 
 function doLogin() {
-  clearAuthError();
-  var email = (document.getElementById('loginEmail').value || '').trim();
+  document.getElementById('authError').classList.add('hidden');
+  var email = (document.getElementById('loginEmail').value || '').trim().toLowerCase();
   var pw    =  document.getElementById('loginPass').value  || '';
 
-  if (!email) { showAuthError('Please enter your email.'); return; }
+  if (!email) { showAuthError('Please enter your email address.'); return; }
   if (!pw)    { showAuthError('Please enter your password.'); return; }
 
-  _setBtn('btnLogin', true, 'Signing in...');
+  var users = _loadUsers();
+  var user  = users.find(function(u) { return u.email === email && u.pw === btoa(pw); });
 
-  var auth = _getFirebaseAuth();
-  if (!auth) {
-    // Firebase unavailable — fall back to localStorage
-    try {
-      var users = JSON.parse(localStorage.getItem('gai_users') || '[]');
-      var user  = users.find(function(u){ return u.email === email.toLowerCase() && u.pw === btoa(pw); });
-      if (!user) { showAuthError('Incorrect email or password.'); _setBtn('btnLogin', false, 'Log In →'); return; }
-      localStorage.setItem('gai_session', JSON.stringify(user));
-      userName = user.name;
-      _setBtn('btnLogin', false, 'Log In →');
-      if (user.onboardingDone) { window.location.href = 'dashboard.html'; return; }
+  if (!user) {
+    // Maybe they registered via Firebase on another device — try Firebase login
+    var btn = document.getElementById('btnLogin');
+    if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
+    _syncLoginToFirebase(email, pw, function(fbUser) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Log In →'; }
+      if (!fbUser) { showAuthError('Incorrect email or password.'); return; }
+      // Found in Firebase — save locally
+      if (!fbUser.pw) fbUser.pw = btoa(pw);
+      var existing = _loadUsers();
+      if (!existing.find(function(u){ return u.email === email; })) { existing.push(fbUser); _saveUsers(existing); }
+      _saveSession(fbUser);
+      userName = fbUser.name || email;
+      if (fbUser.onboardingDone) { window.location.href = 'dashboard.html'; return; }
       hideOverlayAndStart();
-    } catch(e) { showAuthError('Storage error: '+e.message); _setBtn('btnLogin', false, 'Log In →'); }
+    });
     return;
   }
 
-  auth.signInWithEmailAndPassword(email, pw)
-    .then(function(cred) {
-      var fbUser = cred.user;
-      // Try to load profile from Firestore
-      var finish = function(userData) {
-        localStorage.setItem('gai_fb_user', JSON.stringify(userData));
-        userName = userData.name || email;
-        _setBtn('btnLogin', false, 'Log In →');
-        if (userData.onboardingDone) { window.location.href = 'dashboard.html'; return; }
-        hideOverlayAndStart();
-      };
-      try {
-        firebase.firestore().collection('users').doc(fbUser.uid).get()
-          .then(function(doc) { finish(doc.exists ? doc.data() : { id:fbUser.uid, name:fbUser.displayName||email, email:email, onboardingDone:false }); })
-          .catch(function() { finish({ id:fbUser.uid, name:fbUser.displayName||email, email:email, onboardingDone:false }); });
-      } catch(e) { finish({ id:fbUser.uid, name:fbUser.displayName||email, email:email, onboardingDone:false }); }
-    })
-    .catch(function(err) {
-      _setBtn('btnLogin', false, 'Log In →');
-      showAuthError(_fbErrorMsg(err.code));
-    });
+  _saveSession(user);
+  userName = user.name;
+  if (user.onboardingDone) { window.location.href = 'dashboard.html'; return; }
+  hideOverlayAndStart();
 }
 
-if (_showLogin) switchTab('login');
+function socialAuth(provider) {
+  showAuthError('Google sign-in is coming soon — please use email & password below.');
+}
 
-// If already signed in via Firebase, skip auth overlay
-try {
-  var _initAuth = _getFirebaseAuth();
-  if (_initAuth) {
-    _initAuth.onAuthStateChanged(function(fbUser) {
-      if (fbUser) {
-        var cached = (function(){ try { return JSON.parse(localStorage.getItem('gai_fb_user')||'null'); } catch(e){ return null; } })();
-        if (cached && cached.id === fbUser.uid) {
-          if (cached.onboardingDone) { window.location.href = 'dashboard.html'; return; }
-          hideOverlayAndStart();
-        }
-      }
-    });
-  }
-} catch(e) {}
+// Sync quiz completion to Firestore (background, non-blocking)
+function _syncQuizToFirebase(profileData) {
+  setTimeout(function() {
+    try {
+      if (typeof firebase === 'undefined') return;
+      var cfg = { apiKey:"AIzaSyB3TGH0jfAmdNJQGU9HgKixATg8E6d5_NU", authDomain:"glow-ai-7078b.firebaseapp.com", projectId:"glow-ai-7078b", storageBucket:"glow-ai-7078b.firebasestorage.app", messagingSenderId:"1044880109233", appId:"1:1044880109233:web:b51deffcd488904850bc90" };
+      if (!firebase.apps.length) firebase.initializeApp(cfg);
+      var curr = firebase.auth().currentUser;
+      if (!curr) return;
+      firebase.firestore().collection('users').doc(curr.uid).update({ quizProfile: profileData, onboardingDone: true, glowScore: profileData.glowScore || null }).catch(function(){});
+    } catch(e) {}
+  }, 1000);
+}
+
+// Check if already logged in
+var _sess = _getSession();
+if (_sess) {
+  if (_sess.onboardingDone) { window.location.href = 'dashboard.html'; }
+  else { hideOverlayAndStart(); }
+} else {
+  if (_showLogin) switchTab('login');
+}
 
 // ================================================================
 // QUIZ RENDERING
@@ -1082,17 +1054,29 @@ function showResults() {
   const { label, sub } = getScoreLabel(score);
   const summary = getAISummary(answers, score, [...dims]);
 
-  // Save quiz data locally
+  // Save quiz data locally (no glow.js dependency here)
   const quizProfile = { answers, glowScore: score, dimensions: dims, completedAt: new Date().toISOString() };
-  GlowData.profile.set(quizProfile);
-  // Sync to Firestore so it's available on any device
-  GlowAuth.saveQuizProfile(quizProfile);
-
-  // Earn XP for completing onboarding
-  GlowData.xp.add(100);
-
-  // User name
-  const displayName = GlowAuth.getUser()?.name || userName;
+  var _curSess = _getSession();
+  if (_curSess) {
+    try {
+      // Save quiz profile keyed by user ID
+      localStorage.setItem('g_' + _curSess.id + '_p', JSON.stringify(quizProfile));
+      // Mark onboarding done in session
+      _curSess.onboardingDone = true;
+      _curSess.glowScore = score || null;
+      _saveSession(_curSess);
+      // Update in users array
+      var _ul = _loadUsers();
+      var _uidx = _ul.findIndex(function(u) { return u.id === _curSess.id; });
+      if (_uidx >= 0) { _ul[_uidx].onboardingDone = true; _ul[_uidx].glowScore = score || null; _saveUsers(_ul); }
+      // Add 100 XP for completing onboarding
+      var _xpk = 'g_' + _curSess.id + '_xp';
+      localStorage.setItem(_xpk, JSON.stringify((parseInt(localStorage.getItem(_xpk) || '0') || 0) + 100));
+      // Background Firestore sync
+      _syncQuizToFirebase(quizProfile);
+    } catch(e) {}
+  }
+  const displayName = (_getSession() || {}).name || userName;
   document.getElementById('userName').textContent = `Hey, ${displayName}! 👋`;
 
   // Animate score
