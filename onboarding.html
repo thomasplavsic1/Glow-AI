@@ -173,7 +173,7 @@
         <input id="authEmail" type="email" placeholder="Email address" class="input-field" onkeydown="if(event.key==='Enter')doRegister()"/>
         <input id="authPass" type="password" placeholder="Create password (6+ chars)" class="input-field" onkeydown="if(event.key==='Enter')doRegister()"/>
       </div>
-      <button onclick="doRegister()" class="btn-glow w-full mt-4">Create Account & Start Quiz ✨</button>
+      <button id="btnSignup" onclick="doRegister()" class="btn-glow w-full mt-4">Create Account & Start Quiz ✨</button>
     </div>
 
     <!-- Log In Panel -->
@@ -184,7 +184,7 @@
         <input id="loginEmail" type="email" placeholder="Email address" class="input-field" onkeydown="if(event.key==='Enter')doLogin()"/>
         <input id="loginPass" type="password" placeholder="Password" class="input-field" onkeydown="if(event.key==='Enter')doLogin()"/>
       </div>
-      <button onclick="doLogin()" class="btn-glow w-full mt-4">Log In →</button>
+      <button id="btnLogin" onclick="doLogin()" class="btn-glow w-full mt-4">Log In →</button>
     </div>
   </div>
 </div>
@@ -502,63 +502,31 @@ steps.forEach((step, si) => {
 const totalQ = flatQuestions.length;
 
 // ================================================================
-// AUTH
+// AUTH — self-contained Firebase auth with full error handling
 // ================================================================
 function switchTab(tab) {
-  const isSignup = tab === 'signup';
+  var isSignup = tab === 'signup';
   document.getElementById('tabSignup').style.background = isSignup ? 'rgba(139,92,246,0.8)' : 'transparent';
-  document.getElementById('tabSignup').style.color = isSignup ? '#fff' : '#9ca3af';
-  document.getElementById('tabLogin').style.background = isSignup ? 'transparent' : 'rgba(139,92,246,0.8)';
-  document.getElementById('tabLogin').style.color = isSignup ? '#9ca3af' : '#fff';
+  document.getElementById('tabSignup').style.color      = isSignup ? '#fff' : '#9ca3af';
+  document.getElementById('tabLogin').style.background  = isSignup ? 'transparent' : 'rgba(139,92,246,0.8)';
+  document.getElementById('tabLogin').style.color       = isSignup ? '#9ca3af' : '#fff';
   document.getElementById('panelSignup').classList.toggle('hidden', !isSignup);
-  document.getElementById('panelLogin').classList.toggle('hidden', isSignup);
+  document.getElementById('panelLogin').classList.toggle('hidden',  isSignup);
   document.getElementById('authError').classList.add('hidden');
 }
 
 function showAuthError(msg) {
-  const el = document.getElementById('authError');
+  var el = document.getElementById('authError');
   el.textContent = msg;
   el.classList.remove('hidden');
 }
+function clearAuthError() { document.getElementById('authError').classList.add('hidden'); }
 
-function socialAuth(provider) {
-  const ts = Date.now();
-  document.getElementById('authName').value = provider + ' User';
-  document.getElementById('authEmail').value = 'demo_' + ts + '@glowai.app';
-  document.getElementById('authPass').value = 'glowai_' + ts;
-  doRegister();
-}
-
-function _testStorage() {
-  try { localStorage.setItem('_gtest','1'); localStorage.removeItem('_gtest'); return true; }
-  catch(e) { return false; }
-}
-
-async function doRegister() {
-  const btn = document.querySelector('#panelSignup button[onclick]') || document.querySelector('#panelSignup .btn-glow');
-  if (btn) { btn.disabled = true; btn.textContent = 'Creating account...'; }
-  const name  = document.getElementById('authName').value;
-  const email = document.getElementById('authEmail').value;
-  const pw    = document.getElementById('authPass').value;
-  const result = await GlowAuth.register(name, email, pw);
-  if (btn) { btn.disabled = false; btn.textContent = "Let's Glow ✨"; }
-  if (result.error) { showAuthError(result.error); return; }
-  userName = result.user.name;
-  try { GlowData.streak.touch(); } catch(e) {}
-  hideOverlayAndStart();
-}
-
-async function doLogin() {
-  const btn = document.querySelector('#panelLogin button[onclick]') || document.querySelector('#panelLogin .btn-glow');
-  if (btn) { btn.disabled = true; btn.textContent = 'Signing in...'; }
-  const email = document.getElementById('loginEmail').value;
-  const pw    = document.getElementById('loginPass').value;
-  const result = await GlowAuth.login(email, pw);
-  if (btn) { btn.disabled = false; btn.textContent = 'Log In'; }
-  if (result.error) { showAuthError(result.error); return; }
-  userName = result.user.name;
-  if (result.user.onboardingDone) { window.location.href = 'dashboard.html'; return; }
-  hideOverlayAndStart();
+function _setBtn(id, disabled, text) {
+  var btn = document.getElementById(id);
+  if (!btn) return;
+  btn.disabled = disabled;
+  btn.textContent = text;
 }
 
 function hideOverlayAndStart() {
@@ -567,15 +535,156 @@ function hideOverlayAndStart() {
   renderQuestion();
 }
 
+function _fbErrorMsg(code) {
+  var map = {
+    'auth/email-already-in-use':    'That email is already registered — tap Log In.',
+    'auth/invalid-email':           'Please enter a valid email address.',
+    'auth/weak-password':           'Password must be at least 6 characters.',
+    'auth/user-not-found':          'No account found with that email.',
+    'auth/wrong-password':          'Incorrect password — please try again.',
+    'auth/invalid-credential':      'Incorrect email or password.',
+    'auth/network-request-failed':  'Network error — check your connection.',
+    'auth/too-many-requests':       'Too many attempts. Please wait a minute and try again.',
+    'auth/operation-not-allowed':   'Email sign-in is not enabled. Contact the app admin.'
+  };
+  return map[code] || 'Something went wrong — please try again.';
+}
+
+function _getFirebaseAuth() {
+  try {
+    if (typeof firebase === 'undefined') throw new Error('no-firebase');
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:            "AIzaSyB3TGH0jfAmdNJQGU9HgKixATg8E6d5_NU",
+        authDomain:        "glow-ai-7078b.firebaseapp.com",
+        projectId:         "glow-ai-7078b",
+        storageBucket:     "glow-ai-7078b.firebasestorage.app",
+        messagingSenderId: "1044880109233",
+        appId:             "1:1044880109233:web:b51deffcd488904850bc90"
+      });
+    }
+    return firebase.auth();
+  } catch(e) { return null; }
+}
+
+function doRegister() {
+  clearAuthError();
+  var name  = (document.getElementById('authName').value  || '').trim();
+  var email = (document.getElementById('authEmail').value || '').trim();
+  var pw    =  document.getElementById('authPass').value  || '';
+
+  if (!name)              { showAuthError('Please enter your name.');                    return; }
+  if (!email.includes('@')){ showAuthError('Please enter a valid email address.');       return; }
+  if (pw.length < 6)      { showAuthError('Password must be at least 6 characters.');   return; }
+
+  _setBtn('btnSignup', true, 'Creating account...');
+
+  var auth = _getFirebaseAuth();
+  if (!auth) {
+    // Firebase unavailable — fall back to localStorage
+    try {
+      var users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      if (users.find(function(u){ return u.email === email.toLowerCase(); }))
+        { showAuthError('Email already registered — tap Log In.'); _setBtn('btnSignup', false, "Create Account ✨"); return; }
+      var user = { id: 'u'+Date.now(), name:name, email:email.toLowerCase(), pw:btoa(pw), createdAt:new Date().toISOString(), isPremium:false, onboardingDone:false };
+      users.push(user);
+      localStorage.setItem('gai_users', JSON.stringify(users));
+      localStorage.setItem('gai_session', JSON.stringify(user));
+      userName = name;
+      _setBtn('btnSignup', false, "Create Account ✨");
+      hideOverlayAndStart();
+    } catch(e) { showAuthError('Storage error: '+e.message); _setBtn('btnSignup', false, "Create Account ✨"); }
+    return;
+  }
+
+  auth.createUserWithEmailAndPassword(email, pw)
+    .then(function(cred) {
+      return cred.user.updateProfile({ displayName: name }).then(function() {
+        var userData = { id:cred.user.uid, name:name, email:email, createdAt:new Date().toISOString(), isPremium:false, onboardingDone:false };
+        localStorage.setItem('gai_fb_user', JSON.stringify(userData));
+        // Save to Firestore if available
+        try {
+          var db = firebase.firestore();
+          db.collection('users').doc(cred.user.uid).set(userData);
+        } catch(e) {}
+        userName = name;
+        _setBtn('btnSignup', false, "Create Account ✨");
+        try { GlowData.streak.touch(); } catch(e) {}
+        hideOverlayAndStart();
+      });
+    })
+    .catch(function(err) {
+      _setBtn('btnSignup', false, "Create Account ✨");
+      showAuthError(_fbErrorMsg(err.code));
+    });
+}
+
+function doLogin() {
+  clearAuthError();
+  var email = (document.getElementById('loginEmail').value || '').trim();
+  var pw    =  document.getElementById('loginPass').value  || '';
+
+  if (!email) { showAuthError('Please enter your email.'); return; }
+  if (!pw)    { showAuthError('Please enter your password.'); return; }
+
+  _setBtn('btnLogin', true, 'Signing in...');
+
+  var auth = _getFirebaseAuth();
+  if (!auth) {
+    // Firebase unavailable — fall back to localStorage
+    try {
+      var users = JSON.parse(localStorage.getItem('gai_users') || '[]');
+      var user  = users.find(function(u){ return u.email === email.toLowerCase() && u.pw === btoa(pw); });
+      if (!user) { showAuthError('Incorrect email or password.'); _setBtn('btnLogin', false, 'Log In →'); return; }
+      localStorage.setItem('gai_session', JSON.stringify(user));
+      userName = user.name;
+      _setBtn('btnLogin', false, 'Log In →');
+      if (user.onboardingDone) { window.location.href = 'dashboard.html'; return; }
+      hideOverlayAndStart();
+    } catch(e) { showAuthError('Storage error: '+e.message); _setBtn('btnLogin', false, 'Log In →'); }
+    return;
+  }
+
+  auth.signInWithEmailAndPassword(email, pw)
+    .then(function(cred) {
+      var fbUser = cred.user;
+      // Try to load profile from Firestore
+      var finish = function(userData) {
+        localStorage.setItem('gai_fb_user', JSON.stringify(userData));
+        userName = userData.name || email;
+        _setBtn('btnLogin', false, 'Log In →');
+        if (userData.onboardingDone) { window.location.href = 'dashboard.html'; return; }
+        hideOverlayAndStart();
+      };
+      try {
+        firebase.firestore().collection('users').doc(fbUser.uid).get()
+          .then(function(doc) { finish(doc.exists ? doc.data() : { id:fbUser.uid, name:fbUser.displayName||email, email:email, onboardingDone:false }); })
+          .catch(function() { finish({ id:fbUser.uid, name:fbUser.displayName||email, email:email, onboardingDone:false }); });
+      } catch(e) { finish({ id:fbUser.uid, name:fbUser.displayName||email, email:email, onboardingDone:false }); }
+    })
+    .catch(function(err) {
+      _setBtn('btnLogin', false, 'Log In →');
+      showAuthError(_fbErrorMsg(err.code));
+    });
+}
+
 if (_showLogin) switchTab('login');
 
-// If already signed in, skip auth overlay
-GlowAuth.onReady(user => {
-  if (user) {
-    if (user.onboardingDone) { window.location.href = 'dashboard.html'; return; }
-    hideOverlayAndStart();
+// If already signed in via Firebase, skip auth overlay
+try {
+  var _initAuth = _getFirebaseAuth();
+  if (_initAuth) {
+    _initAuth.onAuthStateChanged(function(fbUser) {
+      if (fbUser) {
+        var cached = (function(){ try { return JSON.parse(localStorage.getItem('gai_fb_user')||'null'); } catch(e){ return null; } })();
+        if (cached && cached.id === fbUser.uid) {
+          if (cached.onboardingDone) { window.location.href = 'dashboard.html'; return; }
+          hideOverlayAndStart();
+        }
+      }
+    });
   }
-});
+} catch(e) {}
 
 // ================================================================
 // QUIZ RENDERING
