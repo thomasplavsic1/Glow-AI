@@ -6,15 +6,15 @@
   <title>GlowAI — Your AI-Powered Glow Up</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#7c3aed"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-  const GlowAuth = (() => {
-    const KU = 'gai_users', KS = 'gai_session';
-    const _ul = () => { try { return JSON.parse(localStorage.getItem(KU) || '[]'); } catch(e) { return []; } };
-    const getUser = () => { try { return JSON.parse(localStorage.getItem(KS)); } catch(e) { return null; } };
-    return { getUser };
-  })();
-  </script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="glow.js"></script>
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1070,10 +1070,10 @@
 </footer>
 
 <script>
-  try {
-    const user = GlowAuth.getUser();
+  // Redirect logged-in users to dashboard
+  GlowAuth.onReady(user => {
     if (user && user.onboardingDone) window.location.href = 'dashboard.html';
-  } catch(e) { console.error('GlowAI init:', e); }
+  });
 
   AOS.init({ duration: 700, once: true, easing: 'ease-out-cubic', offset: 60 });
 
