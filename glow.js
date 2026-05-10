@@ -1,14 +1,6 @@
 // ============================================================
 // GLOWAI SHARED LIBRARY — Firebase Auth + Data + Utils
 // ============================================================
-// SETUP (one-time, takes ~5 minutes):
-//  1. Go to https://console.firebase.google.com
-//  2. Click "Add project" → name it "GlowAI" → continue
-//  3. In your project: Build → Authentication → Get started → Email/Password → Enable → Save
-//  4. Build → Firestore Database → Create database → Start in production mode → choose region → Done
-//  5. Project settings (gear icon) → "Your apps" → </> (web) → register app → copy the firebaseConfig object
-//  6. Paste those values into the FIREBASE_CONFIG below (replace the PASTE_... placeholders)
-// ============================================================
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyB3TGH0jfAmdNJQGU9HgKixATg8E6d5_NU",
   authDomain:        "glow-ai-7078b.firebaseapp.com",
@@ -17,6 +9,9 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "1044880109233",
   appId:             "1:1044880109233:web:b51deffcd488904850bc90"
 };
+
+// Owner email — auto-granted Premium
+const OWNER_EMAIL = 'kirsty.plavsic@bigpond.com';
 
 // Initialise Firebase once
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
@@ -37,14 +32,20 @@ const GlowAuth = (() => {
 
   const getUser = () => _cache || _load();
 
+  const _isOwner = email => (email || '').trim().toLowerCase() === OWNER_EMAIL;
+
   const _pullFirestore = async uid => {
     if (!_fbDb) return null;
     try {
       const doc = await _fbDb.collection('users').doc(uid).get();
       if (doc.exists) {
-        const d = doc.data();
+        let d = doc.data();
+        // Auto-premium for owner
+        if (_isOwner(d.email) && !d.isPremium) {
+          d.isPremium = true;
+          await _fbDb.collection('users').doc(uid).update({ isPremium: true });
+        }
         _cache = d; _save(d);
-        // Restore quiz profile into localStorage if missing
         if (d.quizProfile) {
           const k = 'g_' + uid + '_p';
           const existing = (() => { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch(e) { return {}; } })();
@@ -64,7 +65,8 @@ const GlowAuth = (() => {
     try {
       const cred = await _fbAuth.createUserWithEmailAndPassword(email, pw);
       await cred.user.updateProfile({ displayName: name });
-      const u = { id: cred.user.uid, name, email, createdAt: new Date().toISOString(), isPremium: false, onboardingDone: false, glowScore: null };
+      const isPremium = _isOwner(email);
+      const u = { id: cred.user.uid, name, email, createdAt: new Date().toISOString(), isPremium, onboardingDone: false, glowScore: null };
       if (_fbDb) await _fbDb.collection('users').doc(u.id).set(u);
       _cache = u; _save(u);
       return { user: u };
@@ -82,7 +84,12 @@ const GlowAuth = (() => {
     try {
       const cred = await _fbAuth.signInWithEmailAndPassword(email, pw);
       const d = await _pullFirestore(cred.user.uid);
-      const u = d || { id: cred.user.uid, name: cred.user.displayName || email, email, isPremium: false, onboardingDone: false };
+      let u = d || { id: cred.user.uid, name: cred.user.displayName || email, email, isPremium: false, onboardingDone: false };
+      // Auto-premium for owner
+      if (_isOwner(email) && !u.isPremium) {
+        u.isPremium = true;
+        if (_fbDb) await _fbDb.collection('users').doc(u.id).update({ isPremium: true });
+      }
       _cache = u; _save(u);
       return { user: u };
     } catch(e) {
@@ -91,11 +98,40 @@ const GlowAuth = (() => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    if (!_fbAuth) return { error: 'Firebase not configured.' };
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const result = await _fbAuth.signInWithPopup(provider);
+      const fbUser = result.user;
+      // Try to load existing Firestore profile
+      const d = await _pullFirestore(fbUser.uid);
+      let u;
+      if (d) {
+        u = d;
+      } else {
+        const isPremium = _isOwner(fbUser.email);
+        u = { id: fbUser.uid, name: fbUser.displayName || fbUser.email, email: fbUser.email, createdAt: new Date().toISOString(), isPremium, onboardingDone: false, glowScore: null };
+        if (_fbDb) await _fbDb.collection('users').doc(u.id).set(u);
+      }
+      if (_isOwner(u.email) && !u.isPremium) {
+        u.isPremium = true;
+        if (_fbDb) _fbDb.collection('users').doc(u.id).update({ isPremium: true });
+      }
+      _cache = u; _save(u);
+      return { user: u };
+    } catch(e) {
+      if (e.code === 'auth/popup-closed-by-user') return { error: 'Sign-in cancelled.' };
+      if (e.code === 'auth/popup-blocked') return { error: 'Popup blocked — please allow popups for this site and try again.' };
+      return { error: e.message || 'Google sign-in failed. Please try again.' };
+    }
+  };
+
   const logout = async () => {
     if (_fbAuth) try { await _fbAuth.signOut(); } catch(e) {}
     _cache = null;
-    localStorage.removeItem(LOCAL_KEY);      // gai_fb_user
-    localStorage.removeItem('gai_session');  // onboarding auth key
+    localStorage.removeItem(LOCAL_KEY);
+    localStorage.removeItem('gai_session');
     window.location.href = 'index.html';
   };
 
@@ -112,11 +148,21 @@ const GlowAuth = (() => {
     await updateUser({ onboardingDone: true, glowScore: profileData.glowScore || null });
   };
 
+  const startPremiumTrial = async () => {
+    return updateUser({ isPremium: true });
+  };
+
   const onReady = cb => {
-    // localStorage-first: if we already have a user cached locally, use it immediately
-    // This ensures the dashboard works even when Firebase auth state hasn't loaded
     const cached = _load();
-    if (cached) { _cache = cached; cb(cached); return; }
+    if (cached) {
+      _cache = cached;
+      // Auto-premium for owner even from local cache
+      if (_isOwner(cached.email) && !cached.isPremium) {
+        cached.isPremium = true;
+        _save(cached);
+      }
+      cb(cached); return;
+    }
     if (!_fbAuth) { cb(null); return; }
     _fbAuth.onAuthStateChanged(async fbUser => {
       if (fbUser) {
@@ -130,7 +176,7 @@ const GlowAuth = (() => {
     });
   };
 
-  return { getUser, register, login, logout, updateUser, saveQuizProfile, onReady };
+  return { getUser, register, login, signInWithGoogle, logout, updateUser, saveQuizProfile, startPremiumTrial, onReady };
 })();
 
 // ============================================================
@@ -147,10 +193,20 @@ const GlowData = (() => {
     set: d => { const k = uid('p'); if (k) _sv(k, Object.assign(_ld(k, {}), d)); }
   };
 
-  const HABITS = ['h1','h2','h3','h4','h5','h6'];
+  // Habit definitions — shared across dashboard
+  const HABIT_DEFS = [
+    { id:'h1', text:'Morning workout',              xp:20, category:'Fitness' },
+    { id:'h2', text:'Morning hydration (500ml)',    xp:5,  category:'Water' },
+    { id:'h3', text:'Log breakfast macros',         xp:10, category:'Nutrition' },
+    { id:'h4', text:'No social media before 9am',   xp:15, category:'Discipline' },
+    { id:'h5', text:'Evening walk (10 min)',         xp:10, category:'Movement' },
+    { id:'h6', text:'Read for 20 mins before bed',  xp:10, category:'Sleep hygiene' }
+  ];
+
   const habits = {
-    today:    () => _ld(uid('h_' + today()), {}),
-    set:      (id, done) => { const k = uid('h_' + today()); if (!k) return; const h = _ld(k, {}); h[id] = done; _sv(k, h); },
+    defs:  () => HABIT_DEFS,
+    today: () => _ld(uid('h_' + today()), {}),
+    set:   (id, done) => { const k = uid('h_' + today()); if (!k) return; const h = _ld(k, {}); h[id] = done; _sv(k, h); },
     weekData: () => { const out = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const key = d.toISOString().slice(0,10); const h = _ld(uid('h_' + key), {}); out.push({ date: key, day: d.toLocaleDateString('en-AU', { weekday: 'short' }), done: Object.values(h).filter(Boolean).length }); } return out; },
     completedDates: () => { const dates = new Set(); const u = GlowAuth.getUser(); if (!u) return dates; for (let i = 0; i < 90; i++) { const d = new Date(); d.setDate(d.getDate() - i); const key = d.toISOString().slice(0,10); const h = _ld('g_' + u.id + '_h_' + key, {}); if (Object.values(h).some(Boolean)) dates.add(key); } return dates; }
   };
@@ -193,7 +249,35 @@ const GlowData = (() => {
 
   const dayNumber = () => { const u = GlowAuth.getUser(); if (!u||!u.createdAt) return 1; return Math.max(1,Math.floor((Date.now()-new Date(u.createdAt).getTime())/86400000)+1); };
 
-  return { today, profile, habits, streak, xp, water, sleep, food, gym, chat, settings, dayNumber };
+  // Calculate and update Glow Score based on activity over time
+  const calcGlowScore = () => {
+    const p = profile.get();
+    const baseScore = p.glowScore || 50;
+    const totalXP = xp.total();
+    const sk = streak.get();
+    const checkins = _ld(uid('checkins'), 0);
+    // XP bonus: up to +20 points (1 point per 500 XP)
+    const xpBonus = Math.min(20, Math.floor(totalXP / 500));
+    // Streak bonus: up to +10 points
+    const streakBonus = Math.min(10, sk.count);
+    // Check-in bonus: up to +5 points
+    const checkinBonus = Math.min(5, checkins);
+    const newScore = Math.min(100, Math.round(baseScore + xpBonus + streakBonus + checkinBonus));
+    return newScore;
+  };
+
+  const recordCheckin = () => {
+    const k = uid('checkins');
+    if (!k) return;
+    const count = _ld(k, 0) + 1;
+    _sv(k, count);
+    const newScore = calcGlowScore();
+    profile.set({ glowScore: newScore });
+    if (GlowAuth.getUser()) GlowAuth.updateUser({ glowScore: newScore });
+    return newScore;
+  };
+
+  return { today, profile, habits, streak, xp, water, sleep, food, gym, chat, settings, dayNumber, calcGlowScore, recordCheckin };
 })();
 
 // ============================================================
@@ -207,7 +291,33 @@ const GlowUtils = {
   levelXP:      xp => xp%1000,
   initials:     name => (name||'').trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?',
   sleepHours:   (bed,wake) => { const p=s=>s.split(':').map(Number); const[bh,bm]=p(bed);const[wh,wm]=p(wake); let m=(wh*60+wm)-(bh*60+bm); if(m<0)m+=1440; return +(m/60).toFixed(1); },
-  toast:        (msg,type) => { const old=document.getElementById('_gtoast'); if(old) old.remove(); const t=document.createElement('div'); t.id='_gtoast'; const bg=type==='error'?'#dc2626':type==='info'?'#1f2937':'#7c3aed'; t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:'+bg+';border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 22px;font-size:14px;font-weight:600;color:#fff;z-index:9999;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
+  toast:        (msg,type) => { const old=document.getElementById('_gtoast'); if(old) old.remove(); const t=document.createElement('div'); t.id='_gtoast'; const bg=type==='error'?'#dc2626':type==='info'?'#1f2937':'#7c3aed'; t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:'+bg+';border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:12px 22px;font-size:14px;font-weight:600;color:#fff;z-index:9999;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5)'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); },
+  // Predict adult height for young users
+  predictHeight: (currentHeightCm, ageGroup, gender, fatherHeightCm, motherHeightCm) => {
+    let predicted = null;
+    let method = '';
+    // Mid-parental height method (most accurate when parent heights available)
+    if (fatherHeightCm && motherHeightCm) {
+      const midParental = (fatherHeightCm + motherHeightCm) / 2;
+      predicted = gender === 'Female' ? midParental - 6.5 : midParental + 6.5;
+      method = 'mid-parental';
+    } else if (currentHeightCm && ageGroup) {
+      // Estimate remaining growth from current height + age group
+      const isFemale = gender === 'Female';
+      // Average remaining growth by age bracket
+      const remainingGrowth = {
+        'Under 18': isFemale ? 3 : 7,
+        '18–24':    isFemale ? 0 : 1,
+      };
+      const remaining = remainingGrowth[ageGroup] || 0;
+      if (remaining > 0) {
+        predicted = currentHeightCm + remaining;
+        method = 'current-height';
+      }
+    }
+    if (!predicted) return null;
+    return { cm: Math.round(predicted), range: [Math.round(predicted - 5), Math.round(predicted + 5)], method };
+  }
 };
 
 // ============================================================
@@ -219,14 +329,12 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Request notification permission (call this on user action)
 function requestNotificationPermission() {
   if (!('Notification' in window)) return;
   if (Notification.permission === 'granted') return;
   Notification.requestPermission();
 }
 
-// Send a local notification (works when browser is open)
 function sendLocalNotification(title, body, url) {
   if (Notification.permission !== 'granted') return;
   const n = new Notification(title, { body, icon: 'manifest.json', tag: 'glowai' });
