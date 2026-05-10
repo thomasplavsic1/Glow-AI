@@ -205,7 +205,7 @@
 <!-- ================================================================
      AUTH OVERLAY (shown first)
 ================================================================ -->
-<div id="authOverlay" class="auth-overlay">
+<div id="authOverlay" class="auth-overlay" style="display:none">
   <div class="auth-card">
     <div class="flex items-center gap-2 mb-6">
       <div class="w-8 h-8 rounded-lg grad-bg flex items-center justify-center font-black text-sm">G</div>
@@ -258,7 +258,7 @@
 <!-- ================================================================
      MAIN QUIZ CONTAINER
 ================================================================ -->
-<div id="quizContainer" class="hidden min-h-screen flex flex-col">
+<div id="quizContainer" class="min-h-screen flex flex-col">
 
   <!-- TOP BAR -->
   <div class="fixed top-0 left-0 right-0 z-40 px-6 py-4" style="background:rgba(5,5,8,0.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(139,92,246,0.1)">
@@ -409,12 +409,8 @@
 // ================================================================
 // INIT
 // ================================================================
-// If login=1 param present, show the login tab by default
-var _showLogin = window.location.search.indexOf('login=1') !== -1;
-try {
-  const u = GlowAuth.getUser();
-  if (u && u.onboardingDone) window.location.href = 'dashboard.html';
-} catch(e) { console.error('GlowAI init:', e); }
+var _showLogin = false;
+var userName = 'Friend';
 
 // ================================================================
 // DATA
@@ -1012,11 +1008,8 @@ function showResults() {
   document.getElementById('aiSummary').textContent = summary;
 }
 
-// Auto-skip auth overlay for users with an active session
-try {
-  const u = GlowAuth.getUser();
-  if (u && !u.onboardingDone) { userName = u.name; hideOverlayAndStart(); }
-} catch(e) { console.error('GlowAI auto-skip:', e); }
+// Start quiz immediately
+renderQuestion();
 </script>
 </body>
 </html>
