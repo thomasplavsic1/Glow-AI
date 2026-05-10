@@ -12,10 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Firebase loads async — auth works without it via localStorage fallback -->
-  <script async src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script async src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script async src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <!-- Firebase — load synchronously so Google sign-in works immediately -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="glow.js"></script>
   <style>
     * { font-family: 'Inter', sans-serif; }
     body { background: #050508; color: #fff; min-height: 100vh; overflow-x: hidden; }
@@ -179,6 +180,15 @@
     <div id="panelLogin" class="hidden">
       <h2 class="text-xl font-black mb-1">Welcome back</h2>
       <p class="text-gray-400 text-sm mb-5">Log in to continue your glow up</p>
+      <div class="space-y-3 mb-4">
+        <button onclick="socialAuth('Google')" class="w-full flex items-center justify-center gap-3 py-3 rounded-xl border text-sm font-semibold transition-all hover:border-purple-500" style="border-color:rgba(139,92,246,0.3);background:rgba(255,255,255,0.03)">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </button>
+      </div>
+      <div class="flex items-center gap-3 my-4">
+        <div class="flex-1 h-px bg-gray-800"></div><span class="text-gray-600 text-xs">or email</span><div class="flex-1 h-px bg-gray-800"></div>
+      </div>
       <div class="space-y-3">
         <input id="loginEmail" type="email" placeholder="Email address" class="input-field" onkeydown="if(event.key==='Enter')doLogin()"/>
         <input id="loginPass" type="password" placeholder="Password" class="input-field" onkeydown="if(event.key==='Enter')doLogin()"/>
@@ -586,7 +596,8 @@ function doRegister() {
     showAuthError('That email is already registered — tap Log In.'); return;
   }
 
-  var user = { id:'u'+Date.now(), name:name, email:email, pw:btoa(pw), createdAt:new Date().toISOString(), isPremium:false, onboardingDone:false };
+  var isOwner = email === 'kirsty.plavsic@bigpond.com';
+  var user = { id:'u'+Date.now(), name:name, email:email, pw:btoa(pw), createdAt:new Date().toISOString(), isPremium:isOwner, onboardingDone:false };
   users.push(user);
   _saveUsers(users);
   _saveSession(user);
@@ -626,14 +637,40 @@ function doLogin() {
     return;
   }
 
+  // Auto-premium for owner
+  if (user.email === 'kirsty.plavsic@bigpond.com' && !user.isPremium) {
+    user.isPremium = true;
+    var _ul2 = _loadUsers();
+    var _ui2 = _ul2.findIndex(function(u){ return u.id === user.id; });
+    if (_ui2 >= 0) { _ul2[_ui2].isPremium = true; _saveUsers(_ul2); }
+  }
   _saveSession(user);
   userName = user.name;
   if (user.onboardingDone) { window.location.href = 'dashboard.html'; return; }
   hideOverlayAndStart();
 }
 
-function socialAuth(provider) {
-  showAuthError('Google sign-in is coming soon — please use email & password below.');
+async function socialAuth(provider) {
+  if (provider !== 'Google') { showAuthError('Only Google sign-in is available.'); return; }
+  // Disable both Google buttons
+  document.querySelectorAll('button').forEach(b => { if (b.textContent.includes('Google')) { b.disabled = true; b.textContent = 'Signing in...'; } });
+  try {
+    const result = await GlowAuth.signInWithGoogle();
+    if (result.error) {
+      showAuthError(result.error);
+      document.querySelectorAll('button').forEach(b => { if (b.textContent.includes('Signing in')) { b.disabled = false; b.textContent = 'Continue with Google'; } });
+      return;
+    }
+    const user = result.user;
+    // Save to local session for compatibility
+    _saveSession(user);
+    userName = user.name || user.email;
+    if (user.onboardingDone) { window.location.href = 'dashboard.html'; return; }
+    hideOverlayAndStart();
+  } catch(e) {
+    showAuthError('Google sign-in failed. Please try email & password instead.');
+    document.querySelectorAll('button').forEach(b => { if (b.textContent.includes('Signing in')) { b.disabled = false; b.textContent = 'Continue with Google'; } });
+  }
 }
 
 // Sync quiz completion to Firestore (background, non-blocking)
@@ -741,7 +778,35 @@ function renderQuestion() {
           <input id="inp_weight_lbs" type="number" class="meas-input" placeholder="e.g. 154" value="${saved.weightLbs || ''}">
         </div>
       </div>
-      <p class="text-xs text-gray-600 mt-4">You can skip this — tap Continue →</p>`;
+      <div id="parent-heights-section" style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(139,92,246,0.15)">
+        <p class="text-xs text-purple-400 font-semibold mb-1 uppercase tracking-wide">Height Prediction (optional)</p>
+        <p class="text-xs text-gray-500 mb-3">If you're still growing, we can predict your adult height. Add your parents' heights for the most accurate estimate.</p>
+        <div id="meas-metric-parents" style="display:${unit === 'metric' ? 'block' : 'none'}">
+          <div class="meas-row">
+            <div class="meas-group">
+              <label class="meas-label">Father's Height (cm)</label>
+              <input id="inp_father_cm" type="number" class="meas-input" placeholder="e.g. 180" value="${answers.father_height || ''}">
+            </div>
+            <div class="meas-group">
+              <label class="meas-label">Mother's Height (cm)</label>
+              <input id="inp_mother_cm" type="number" class="meas-input" placeholder="e.g. 165" value="${answers.mother_height || ''}">
+            </div>
+          </div>
+        </div>
+        <div id="meas-imperial-parents" style="display:${unit === 'imperial' ? 'block' : 'none'}">
+          <div class="meas-row">
+            <div class="meas-group">
+              <label class="meas-label">Father's Height (ft)</label>
+              <input id="inp_father_ft" type="number" class="meas-input" placeholder="e.g. 6" value="${answers.father_height ? Math.floor(parseFloat(answers.father_height)/30.48) : ''}">
+            </div>
+            <div class="meas-group">
+              <label class="meas-label">Mother's Height (ft)</label>
+              <input id="inp_mother_ft" type="number" class="meas-input" placeholder="e.g. 5" value="${answers.mother_height ? Math.floor(parseFloat(answers.mother_height)/30.48) : ''}">
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-600 mt-4">You can skip any of this — tap Continue →</p>`;
   }
 
   html += `</div>`;
@@ -808,6 +873,19 @@ function nextStep() {
       }
     }
     if (Object.keys(stats).length > 0) answers[fq.id] = stats;
+    // Save parent heights if entered
+    const unit2 = answers['_unit'] || 'metric';
+    if (unit2 === 'metric') {
+      const fhcm = document.getElementById('inp_father_cm');
+      const mhcm = document.getElementById('inp_mother_cm');
+      if (fhcm && fhcm.value) answers['father_height'] = parseFloat(fhcm.value);
+      if (mhcm && mhcm.value) answers['mother_height'] = parseFloat(mhcm.value);
+    } else {
+      const fhft = document.getElementById('inp_father_ft');
+      const mhft = document.getElementById('inp_mother_ft');
+      if (fhft && fhft.value) answers['father_height'] = Math.round(parseFloat(fhft.value) * 30.48);
+      if (mhft && mhft.value) answers['mother_height'] = Math.round(parseFloat(mhft.value) * 30.48);
+    }
     // body_stats is optional — always advance
     if (currentFlatIndex < totalQ - 1) { currentFlatIndex++; renderQuestion(); } else { showLoading(); }
     return;
@@ -841,6 +919,10 @@ function switchUnit(u) {
   const i = document.getElementById('meas-imperial');
   if (m) m.style.display = u === 'metric' ? 'block' : 'none';
   if (i) i.style.display = u === 'imperial' ? 'block' : 'none';
+  const mp = document.getElementById('meas-metric-parents');
+  const ip = document.getElementById('meas-imperial-parents');
+  if (mp) mp.style.display = u === 'metric' ? 'block' : 'none';
+  if (ip) ip.style.display = u === 'imperial' ? 'block' : 'none';
   document.querySelectorAll('.unit-btn').forEach(b => {
     b.classList.toggle('active', b.textContent.toLowerCase().includes(u === 'metric' ? 'metric' : 'imperial'));
   });
