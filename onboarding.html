@@ -578,21 +578,30 @@ function socialAuth(provider) {
   doRegister();
 }
 
+function _testStorage() {
+  try { localStorage.setItem('_gtest','1'); localStorage.removeItem('_gtest'); return true; }
+  catch(e) { return false; }
+}
+
 function doRegister() {
   try {
+    if (!_testStorage()) { showAuthError('Your browser is blocking data storage. Please disable private/incognito mode or try Chrome/Safari and try again.'); return; }
     const name = document.getElementById('authName').value;
     const email = document.getElementById('authEmail').value;
     const pw = document.getElementById('authPass').value;
     const result = GlowAuth.register(name, email, pw);
     if (result.error) { showAuthError(result.error); return; }
+    const saved = GlowAuth.getUser();
+    if (!saved) { showAuthError('Could not save your session — please try a different browser.'); return; }
     userName = result.user.name;
     try { GlowData.streak.touch(); } catch(e) {}
     hideOverlayAndStart();
-  } catch(e) { showAuthError('Something went wrong. Please try again.'); console.error(e); }
+  } catch(e) { showAuthError('Error: ' + (e.message || 'Please try again.')); console.error(e); }
 }
 
 function doLogin() {
   try {
+    if (!_testStorage()) { showAuthError('Your browser is blocking data storage. Please disable private/incognito mode or try Chrome/Safari and try again.'); return; }
     const email = document.getElementById('loginEmail').value;
     const pw = document.getElementById('loginPass').value;
     const result = GlowAuth.login(email, pw);
@@ -600,7 +609,7 @@ function doLogin() {
     userName = result.user.name;
     if (result.user.onboardingDone) { window.location.href = 'dashboard.html'; return; }
     hideOverlayAndStart();
-  } catch(e) { showAuthError('Something went wrong. Please try again.'); console.error(e); }
+  } catch(e) { showAuthError('Error: ' + (e.message || 'Please try again.')); console.error(e); }
 }
 
 function hideOverlayAndStart() {
