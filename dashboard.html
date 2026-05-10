@@ -152,6 +152,7 @@
     <button class="nav-item" onclick="showPage('nutrition')"><span class="nav-icon">🥗</span>Nutrition</button>
     <button class="nav-item" onclick="showPage('sleep')"><span class="nav-icon">😴</span>Sleep</button>
     <button class="nav-item" onclick="showPage('water')"><span class="nav-icon">💧</span>Water</button>
+    <button class="nav-item" onclick="showPage('skincare')"><span class="nav-icon">🫧</span>Skincare</button>
     <button class="nav-item" onclick="showPage('chat')"><span class="nav-icon">💬</span>AI Coach</button>
     <button class="nav-item" onclick="showPage('research')"><span class="nav-icon">🔬</span>Research</button>
     <button class="nav-item" onclick="showPage('analytics')"><span class="nav-icon">📊</span>Analytics</button>
@@ -259,10 +260,10 @@
             <div class="ring-wrap">
               <svg width="80" height="80" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(139,92,246,0.15)" stroke-width="6"/>
-                <circle cx="40" cy="40" r="32" fill="none" stroke="#8b5cf6" stroke-width="6"
-                  stroke-dasharray="201" stroke-dashoffset="50" stroke-linecap="round"/>
+                <circle id="ringHabits" cx="40" cy="40" r="32" fill="none" stroke="#8b5cf6" stroke-width="6"
+                  stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"/>
               </svg>
-              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold">75%</div>
+              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold"><span id="ringHabitsLabel">0%</span></div>
             </div>
             <div class="text-xs text-gray-400 mt-2">Habits</div>
           </div>
@@ -270,10 +271,10 @@
             <div class="ring-wrap">
               <svg width="80" height="80" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="6"/>
-                <circle cx="40" cy="40" r="32" fill="none" stroke="#10b981" stroke-width="6"
-                  stroke-dasharray="201" stroke-dashoffset="70" stroke-linecap="round"/>
+                <circle id="ringNutrition" cx="40" cy="40" r="32" fill="none" stroke="#10b981" stroke-width="6"
+                  stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"/>
               </svg>
-              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold">65%</div>
+              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold"><span id="ringNutritionLabel">0%</span></div>
             </div>
             <div class="text-xs text-gray-400 mt-2">Nutrition</div>
           </div>
@@ -281,10 +282,10 @@
             <div class="ring-wrap">
               <svg width="80" height="80" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(6,182,212,0.15)" stroke-width="6"/>
-                <circle cx="40" cy="40" r="32" fill="none" stroke="#06b6d4" stroke-width="6"
-                  stroke-dasharray="201" stroke-dashoffset="40" stroke-linecap="round"/>
+                <circle id="ringWater" cx="40" cy="40" r="32" fill="none" stroke="#06b6d4" stroke-width="6"
+                  stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"/>
               </svg>
-              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold">80%</div>
+              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold"><span id="ringWaterLabel">0%</span></div>
             </div>
             <div class="text-xs text-gray-400 mt-2">Water</div>
           </div>
@@ -353,49 +354,13 @@
     <div class="grid md:grid-cols-3 gap-6 mb-6">
       <div class="card md:col-span-2" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.06))">
         <div class="font-bold text-sm mb-2">📅 Week at a Glance</div>
-        <div class="flex gap-2">
-          <div class="flex-1 text-center">
-            <div class="text-xs text-gray-400 mb-1">Mon</div>
-            <div class="h-12 rounded-lg bg-purple-500 opacity-90"></div>
-            <div class="text-xs mt-1 text-purple-400">✓</div>
-          </div>
-          <div class="flex-1 text-center">
-            <div class="text-xs text-gray-400 mb-1">Tue</div>
-            <div class="h-12 rounded-lg bg-purple-500 opacity-90"></div>
-            <div class="text-xs mt-1 text-purple-400">✓</div>
-          </div>
-          <div class="flex-1 text-center">
-            <div class="text-xs text-gray-400 mb-1">Wed</div>
-            <div class="h-12 rounded-lg bg-purple-500 opacity-80"></div>
-            <div class="text-xs mt-1 text-purple-400">✓</div>
-          </div>
-          <div class="flex-1 text-center">
-            <div class="text-xs text-gray-400 mb-1">Thu</div>
-            <div class="h-12 rounded-lg bg-purple-500 opacity-80"></div>
-            <div class="text-xs mt-1 text-purple-400">✓</div>
-          </div>
-          <div class="flex-1 text-center">
-            <div class="text-xs text-gray-400 mb-1">Fri</div>
-            <div class="h-12 rounded-lg bg-purple-500 opacity-100 relative" style="box-shadow:0 0 12px rgba(139,92,246,0.6)"></div>
-            <div class="text-xs mt-1 text-white font-bold">Today</div>
-          </div>
-          <div class="flex-1 text-center">
-            <div class="text-xs text-gray-400 mb-1">Sat</div>
-            <div class="h-12 rounded-lg opacity-20" style="background:rgba(139,92,246,0.3)"></div>
-            <div class="text-xs mt-1 text-gray-600">—</div>
-          </div>
-          <div class="flex-1 text-center">
-            <div class="text-xs text-gray-400 mb-1">Sun</div>
-            <div class="h-12 rounded-lg opacity-20" style="background:rgba(139,92,246,0.3)"></div>
-            <div class="text-xs mt-1 text-gray-600">—</div>
-          </div>
-        </div>
+        <div id="weekGlanceContainer" class="flex gap-2"></div>
       </div>
 
       <div class="card" style="background:linear-gradient(135deg,rgba(245,158,11,0.08),transparent)">
         <div class="text-2xl mb-2">💬</div>
         <div class="font-bold text-sm mb-2">Daily Motivation</div>
-        <div class="text-sm text-gray-300 leading-relaxed italic">"You're not trying to be perfect. You're trying to be consistent. Day 12 of 90 — you're building something real."</div>
+        <div id="motivationText" class="text-sm text-gray-300 leading-relaxed italic"></div>
         <div class="text-xs text-gray-500 mt-3">— GlowAI Coach</div>
       </div>
     </div>
@@ -412,15 +377,15 @@
       <div class="xp-bar mb-3"><div class="xp-fill" style="width:40%"></div></div>
       <div class="grid grid-cols-3 gap-3 text-center">
         <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)">
-          <div class="text-lg font-black text-white">12</div>
+          <div id="daysDone" class="text-lg font-black text-white">1</div>
           <div class="text-xs text-gray-400">Days done</div>
         </div>
         <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)">
-          <div class="text-lg font-black text-white">18</div>
+          <div id="daysLeft" class="text-lg font-black text-white">90</div>
           <div class="text-xs text-gray-400">Days left in phase</div>
         </div>
         <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)">
-          <div class="text-lg font-black text-white">78</div>
+          <div id="daysToGoal" class="text-lg font-black text-white">90</div>
           <div class="text-xs text-gray-400">Days to goal</div>
         </div>
       </div>
@@ -522,10 +487,10 @@
     <div class="card mb-6">
       <div class="flex items-center justify-between mb-4">
         <div id="gymSessionHeader" class="font-bold">Today's Workout — Push A</div>
-        <button class="btn-primary text-xs py-1.5 px-4">▶ Start Session</button>
+        <button id="startSessionBtn" onclick="startSession()" class="btn-primary text-xs py-1.5 px-4">▶ Start Session</button>
       </div>
 
-      <div class="exercise-item" id="ex1">
+      <div class="exercise-item" id="ex1" data-exercise="Bench Press">
         <div class="flex justify-between items-start mb-2">
           <div>
             <div class="font-semibold text-sm">Bench Press</div>
@@ -536,27 +501,27 @@
         <div class="grid grid-cols-4 gap-2 text-xs text-gray-400 mb-2">
           <div>Set</div><div>Weight</div><div>Reps</div><div>Done</div>
         </div>
-        <div class="grid grid-cols-4 gap-2 text-sm mb-1">
+        <div class="set-row grid grid-cols-4 gap-2 text-sm mb-1">
           <div class="text-gray-400">1</div>
-          <div><input type="text" value="55" class="w-full bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
-          <div><input type="text" value="10" class="w-full bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
+          <div><input type="text" value="55" class="inp-weight w-full bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
+          <div><input type="text" value="10" class="inp-reps w-full bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
           <div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div>
         </div>
-        <div class="grid grid-cols-4 gap-2 text-sm mb-1">
+        <div class="set-row grid grid-cols-4 gap-2 text-sm mb-1">
           <div class="text-gray-400">2</div>
-          <div><input type="text" value="60" class="bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
-          <div><input type="text" value="8" class="bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
+          <div><input type="text" value="60" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
+          <div><input type="text" value="8" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
           <div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div>
         </div>
-        <div class="grid grid-cols-4 gap-2 text-sm">
+        <div class="set-row grid grid-cols-4 gap-2 text-sm">
           <div class="text-gray-400">3</div>
-          <div><input type="text" value="60" class="bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
-          <div><input type="text" value="8" class="bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
+          <div><input type="text" value="60" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
+          <div><input type="text" value="8" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div>
           <div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div>
         </div>
       </div>
 
-      <div class="exercise-item">
+      <div class="exercise-item" data-exercise="Overhead Press">
         <div class="flex justify-between items-start mb-2">
           <div>
             <div class="font-semibold text-sm">Overhead Press</div>
@@ -565,11 +530,11 @@
           <div class="text-xs text-purple-400 font-bold">PR: 42.5kg ×6</div>
         </div>
         <div class="grid grid-cols-4 gap-2 text-xs text-gray-400 mb-2"><div>Set</div><div>Weight</div><div>Reps</div><div>Done</div></div>
-        <div class="grid grid-cols-4 gap-2 text-sm mb-1">
-          <div class="text-gray-400">1</div><div><input type="text" value="35" class="bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="10" class="bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div>
+        <div class="set-row grid grid-cols-4 gap-2 text-sm mb-1">
+          <div class="text-gray-400">1</div><div><input type="text" value="35" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="10" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div>
         </div>
-        <div class="grid grid-cols-4 gap-2 text-sm">
-          <div class="text-gray-400">2</div><div><input type="text" value="40" class="bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="8" class="bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div>
+        <div class="set-row grid grid-cols-4 gap-2 text-sm">
+          <div class="text-gray-400">2</div><div><input type="text" value="40" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="8" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div>
         </div>
       </div>
 
@@ -732,11 +697,7 @@
         <div class="text-xl">🤖</div>
         <div class="font-bold text-sm">AI Sleep Analysis</div>
       </div>
-      <div class="space-y-3 text-sm text-gray-300">
-        <div class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">→</span><span>You averaged 6.8h this week — 12 minutes below your optimal 7h target. Small changes to your bedtime consistency could unlock noticeably better energy.</span></div>
-        <div class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">→</span><span>Your best sleep nights correlate with days where you did evening walks (Mon/Thu). Consider adding this habit tonight.</span></div>
-        <div class="flex items-start gap-2"><span class="text-blue-400 mt-0.5">→</span><span><strong class="text-purple-300">Recommendation:</strong> Aim for lights-off at 10:15pm tonight for your target 7.5h sleep window.</span></div>
-      </div>
+      <div id="sleepAnalysis"></div>
     </div>
   </div>
 
@@ -770,17 +731,21 @@
         <button onclick="addWater(500)" class="btn-outline text-sm">+500ml</button>
         <button onclick="addWater(750)" class="btn-primary text-sm">+750ml</button>
       </div>
+      <!-- Custom amount input -->
+      <div class="flex gap-2 items-center mt-3 max-w-xs mx-auto">
+        <input id="waterCustomInput" type="number" placeholder="Custom ml (e.g. 330)"
+          class="flex-1 text-sm rounded-xl px-3 py-2 outline-none"
+          style="background:rgba(255,255,255,0.05);border:1px solid rgba(6,182,212,0.3);color:#fff"
+          onkeydown="if(event.key==='Enter')addCustomWater()"/>
+        <button onclick="addCustomWater()" class="btn-primary text-sm px-4 py-2">Add</button>
+      </div>
     </div>
 
     <!-- Water this week -->
     <div class="card mb-6">
       <div class="font-bold mb-4">Hydration This Week</div>
-      <div class="space-y-2">
-        <div class="flex items-center gap-3"><div class="text-sm text-gray-400 w-8">Mon</div><div class="flex-1 h-6 bg-gray-800 rounded-full overflow-hidden"><div style="width:92%;height:100%;background:linear-gradient(90deg,#06b6d4,#3b82f6);border-radius:50px"></div></div><div class="text-sm font-semibold text-right" style="width:36px">2.3L</div></div>
-        <div class="flex items-center gap-3"><div class="text-sm text-gray-400 w-8">Tue</div><div class="flex-1 h-6 bg-gray-800 rounded-full overflow-hidden"><div style="width:100%;height:100%;background:linear-gradient(90deg,#06b6d4,#3b82f6);border-radius:50px"></div></div><div class="text-sm font-semibold text-right" style="width:36px">2.6L</div></div>
-        <div class="flex items-center gap-3"><div class="text-sm text-gray-400 w-8">Wed</div><div class="flex-1 h-6 bg-gray-800 rounded-full overflow-hidden"><div style="width:72%;height:100%;background:linear-gradient(90deg,#06b6d4,#3b82f6);border-radius:50px"></div></div><div class="text-sm font-semibold text-right" style="width:36px">1.8L</div></div>
-        <div class="flex items-center gap-3"><div class="text-sm text-gray-400 w-8">Thu</div><div class="flex-1 h-6 bg-gray-800 rounded-full overflow-hidden"><div style="width:88%;height:100%;background:linear-gradient(90deg,#06b6d4,#3b82f6);border-radius:50px"></div></div><div class="text-sm font-semibold text-right" style="width:36px">2.2L</div></div>
-        <div class="flex items-center gap-3"><div class="text-sm text-gray-400 w-8">Fri</div><div class="flex-1 h-6 bg-gray-800 rounded-full overflow-hidden"><div style="width:56%;height:100%;background:linear-gradient(90deg,#06b6d4,#3b82f6);border-radius:50px"></div></div><div class="text-sm font-semibold text-right" style="width:36px">1.4L</div></div>
+      <div id="waterWeekList" class="space-y-2">
+        <div class="text-sm text-gray-500 text-center py-2">Loading...</div>
       </div>
     </div>
 
@@ -793,7 +758,13 @@
   <div id="page-chat" class="page">
     <div class="section-header">💬 GlowAI Coach</div>
 
-    <div class="card mb-4 flex flex-col" style="height:420px">
+    <div class="card mb-4 flex flex-col" style="height:420px;position:relative">
+      <div id="chatLockedOverlay" style="position:absolute;inset:0;background:rgba(5,5,8,0.92);backdrop-filter:blur(8px);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:20px;padding:32px;text-align:center">
+        <div class="text-5xl mb-4">🤖</div>
+        <h3 class="text-xl font-black mb-2">AI Coach — <span class="grad-text">Coming Soon</span></h3>
+        <p class="text-gray-400 text-sm mb-6 max-w-xs">Your personal AI health coach is in development. Premium members will get access first when it launches.</p>
+        <button onclick="openUpgrade()" class="btn-primary">Join Premium — Get Early Access</button>
+      </div>
       <div class="flex-1 overflow-y-auto flex flex-col gap-0 p-2" id="chatMessages">
         <div class="chat-bubble chat-ai">
           Hey Sophie! 👋 I'm your GlowAI Coach. I know your goals, your plan, and your progress. Ask me anything — gym advice, nutrition questions, sleep help, motivation, or anything else on your glow up journey. What's on your mind?
@@ -884,7 +855,7 @@
         </div>
       </div>
 
-      <div class="card" style="cursor:pointer" onclick="this.querySelector('.article-summary').classList.toggle('hidden')">
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 2)">
         <div class="flex items-start gap-4">
           <div class="text-3xl flex-shrink-0">😴</div>
           <div class="flex-1">
@@ -901,7 +872,7 @@
         </div>
       </div>
 
-      <div class="card" style="cursor:pointer" onclick="this.querySelector('.article-summary').classList.toggle('hidden')">
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 3)">
         <div class="flex items-start gap-4">
           <div class="text-3xl flex-shrink-0">🥗</div>
           <div class="flex-1">
@@ -918,13 +889,161 @@
         </div>
       </div>
 
-      <!-- Premium locked -->
-      <div class="card relative" style="opacity:0.5">
+      <!-- Premium locked article 1 (free users see blur) -->
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 2)">
         <div class="flex items-start gap-4">
           <div class="text-3xl flex-shrink-0">🧘</div>
-          <div><div class="font-bold mb-1">Cold Exposure, Dopamine & Resilience</div><div class="text-sm text-gray-400">The neuroscience behind cold showers and why they genuinely work for mood and focus...</div></div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-purple-900 text-purple-300 rounded-full px-2 py-0.5">Mental Health</span>
+              <span class="text-xs text-gray-500">9 min read</span>
+            </div>
+            <div class="font-bold mb-1">Cold Exposure, Dopamine &amp; Resilience</div>
+            <div class="text-sm text-gray-400">The neuroscience behind cold showers and why they genuinely work for mood, focus and mental toughness.</div>
+            <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(139,92,246,0.06)">
+              <strong class="text-purple-300">Key Insight:</strong> Cold exposure triggers a 250–300% increase in dopamine (Leppäluoto et al., 2008) — the same neurotransmitter deficit targeted by antidepressants. Unlike artificial dopamine spikes from social media or sugar, cold exposure builds a sustained baseline elevation that improves mood for hours. Start with 30 seconds at the end of your warm shower.
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- Additional premium articles -->
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 3)">
+        <div class="flex items-start gap-4">
+          <div class="text-3xl flex-shrink-0">🦠</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-pink-900 text-pink-300 rounded-full px-2 py-0.5">Mental Health</span>
+              <span class="text-xs text-gray-500">11 min read</span>
+            </div>
+            <div class="font-bold mb-1">The Gut-Brain Axis: How Your Microbiome Affects Mood</div>
+            <div class="text-sm text-gray-400">New research reveals your gut produces 90% of your body's serotonin. Here's what that means for your mental health.</div>
+            <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(236,72,153,0.06)">
+              <strong class="text-pink-300">Key Insight:</strong> The gut-brain axis is a bidirectional communication network. Studies show diverse gut microbiomes correlate strongly with lower rates of anxiety and depression. Fermented foods (yoghurt, kefir, kimchi), prebiotic fibre, and reducing ultra-processed foods are the three highest-leverage dietary changes for improving microbiome diversity and mood.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 4)">
+        <div class="flex items-start gap-4">
+          <div class="text-3xl flex-shrink-0">⚡</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-blue-900 text-blue-300 rounded-full px-2 py-0.5">Fitness</span>
+              <span class="text-xs text-gray-500">8 min read</span>
+            </div>
+            <div class="font-bold mb-1">Creatine: The Most Evidence-Based Supplement in Sports Science</div>
+            <div class="text-sm text-gray-400">500+ studies confirm it works. Here's exactly how to take it, what it does, and who benefits most.</div>
+            <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(59,130,246,0.06)">
+              <strong class="text-blue-300">Key Insight:</strong> Creatine monohydrate increases phosphocreatine stores in muscle, directly improving high-intensity performance by 5–15%. The evidence base is unmatched — over 500 peer-reviewed studies with consistent results. 3–5g per day is sufficient (no loading phase needed). It's also being studied for cognitive benefits, particularly in sleep-deprived states.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 5)">
+        <div class="flex items-start gap-4">
+          <div class="text-3xl flex-shrink-0">💓</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-blue-900 text-blue-300 rounded-full px-2 py-0.5">Fitness</span>
+              <span class="text-xs text-gray-500">10 min read</span>
+            </div>
+            <div class="font-bold mb-1">Understanding HRV: The Real Measure of Recovery</div>
+            <div class="text-sm text-gray-400">Heart rate variability is the most accurate real-time signal of your nervous system's readiness. Here's how to read it.</div>
+            <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(59,130,246,0.06)">
+              <strong class="text-blue-300">Key Insight:</strong> HRV measures the variation in time between heartbeats — high HRV signals your parasympathetic (rest &amp; digest) system is dominant, meaning you're recovered. Low HRV = high stress/fatigue. Elite athletes and coaches now use HRV as the primary metric for training load decisions. Sleep, alcohol, illness, and overtraining all suppress HRV within hours.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 6)">
+        <div class="flex items-start gap-4">
+          <div class="text-3xl flex-shrink-0">🌱</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-green-900 text-green-300 rounded-full px-2 py-0.5">Nutrition</span>
+              <span class="text-xs text-gray-500">9 min read</span>
+            </div>
+            <div class="font-bold mb-1">Seed Cycling, Cortisol &amp; Hormonal Health</div>
+            <div class="text-sm text-gray-400">How specific foods in specific phases of your cycle can support hormone balance, energy and mood stability.</div>
+            <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(16,185,129,0.06)">
+              <strong class="text-green-300">Key Insight:</strong> Seeds like flaxseed and pumpkin seed are rich in lignans and zinc — compounds that support oestrogen metabolism and progesterone production. While direct RCT evidence on seed cycling is limited, the underlying nutritional science is solid. Pair this with managing cortisol via sleep and stress reduction for meaningful hormonal improvements.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 7)">
+        <div class="flex items-start gap-4">
+          <div class="text-3xl flex-shrink-0">💡</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-indigo-900 text-indigo-300 rounded-full px-2 py-0.5">Sleep</span>
+              <span class="text-xs text-gray-500">8 min read</span>
+            </div>
+            <div class="font-bold mb-1">Blue Light, Melatonin &amp; Your Circadian Rhythm</div>
+            <div class="text-sm text-gray-400">Why your phone is destroying your sleep quality — and the exact protocol to fix it without giving up screens entirely.</div>
+            <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(99,102,241,0.06)">
+              <strong class="text-indigo-300">Key Insight:</strong> Blue light (wavelength 480nm) directly suppresses melatonin production via intrinsically photosensitive retinal ganglion cells. A 2017 Harvard study found evening blue light exposure delayed melatonin onset by 1.5 hours and shifted circadian rhythms by 3 hours. Solution: blue light glasses after sunset, night mode on screens, and morning bright light exposure to anchor your circadian clock.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 8)">
+        <div class="flex items-start gap-4">
+          <div class="text-3xl flex-shrink-0">🐢</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-blue-900 text-blue-300 rounded-full px-2 py-0.5">Fitness</span>
+              <span class="text-xs text-gray-500">12 min read</span>
+            </div>
+            <div class="font-bold mb-1">Zone 2 Cardio: Why Slow Training Makes You Faster</div>
+            <div class="text-sm text-gray-400">The counterintuitive training method elite endurance athletes swear by — and why it works for fat loss too.</div>
+            <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(59,130,246,0.06)">
+              <strong class="text-blue-300">Key Insight:</strong> Zone 2 (60–70% max heart rate) training builds mitochondrial density — the powerhouses of your cells. More mitochondria = more fat oxidation at rest and during exercise. Elite athletes spend 80% of training in Zone 2, with only 20% at high intensity. For fat loss, 3×45 min Zone 2 per week (brisk walk, light jog, cycling) is more effective than constant high-intensity training.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 9)">
+        <div class="flex items-start gap-4">
+          <div class="text-3xl flex-shrink-0">🧩</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-purple-900 text-purple-300 rounded-full px-2 py-0.5">Habits</span>
+              <span class="text-xs text-gray-500">10 min read</span>
+            </div>
+            <div class="font-bold mb-1">The Psychology of Motivation: Dopamine, Habits &amp; Reward Systems</div>
+            <div class="text-sm text-gray-400">Why willpower is the wrong strategy — and how to hack your brain's reward system to make healthy habits effortless.</div>
+            <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(139,92,246,0.06)">
+              <strong class="text-purple-300">Key Insight:</strong> Dopamine is released not when you get a reward, but when you anticipate it. This is why streaks and progress tracking work — they create an anticipation-reward loop. Habit stacking (attaching a new habit to an existing one), implementation intentions ("I will do X at Y time in Z location"), and visual progress cues are the three evidence-backed strategies for sustainable behaviour change.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 10)">
+        <div class="flex items-start gap-4">
+          <div class="text-3xl flex-shrink-0">🧲</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs bg-green-900 text-green-300 rounded-full px-2 py-0.5">Nutrition</span>
+              <span class="text-xs text-gray-500">9 min read</span>
+            </div>
+            <div class="font-bold mb-1">Magnesium: The Missing Mineral for Sleep, Stress &amp; Performance</div>
+            <div class="text-sm text-gray-400">Over 75% of people are deficient. Here's what magnesium actually does and how to fix your intake.</div>
+            <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(16,185,129,0.06)">
+              <strong class="text-green-300">Key Insight:</strong> Magnesium is involved in over 300 enzymatic reactions — including protein synthesis, nerve function, and melatonin regulation. Magnesium glycinate (200–400mg before bed) is the most bioavailable form and has the strongest evidence for improving sleep quality and reducing anxiety. Food sources: dark chocolate, nuts, seeds, legumes, leafy greens.
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="text-center py-2">
         <button onclick="openUpgrade()" class="text-sm text-purple-400 hover:text-purple-300 font-semibold">🔒 Unlock 120+ more articles — Premium</button>
       </div>
@@ -1028,6 +1147,15 @@
         <button onclick="doLogout()" class="nav-item w-full text-left" style="color:#ef4444">🚪 Log Out</button>
         <button class="nav-item w-full text-left" style="color:#6b7280"><a href="index.html">← Back to Landing Page</a></button>
       </div>
+    </div>
+  </div>
+
+  <!-- ====== SKINCARE PAGE ====== -->
+  <div id="page-skincare" class="page">
+    <div class="section-header">🫧 Skincare Plan</div>
+    <!-- Content based on quiz answers -->
+    <div id="skincareContent">
+      <div class="text-sm text-gray-500 text-center py-8">Loading your personalised skincare plan...</div>
     </div>
   </div>
 
@@ -1199,7 +1327,11 @@ function showPage(name) {
   if (name === 'analytics') initAnalyticsCharts();
   if (name === 'gym') initGymChart();
   if (name === 'nutrition') { renderFoodLog(); initNutritionChart(); }
-  if (name === 'sleep') { loadSleepStats(); initSleepChart(); }
+  if (name === 'sleep') { loadSleepStats(); initSleepChart(); generateSleepAnalysis(); }
+  if (name === 'water') updateWaterWeekChart();
+  if (name === 'chat') showChatPage();
+  if (name === 'skincare') loadSkincarePage();
+  if (name === 'dashboard') { updateProgressRings(); updateWeekAtAGlance(); updateDaysTracking(); }
 }
 
 function setMobileActive(el) {
@@ -1331,7 +1463,10 @@ function initDashboard() {
   initWater();
   loadSleepStats();
   renderFoodLog();
-  updateStats();
+  updateStats(); // also calls updateProgressRings internally
+  updateWeekAtAGlance();
+  updateDaysTracking();
+  setText('motivationText', getDailyMotivation());
   loadSettingsToggles();
   buildCalendar();
 }
@@ -1364,6 +1499,8 @@ function updateXPDisplay() {
 // ============================================================
 function loadHabitStates() {
   const today = GlowData.habits.today();
+  const user = GlowAuth.getUser();
+  const isPremium = user && user.isPremium;
   document.querySelectorAll('[data-habit-id]').forEach(el => {
     const id = el.dataset.habitId;
     const isDone = today[id] === true;
@@ -1371,12 +1508,30 @@ function loadHabitStates() {
     el.classList.toggle('done', isDone);
     if (check) check.textContent = isDone ? '✓' : '';
   });
+  // Lock premium habits for free users
+  if (!isPremium) {
+    ['h3','h4','h5','h6'].forEach(id => {
+      document.querySelectorAll('[data-habit-id="' + id + '"]').forEach(el => {
+        el.style.opacity = '0.4';
+        el.style.cursor = 'pointer';
+        const badge = el.querySelector('.text-xs');
+        if (badge && !badge.innerHTML.includes('Premium')) {
+          badge.innerHTML = badge.innerHTML + ' · <span style="color:#c4b5fd">🔒 Premium</span>';
+        }
+      });
+    });
+  }
   updateHabitsCount();
 }
 
 function toggleTask(el) {
   const id = el.dataset.habitId;
   if (!id) return;
+  const user = GlowAuth.getUser();
+  const isPremium = user && user.isPremium;
+  if (!isPremium && (id === 'h3' || id === 'h4' || id === 'h5' || id === 'h6')) {
+    openUpgrade(); return;
+  }
   const willBeDone = !el.classList.contains('done');
   const def = GlowData.habits.defs().find(h => h.id === id);
 
@@ -1406,9 +1561,14 @@ function toggleTask(el) {
 
 function updateHabitsCount() {
   const today = GlowData.habits.today();
-  const done = Object.values(today).filter(Boolean).length;
-  setText('habitsStat', done + '/6');
-  setText('habitsPageCount', done + '/6 ✓');
+  const user = GlowAuth.getUser();
+  const isPremium = user && user.isPremium;
+  const total = isPremium ? 6 : 2;
+  const allDone = Object.values(today).filter(Boolean).length;
+  const freeIds = ['h1','h2'];
+  const freeDone = isPremium ? allDone : freeIds.filter(id => today[id] === true).length;
+  setText('habitsStat', freeDone + '/' + total);
+  setText('habitsPageCount', freeDone + '/' + total + ' ✓');
 }
 
 // ============================================================
@@ -1422,8 +1582,14 @@ function updateStats() {
   setText('waterStat', (wml / 1000).toFixed(1) + 'L');
   const lastSleep = GlowData.sleep.lastNight();
   setText('sleepStat', lastSleep ? lastSleep.hours + 'h' : '—');
-  const today = GlowData.habits.today();
-  setText('habitsStat', Object.values(today).filter(Boolean).length + '/6');
+  updateProgressRings();
+  const todayH = GlowData.habits.today();
+  const userH = GlowAuth.getUser();
+  const isPremiumH = userH && userH.isPremium;
+  const totalH2 = isPremiumH ? 6 : 2;
+  const freeIdsH = ['h1','h2'];
+  const doneFreeH = isPremiumH ? Object.values(todayH).filter(Boolean).length : freeIdsH.filter(id => todayH[id] === true).length;
+  setText('habitsStat', doneFreeH + '/' + totalH2);
 }
 
 // ============================================================
@@ -1440,6 +1606,7 @@ function addWater(ml) {
   _waterMl = Math.min(_waterMl + ml, 2500);
   GlowData.water.set(_waterMl);
   updateWaterUI();
+  updateWaterWeekChart();
   updateStats();
   GlowUtils.toast('💧 ' + (_waterMl / 1000).toFixed(1) + 'L logged');
 }
@@ -1499,6 +1666,7 @@ function loadSleepStats() {
   } else {
     setText('sleepScore', '—');
   }
+  generateSleepAnalysis();
 }
 
 // ============================================================
@@ -1742,18 +1910,48 @@ function appendChat(text, who) {
 function initGymChart() {
   const ctx = document.getElementById('strengthChart');
   if (!ctx || ctx.chart) return;
+
+  const gymHistory = (GlowData.gym && GlowData.gym.all) ? GlowData.gym.all() : {};
+  const dates = Object.keys(gymHistory).sort().slice(-12);
+
+  const benchData = dates.map(d => {
+    const session = gymHistory[d];
+    if (!session || !session.exercises) return null;
+    const bench = session.exercises['Bench Press'];
+    if (!bench || !bench.length) return null;
+    return Math.max(...bench.map(s => s.weight));
+  });
+
+  const ohpData = dates.map(d => {
+    const session = gymHistory[d];
+    if (!session || !session.exercises) return null;
+    const ohp = session.exercises['Overhead Press'];
+    if (!ohp || !ohp.length) return null;
+    return Math.max(...ohp.map(s => s.weight));
+  });
+
+  const hasData = benchData.some(v => v !== null) || ohpData.some(v => v !== null);
+
+  const labels = hasData && dates.length > 0 ? dates.map(d => {
+    const dt = new Date(d);
+    return dt.toLocaleDateString('en-AU', { day:'numeric', month:'short' });
+  }) : ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'];
+
+  const benchPlot = hasData ? benchData : [45,47.5,50,50,52.5,55,55,57.5,60,60,60,62.5];
+  const ohpPlot = hasData ? ohpData : [25,27.5,27.5,30,30,32.5,35,35,37.5,40,40,42.5];
+
   ctx.chart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],
+      labels,
       datasets: [{
         label: 'Bench Press (kg)',
-        data: [45,47.5,50,50,52.5,55,55,57.5,60,60,60,62.5],
-        borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.1)', tension:0.4, fill:true, borderWidth:2
+        data: benchPlot,
+        borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.1)', tension:0.4, fill:true, borderWidth:2, spanGaps:true
       },{
         label: 'OHP (kg)',
-        data: [25,27.5,27.5,30,30,32.5,35,35,37.5,40,40,42.5],
-        borderColor:'#ec4899', backgroundColor:'rgba(236,72,153,0.05)', tension:0.4, fill:true, borderWidth:2
+        data: ohpPlot,
+        borderColor:'#ec4899', backgroundColor:'rgba(236,72,153,0.05)', tension:0.4, fill:true, borderWidth:2, spanGaps:true
       }]
     },
     options:{responsive:true,plugins:{legend:{labels:{color:'#9ca3af',font:{size:11}}}},scales:{x:{ticks:{color:'#6b7280'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#6b7280'},grid:{color:'rgba(255,255,255,0.05)'}}}}
@@ -1848,9 +2046,361 @@ function initAnalyticsCharts() {
   if (allVals[2]) allVals[2].textContent = GlowData.xp.total().toLocaleString();
   if (allVals[3]) {
     const wd = GlowData.habits.weekData();
-    const totalPossible = wd.length * 6;
-    const totalDone = wd.reduce((a, d) => a + d.done, 0);
+    const userA = GlowAuth.getUser();
+    const isPremA = userA && userA.isPremium;
+    const totalPerDay = isPremA ? 6 : 2;
+    const totalPossible = wd.length * totalPerDay;
+    const totalDone = wd.reduce((a, d) => a + Math.min(d.done, totalPerDay), 0);
     allVals[3].textContent = totalPossible > 0 ? Math.round(totalDone / totalPossible * 100) + '%' : '—';
+  }
+}
+
+// ============================================================
+// WEEK AT A GLANCE
+// ============================================================
+function updateWeekAtAGlance() {
+  const container = document.getElementById('weekGlanceContainer');
+  if (!container) return;
+  const weekData = GlowData.habits.weekData();
+  const today = GlowData.today();
+  const user = GlowAuth.getUser();
+  const totalHabits = user && user.isPremium ? 6 : 2;
+  container.innerHTML = weekData.map(d => {
+    const pct = totalHabits > 0 ? Math.min(100, Math.round((d.done / totalHabits) * 100)) : 0;
+    const isToday = d.date === today;
+    const opacity = isToday ? '1' : (pct > 0 ? '0.8' : '0.3');
+    const glow = isToday ? 'box-shadow:0 0 12px rgba(139,92,246,0.6);' : '';
+    const bar = pct > 0
+      ? `<div style="height:${Math.max(8, pct*0.48)}px;border-radius:4px;background:linear-gradient(135deg,#7c3aed,#ec4899);opacity:${opacity};${glow}margin-top:auto"></div>`
+      : `<div style="height:4px;border-radius:4px;background:rgba(139,92,246,0.2);margin-top:auto"></div>`;
+    const tick = pct >= 50 ? '✓' : (isToday ? '·' : '');
+    const tickColor = pct >= 50 ? 'text-purple-400' : (isToday ? 'text-white' : 'text-gray-600');
+    return `<div class="flex-1 text-center flex flex-col" style="min-height:64px">
+      <div class="text-xs text-gray-400 mb-1">${d.day}</div>
+      <div class="flex-1 flex flex-col justify-end">${bar}</div>
+      <div class="text-xs mt-1 ${tickColor}">${tick}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// DAILY MOTIVATION
+// ============================================================
+const MOTIVATIONS = [
+  "Every rep, every meal, every good night's sleep — it compounds. You're building the best version of yourself one day at a time.",
+  "Discipline is choosing between what you want now and what you want most. Choose wisely today.",
+  "Progress isn't always visible. Trust the process — your body and mind are adapting right now.",
+  "The hardest part is starting. You've already done that. Now just keep showing up.",
+  "Your future self is watching. Make today a day they'll be proud of.",
+  "Small wins compound into massive results. Every habit checked off is a vote for who you're becoming.",
+  "Energy follows action. Don't wait to feel motivated — move first, motivation follows.",
+  "Rest is part of the program. Recovery is where the growth happens.",
+  "You don't have to be perfect. You just have to be consistent.",
+  "Champions aren't made in the gym — they're made in the moments when they want to quit but don't.",
+  "Your body can do more than your mind believes. Push through the resistance today.",
+  "Focus on what you can control: your actions, your attitude, your effort.",
+  "Momentum is everything. Keep the streak alive.",
+  "One per cent better every day. In 90 days, you'll be unrecognisable.",
+  "The version of you 90 days from now is watching. Don't let them down.",
+  "Nutrition, sleep, movement — master these three and everything else follows.",
+  "You are not behind. You are exactly where you need to be to start.",
+  "Grit beats talent when talent doesn't work hard. Keep going.",
+  "Your habits are your identity. Who are you building today?",
+  "Pain is temporary. The results you build are permanent.",
+  "The best time to start was yesterday. The second best time is right now.",
+  "Visualise who you want to be, then act like that person today.",
+  "Success isn't owned — it's rented, and the rent is due every day.",
+  "Be the person your future self needs you to be today.",
+  "Every sunrise is a chance to reset, refocus, and go again."
+];
+
+function getDailyMotivation() {
+  const dayNum = GlowData.dayNumber();
+  return MOTIVATIONS[(dayNum - 1) % MOTIVATIONS.length];
+}
+
+// ============================================================
+// DAYS TRACKING
+// ============================================================
+function updateDaysTracking() {
+  const dayNum = GlowData.dayNumber();
+  const daysLeft = Math.max(0, 90 - dayNum + 1);
+  setText('daysDone', dayNum);
+  setText('daysLeft', daysLeft);
+  setText('daysToGoal', daysLeft);
+  setText('dayCount', 'Day ' + dayNum + ' of 90');
+}
+
+// ============================================================
+// PROGRESS RINGS
+// ============================================================
+function updateProgressRings() {
+  const circum = 201;
+  const user = GlowAuth.getUser();
+  const isPremium = user && user.isPremium;
+  // Habits ring
+  const totalH = isPremium ? 6 : 2;
+  const todayHabits = GlowData.habits.today();
+  const freeHIds = ['h1','h2'];
+  const doneH = isPremium
+    ? Object.values(todayHabits).filter(Boolean).length
+    : freeHIds.filter(id => todayHabits[id] === true).length;
+  const habPct = totalH > 0 ? Math.round((Math.min(doneH, totalH) / totalH) * 100) : 0;
+  const ringH = document.getElementById('ringHabits');
+  if (ringH) ringH.setAttribute('stroke-dashoffset', circum - (habPct / 100) * circum);
+  setText('ringHabitsLabel', habPct + '%');
+  // Water ring
+  const waterMl = GlowData.water.get();
+  const waterGoal = 2500;
+  const watPct = Math.round(Math.min(waterMl / waterGoal, 1) * 100);
+  const ringW = document.getElementById('ringWater');
+  if (ringW) ringW.setAttribute('stroke-dashoffset', circum - (watPct / 100) * circum);
+  setText('ringWaterLabel', watPct + '%');
+  // Nutrition ring
+  const food = GlowData.food.today();
+  const GOAL = window._glowGoal || { cal: 2000 };
+  const goalCal = GOAL.cal || 2000;
+  const cals = GlowData.food.totals(food).cal;
+  const nutPct = Math.round(Math.min(cals / goalCal, 1) * 100);
+  const ringN = document.getElementById('ringNutrition');
+  if (ringN) ringN.setAttribute('stroke-dashoffset', circum - (nutPct / 100) * circum);
+  setText('ringNutritionLabel', nutPct + '%');
+}
+
+// ============================================================
+// WATER - CUSTOM AMOUNT
+// ============================================================
+function addCustomWater() {
+  const input = document.getElementById('waterCustomInput');
+  const ml = parseInt(input.value);
+  if (!ml || ml < 1 || ml > 2000) { GlowUtils.toast('Enter a valid amount (1–2000ml)', 'error'); return; }
+  addWater(ml);
+  input.value = '';
+}
+
+function updateWaterWeekChart() {
+  const container = document.getElementById('waterWeekList');
+  if (!container) return;
+  const wData = GlowData.water.weekData ? GlowData.water.weekData() : [];
+  if (!wData || !wData.length) {
+    container.innerHTML = '<div class="text-sm text-gray-500 text-center py-2">No data yet — start logging water!</div>';
+    return;
+  }
+  const goal = 2500;
+  container.innerHTML = wData.map(d => {
+    const ml = d.ml || 0;
+    const pct = Math.min(100, Math.round(ml / goal * 100));
+    const litres = (ml / 1000).toFixed(1) + 'L';
+    return `<div class="flex items-center gap-3">
+      <div class="text-sm text-gray-400 w-8">${d.day}</div>
+      <div class="flex-1 h-6 bg-gray-800 rounded-full overflow-hidden">
+        ${ml > 0 ? `<div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#06b6d4,#3b82f6);border-radius:50px"></div>` : ''}
+      </div>
+      <div class="text-sm font-semibold text-right" style="width:36px">${ml > 0 ? litres : '—'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// SLEEP ANALYSIS
+// ============================================================
+function generateSleepAnalysis() {
+  const avg = GlowData.sleep.avg7();
+  const last = GlowData.sleep.lastNight();
+  const el = document.getElementById('sleepAnalysis');
+  if (!el) return;
+  if (!last && !avg) {
+    el.innerHTML = '<p class="text-xs text-gray-400">Log your first sleep entry to get personalised analysis.</p>';
+    return;
+  }
+  const hours = last ? last.hours : avg;
+  const quality = last ? last.quality : 3;
+  const insights = [];
+  if (hours < 6) {
+    insights.push('⚠️ You\'re getting less than 6 hours — this significantly impacts recovery, mood and performance. Aim for 7–9 hours.');
+  } else if (hours < 7) {
+    insights.push('You\'re getting ' + hours + ' hours — slightly below optimal. Try shifting your bedtime 30–60 mins earlier.');
+  } else if (hours >= 7 && hours <= 9) {
+    insights.push('✅ Great sleep duration (' + hours + 'h)! This is the optimal range for recovery and cognitive performance.');
+  } else {
+    insights.push('You\'re sleeping ' + hours + 'h which is on the longer side. If you still feel tired, focus on improving sleep quality.');
+  }
+  if (quality <= 2) {
+    insights.push('Your sleep quality is low — consider a stricter wind-down routine: no screens 1hr before bed, keep the room cool and dark.');
+  } else if (quality >= 4) {
+    insights.push('Your sleep quality is strong — whatever you\'re doing before bed is working. Keep it up.');
+  }
+  if (avg) {
+    insights.push('Your 7-day average is ' + avg + 'h. ' + (avg >= 7 ? 'You\'re consistently resting well.' : 'Try to be more consistent with your bedtime.'));
+  }
+  el.innerHTML = insights.map(i => '<p class="text-xs text-gray-300 mb-2">• ' + i + '</p>').join('');
+}
+
+// ============================================================
+// AI CHAT OVERLAY
+// ============================================================
+function showChatPage() {
+  const user = GlowAuth.getUser();
+  const overlay = document.getElementById('chatLockedOverlay');
+  if (overlay) overlay.style.display = user && user.isPremium ? 'none' : 'flex';
+}
+
+// ============================================================
+// RESEARCH - Toggle or prompt upgrade for premium articles
+// ============================================================
+function toggleArticleOrUpgrade(card, articleIndex) {
+  const user = GlowAuth.getUser();
+  const isPremium = user && user.isPremium;
+  // Articles 0 and 1 (first 2) are free; index 2+ are premium
+  if (!isPremium && articleIndex >= 2) {
+    openUpgrade();
+    return;
+  }
+  const summary = card.querySelector('.article-summary');
+  if (summary) summary.classList.toggle('hidden');
+}
+
+// ============================================================
+// GYM - Start Session
+// ============================================================
+function startSession() {
+  const btn = document.getElementById('startSessionBtn');
+  if (!btn) return;
+  if (btn.dataset.active === 'true') {
+    btn.dataset.active = 'false';
+    btn.textContent = '▶ Start Session';
+    btn.style.background = '';
+    const sessionData = { date: GlowData.today(), exercises: collectExerciseData(), completedAt: new Date().toISOString() };
+    if (GlowData.gym && GlowData.gym.saveToday) GlowData.gym.saveToday(sessionData);
+    GlowData.xp.add(30);
+    updateXPDisplay();
+    GlowUtils.toast('Session saved! +30 XP 💪', 'success');
+    const ctx = document.getElementById('strengthChart');
+    if (ctx && ctx.chart) { ctx.chart.destroy(); ctx.chart = null; initGymChart(); }
+  } else {
+    btn.dataset.active = 'true';
+    btn.textContent = '✅ End & Save Session';
+    btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+    GlowUtils.toast('Session started! Complete your sets 💪');
+  }
+}
+
+function collectExerciseData() {
+  const exercises = {};
+  document.querySelectorAll('.exercise-item[data-exercise]').forEach(el => {
+    const name = el.dataset.exercise;
+    const sets = [];
+    el.querySelectorAll('.set-row').forEach(row => {
+      const weight = row.querySelector('.inp-weight');
+      const reps = row.querySelector('.inp-reps');
+      if (weight && reps) sets.push({ weight: parseFloat(weight.value) || 0, reps: parseInt(reps.value) || 0 });
+    });
+    if (sets.length) exercises[name] = sets;
+  });
+  return exercises;
+}
+
+// ============================================================
+// SKINCARE
+// ============================================================
+function loadSkincarePage() {
+  const profile = GlowData.profile.get();
+  const answers = (profile && profile.answers) ? profile.answers : {};
+  const skinType = answers.skin_type || 'Normal — balanced, no major issues';
+  const concerns = answers.skin_concerns || [];
+  const routine = answers.skin_routine || 'Nothing — just water';
+  const spf = answers.spf_habit || 'Never';
+  const time = answers.skin_time || '1–2 mins — quick and easy';
+
+  const routines = getSkinRoutine(skinType, concerns, time);
+
+  const content = document.getElementById('skincareContent');
+  if (!content) return;
+
+  content.innerHTML = `
+    <div class="card mb-6" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.06))">
+      <div class="font-bold mb-1">Your Skin Profile</div>
+      <div class="text-xs text-gray-400">Based on your quiz answers</div>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <span class="lock-badge">${skinType.split('—')[0].trim()}</span>
+        ${(Array.isArray(concerns) ? concerns : []).slice(0,3).map(c => `<span class="lock-badge" style="background:rgba(236,72,153,0.2);border-color:rgba(236,72,153,0.4);color:#f9a8d4">${c}</span>`).join('')}
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6 mb-6">
+      <div class="card">
+        <div class="font-bold text-sm mb-4">☀️ AM Routine</div>
+        <div class="space-y-3">
+          ${routines.am.map((step, i) => `<div class="flex items-start gap-3 p-3 rounded-xl" style="background:rgba(139,92,246,0.06)">
+            <div class="w-6 h-6 grad-bg rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">${i+1}</div>
+            <div><div class="text-sm font-semibold">${step.name}</div><div class="text-xs text-gray-400">${step.desc}</div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="font-bold text-sm mb-4">🌙 PM Routine</div>
+        <div class="space-y-3">
+          ${routines.pm.map((step, i) => `<div class="flex items-start gap-3 p-3 rounded-xl" style="background:rgba(236,72,153,0.06)">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:linear-gradient(135deg,#ec4899,#8b5cf6)">${i+1}</div>
+            <div><div class="text-sm font-semibold">${step.name}</div><div class="text-xs text-gray-400">${step.desc}</div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="card mb-6">
+      <div class="font-bold text-sm mb-3">🎯 Key Focus Areas</div>
+      <div class="space-y-2">
+        ${routines.tips.map(t => `<div class="flex items-start gap-2 text-sm"><span class="text-purple-400 flex-shrink-0">•</span><span class="text-gray-300">${t}</span></div>`).join('')}
+      </div>
+    </div>
+    ${(spf === 'Never' || spf === 'Sometimes when I remember') ? `<div class="card" style="background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3)">
+      <div class="font-bold text-sm text-red-400 mb-2">☀️ SPF Warning</div>
+      <div class="text-xs text-gray-300">You indicated you rarely use SPF. Daily SPF 30+ is the single most important thing you can do for your skin — it prevents ageing, hyperpigmentation and skin cancer. Apply every morning, even on cloudy days.</div>
+    </div>` : ''}
+  `;
+}
+
+function getSkinRoutine(skinType, concerns, timeAvail) {
+  const concernArr = Array.isArray(concerns) ? concerns : [];
+  const isOily = skinType.includes('Oily') || skinType.includes('Combination');
+  const isDry = skinType.includes('Dry');
+  const isSensitive = skinType.includes('Sensitive');
+  const hasAcne = concernArr.some(c => c.includes('Acne'));
+  const hasDark = concernArr.some(c => c.includes('Dark spots') || c.includes('pigmentation'));
+  const isQuick = timeAvail.includes('1–2') || timeAvail.includes('5 min');
+
+  const am = [
+    { name: 'Gentle Cleanser', desc: isOily ? 'Use a foaming or gel cleanser to control oil' : isDry ? 'Use a cream or oil cleanser — avoid stripping your skin' : 'A mild, pH-balanced cleanser works best for your skin type' },
+    ...(isOily || hasAcne ? [{ name: 'Toner/Essence', desc: 'Niacinamide toner to control oil and minimise pores' }] : []),
+    ...(hasDark ? [{ name: 'Vitamin C Serum', desc: 'Apply 2–3 drops to brighten and fade pigmentation' }] : []),
+    { name: 'Moisturiser', desc: isOily ? 'Lightweight, oil-free gel moisturiser' : isDry ? 'Rich cream or oil-based moisturiser' : 'Light lotion appropriate for your skin type' },
+    { name: 'SPF 30+ Sunscreen', desc: 'Non-negotiable. Protects against UV ageing and hyperpigmentation. Apply as your final step.' }
+  ];
+
+  const pm = [
+    { name: 'Double Cleanse', desc: isQuick ? 'One gentle cleanser is fine in the evening' : 'Oil cleanser first to remove SPF/makeup, then water-based cleanser' },
+    ...(hasAcne ? [{ name: 'BHA/Salicylic Acid', desc: '2% salicylic acid 2–3x per week. Unclogs pores and reduces breakouts' }] : hasDark ? [{ name: 'AHA Exfoliant', desc: 'Glycolic or lactic acid 2–3x per week for brighter, more even skin' }] : []),
+    { name: 'Retinol/Retinoid', desc: isSensitive ? 'Skip retinol if skin is reactive — use Bakuchiol (plant alternative) instead' : 'Start with 0.025% retinol 2–3x per week. Build up slowly over months.' },
+    { name: 'Night Moisturiser', desc: isDry ? 'Use a richer cream at night — your skin repairs itself while you sleep' : 'Same moisturiser as AM, or slightly richer formula' },
+    { name: 'Eye Cream (optional)', desc: 'Peptide-based eye cream if targeting fine lines or dark circles' }
+  ];
+
+  const tips = [
+    'Consistency beats expensive products — a basic routine done daily outperforms a complex one done occasionally.',
+    isSensitive ? 'Patch test all new products on your inner arm for 24 hours before applying to face.' : 'Introduce one new product at a time, 2–3 weeks apart, so you can identify what works.',
+    hasAcne ? 'Avoid picking or squeezing spots — this spreads bacteria and causes scarring.' : 'Exfoliate 1–2x per week max — over-exfoliating damages your skin barrier.',
+    'Change your pillowcase at least weekly — it collects bacteria and oils.',
+    'Diet and sleep are as important as topicals — your skin reflects your overall health.'
+  ];
+
+  return { am, pm, tips };
+}
+
+// ============================================================
+// NOTIFICATIONS
+// ============================================================
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
   }
 }
 </script>
