@@ -486,6 +486,12 @@
       </div>
     </div>
 
+    <!-- 7-Day Training Plan Overview -->
+    <div class="card mb-6">
+      <div class="font-bold text-sm mb-3">📅 Your 7-Day Training Week</div>
+      <div id="gymWeekPlan" class="grid grid-cols-7 gap-1"></div>
+    </div>
+
     <!-- Today's workout -->
     <div class="card mb-6">
       <div class="flex items-center justify-between mb-4">
@@ -920,6 +926,21 @@
         </div>
       </div>
 
+      <!-- Free user teaser (hidden for premium) -->
+      <div id="researchLockedTeaser" class="card" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(236,72,153,0.06));border:1px dashed rgba(139,92,246,0.3)">
+        <div class="flex items-center gap-4">
+          <div class="text-3xl">🔒</div>
+          <div class="flex-1">
+            <div class="font-bold mb-1">11 More Premium Articles</div>
+            <div class="text-sm text-gray-400 mb-3">Sleep science, creatine dosing, Zone 2 cardio, HRV, gut-brain axis, magnesium, blue light, hormonal health, motivation psychology + more — all evidence-based, deeply researched.</div>
+            <button onclick="openUpgrade()" class="btn-primary text-sm py-2 px-5">✨ Unlock All — Premium $4.99/mo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Premium articles (hidden for free users) -->
+      <div id="researchPremiumArticles" style="display:none" class="space-y-4">
+
       <div class="card research-premium-card" style="cursor:pointer;position:relative" onclick="toggleArticleOrUpgrade(this, 2)">
         <div class="flex items-start gap-4">
           <div class="text-3xl flex-shrink-0">😴</div>
@@ -931,7 +952,10 @@
             <div class="font-bold mb-1">Sleep, Cortisol, and Body Composition</div>
             <div class="text-sm text-gray-400">How sleep deprivation directly sabotages fat loss, muscle retention, and willpower — and what the research says you should do about it.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(99,102,241,0.06)">
-              <strong class="text-indigo-300">Key Insight:</strong> A 2010 study in the Annals of Internal Medicine found that sleep-deprived subjects lost 55% less fat and 60% more lean mass than those who slept 8.5 hours, despite identical calorie deficits. Cortisol (stress hormone) rises with sleep deprivation, directly causing muscle catabolism and fat retention, especially around the abdomen.
+              <p><strong class="text-indigo-300">Key Insight:</strong> A 2010 study in the Annals of Internal Medicine found that sleep-deprived subjects lost 55% less fat and 60% more lean mass than those who slept 8.5 hours, despite identical calorie deficits. Cortisol (stress hormone) rises with sleep deprivation, directly causing muscle catabolism and fat retention, especially around the abdomen.</p>
+              <p class="mt-2"><strong class="text-indigo-300">The Evidence:</strong> Spiegel et al. (1999) showed just 2 nights of 4-hour sleep reduced leptin (satiety hormone) by 18% and raised ghrelin (hunger hormone) by 28% — causing subjects to crave 33% more calories, especially high-carb, high-fat foods. The effect compounds: chronic short sleep rewires hunger signalling permanently.</p>
+              <p class="mt-2"><strong class="text-indigo-300">Practical Protocol:</strong> Target 7–9 hours. The highest-leverage habits: (1) consistent wake time — even weekends, (2) no caffeine after 2pm, (3) room temperature 18–20°C, (4) complete darkness. These four changes alone improve sleep quality by 30–40% in most people within 1–2 weeks.</p>
+              <p class="mt-2"><strong class="text-indigo-300">GlowAI Application:</strong> Your sleep log tracks hours and quality. If your 7-day average falls below 7h, GlowAI adjusts your calorie target upward by ~150 kcal to compensate for the increased hunger signalling — and flags it in your AI Insight panel.</p>
             </div>
           </div>
         </div>
@@ -948,7 +972,10 @@
             <div class="font-bold mb-1">How Much Protein Do You Actually Need?</div>
             <div class="text-sm text-gray-400">The latest research cuts through the noise on protein intake, timing, and what actually drives muscle growth and fat loss.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(16,185,129,0.06)">
-              <strong class="text-green-300">Key Insight:</strong> Current meta-analyses suggest 1.6–2.2g protein per kg of bodyweight for muscle building (Morton et al., 2018). Protein timing matters less than total daily intake — the "anabolic window" myth has largely been debunked. What matters most: hitting your daily target, spread across 3–5 meals.
+              <p><strong class="text-green-300">Key Insight:</strong> Current meta-analyses suggest 1.6–2.2g protein per kg of bodyweight for muscle building (Morton et al., 2018). Protein timing matters less than total daily intake — the "anabolic window" myth has largely been debunked. What matters most: hitting your daily target, spread across 3–5 meals.</p>
+              <p class="mt-2"><strong class="text-green-300">The Evidence:</strong> A 2017 systematic review in the British Journal of Sports Medicine (49 studies, 1,800 participants) confirmed 1.62g/kg is the minimum effective dose for maximising muscle protein synthesis, with diminishing returns beyond 2.2g/kg. For fat loss, higher intakes (2.3–3.1g/kg) are actually beneficial — protein's thermic effect (25–30% of calories burned in digestion) and satiety value make it the most metabolically active macronutrient.</p>
+              <p class="mt-2"><strong class="text-green-300">Common Mistakes:</strong> (1) Relying on "complete" vs "incomplete" protein labels — irrelevant for most mixed diets, (2) thinking more than 40g per meal is wasted — false, absorption rate adjusts, (3) fearing protein for kidneys — debunked in healthy individuals, even at very high intakes.</p>
+              <p class="mt-2"><strong class="text-green-300">GlowAI Application:</strong> Your protein target is personalised to your bodyweight, goal, and activity level. GlowAI's meal plan ensures your four daily meals hit the target with high-satiety whole-food sources, not just protein shakes.</p>
             </div>
           </div>
         </div>
@@ -966,7 +993,10 @@
             <div class="font-bold mb-1">Cold Exposure, Dopamine &amp; Resilience</div>
             <div class="text-sm text-gray-400">The neuroscience behind cold showers and why they genuinely work for mood, focus and mental toughness.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(139,92,246,0.06)">
-              <strong class="text-purple-300">Key Insight:</strong> Cold exposure triggers a 250–300% increase in dopamine (Leppäluoto et al., 2008) — the same neurotransmitter deficit targeted by antidepressants. Unlike artificial dopamine spikes from social media or sugar, cold exposure builds a sustained baseline elevation that improves mood for hours. Start with 30 seconds at the end of your warm shower.
+              <p><strong class="text-purple-300">Key Insight:</strong> Cold exposure triggers a 250–300% increase in dopamine (Leppäluoto et al., 2008) — the same neurotransmitter deficit targeted by antidepressants. Unlike artificial dopamine spikes from social media or sugar, cold exposure builds a sustained baseline elevation that improves mood for hours. Start with 30 seconds at the end of your warm shower.</p>
+              <p class="mt-2"><strong class="text-purple-300">The Neuroscience:</strong> Dr Andrew Huberman's research shows cold water immersion at 10–15°C drives massive norepinephrine release (up to 300%) alongside the dopamine surge. Norepinephrine is the brain's alertness and focus chemical — explaining why a cold shower feels mentally clarifying, not just physical. The effect lasts 3–4 hours post-exposure.</p>
+              <p class="mt-2"><strong class="text-purple-300">The Resilience Mechanism:</strong> Cold exposure also builds what researchers call "stress inoculation" — deliberately tolerating discomfort trains your prefrontal cortex to override your limbic panic response. Over 4–6 weeks, this generalises to other stressors: you become better at pausing before reacting. This is why cold exposure is disproportionately used by high-performers.</p>
+              <p class="mt-2"><strong class="text-purple-300">The Protocol:</strong> Start with 30 seconds cold at the end of a warm shower, daily. Build to 2–3 minutes. Full cold water immersion (under 15°C) 2–3 times per week is the most evidence-backed approach for the mood and resilience benefits. Do it after training — not before (cold blunts hypertrophic signalling if done immediately post-workout).</p>
             </div>
           </div>
         </div>
@@ -984,7 +1014,10 @@
             <div class="font-bold mb-1">The Gut-Brain Axis: How Your Microbiome Affects Mood</div>
             <div class="text-sm text-gray-400">New research reveals your gut produces 90% of your body's serotonin. Here's what that means for your mental health.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(236,72,153,0.06)">
-              <strong class="text-pink-300">Key Insight:</strong> The gut-brain axis is a bidirectional communication network. Studies show diverse gut microbiomes correlate strongly with lower rates of anxiety and depression. Fermented foods (yoghurt, kefir, kimchi), prebiotic fibre, and reducing ultra-processed foods are the three highest-leverage dietary changes for improving microbiome diversity and mood.
+              <p><strong class="text-pink-300">Key Insight:</strong> The gut-brain axis is a bidirectional communication network. Studies show diverse gut microbiomes correlate strongly with lower rates of anxiety and depression. Fermented foods (yoghurt, kefir, kimchi), prebiotic fibre, and reducing ultra-processed foods are the three highest-leverage dietary changes for improving microbiome diversity and mood.</p>
+              <p class="mt-2"><strong class="text-pink-300">The Science:</strong> Your gut produces approximately 90% of your body's serotonin and 50% of its dopamine — not your brain. The vagus nerve is the main "highway" between gut and brain, transmitting signals in both directions. A 2019 study in Nature Microbiology found Lactobacillus rhamnosus and Bifidobacterium longum species were significantly depleted in people with depression and anxiety, and their restoration through probiotics reduced anxiety scores by 25–30%.</p>
+              <p class="mt-2"><strong class="text-pink-300">Common Microbiome Destroyers:</strong> (1) Antibiotics — wipe out 30–50% of gut bacteria, (2) Emulsifiers in ultra-processed foods — directly damage the gut lining, (3) Artificial sweeteners — aspartame and sucralose demonstrably alter microbiome composition within 2 weeks, (4) Chronic stress — cortisol selectively kills beneficial Lactobacillus species.</p>
+              <p class="mt-2"><strong class="text-pink-300">Rebuild Protocol:</strong> 30 different plant foods per week is the most evidence-backed dietary target for microbiome diversity (ZOE study, 11,000 participants). Add 1–2 servings of fermented food daily (yoghurt, kefir, sauerkraut, miso). Sleep, stress management, and exercise all independently improve gut health — making your GlowAI habits stack directly supportive.</p>
             </div>
           </div>
         </div>
@@ -1001,7 +1034,10 @@
             <div class="font-bold mb-1">Creatine: The Most Evidence-Based Supplement in Sports Science</div>
             <div class="text-sm text-gray-400">500+ studies confirm it works. Here's exactly how to take it, what it does, and who benefits most.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(59,130,246,0.06)">
-              <strong class="text-blue-300">Key Insight:</strong> Creatine monohydrate increases phosphocreatine stores in muscle, directly improving high-intensity performance by 5–15%. The evidence base is unmatched — over 500 peer-reviewed studies with consistent results. 3–5g per day is sufficient (no loading phase needed). It's also being studied for cognitive benefits, particularly in sleep-deprived states.
+              <p><strong class="text-blue-300">Key Insight:</strong> Creatine monohydrate increases phosphocreatine stores in muscle, directly improving high-intensity performance by 5–15%. The evidence base is unmatched — over 500 peer-reviewed studies with consistent results. 3–5g per day is sufficient (no loading phase needed). It's also being studied for cognitive benefits, particularly in sleep-deprived states.</p>
+              <p class="mt-2"><strong class="text-blue-300">How It Works:</strong> Creatine regenerates ATP (the cell's energy currency) during short, intense efforts — sprints, heavy lifts, explosive movements. More phosphocreatine = more energy available in the first 10–30 seconds of maximal effort. Over time, this lets you do more reps at heavier weights, which drives greater hypertrophy and strength adaptations.</p>
+              <p class="mt-2"><strong class="text-blue-300">Dosing &amp; Myths Debunked:</strong> 5g daily is optimal — loading phases (20g/day for 5–7 days) reach saturation faster but produce the same long-term result. Creatine does NOT cause kidney damage in healthy individuals (debunked by 12+ studies). The initial "weight gain" (1–2kg in week 1) is water pulled into muscle cells — this is the mechanism of action, not fat or bloat. Take it at any time — timing barely matters.</p>
+              <p class="mt-2"><strong class="text-blue-300">The Cognitive Angle:</strong> A 2023 meta-analysis found creatine supplementation improved working memory and processing speed, especially when sleep-deprived or under stress. The brain is energy-hungry and benefits from the same ATP-regeneration mechanism as muscle. This makes creatine one of the few supplements that genuinely works for both performance AND cognition.</p>
             </div>
           </div>
         </div>
@@ -1018,7 +1054,10 @@
             <div class="font-bold mb-1">Understanding HRV: The Real Measure of Recovery</div>
             <div class="text-sm text-gray-400">Heart rate variability is the most accurate real-time signal of your nervous system's readiness. Here's how to read it.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(59,130,246,0.06)">
-              <strong class="text-blue-300">Key Insight:</strong> HRV measures the variation in time between heartbeats — high HRV signals your parasympathetic (rest &amp; digest) system is dominant, meaning you're recovered. Low HRV = high stress/fatigue. Elite athletes and coaches now use HRV as the primary metric for training load decisions. Sleep, alcohol, illness, and overtraining all suppress HRV within hours.
+              <p><strong class="text-blue-300">Key Insight:</strong> HRV measures the variation in time between heartbeats — high HRV signals your parasympathetic (rest &amp; digest) system is dominant, meaning you're recovered. Low HRV = high stress/fatigue. Elite athletes and coaches now use HRV as the primary metric for training load decisions. Sleep, alcohol, illness, and overtraining all suppress HRV within hours.</p>
+              <p class="mt-2"><strong class="text-blue-300">Why It Matters More Than Heart Rate:</strong> Resting heart rate is a blunt instrument — it takes days to reflect overtraining. HRV responds within hours to stress, sleep quality, alcohol, inflammation, and even mental anxiety. A single drink of alcohol can suppress HRV for 48 hours. A bad night's sleep (under 6h) typically drops HRV by 15–25% the following morning.</p>
+              <p class="mt-2"><strong class="text-blue-300">How to Improve HRV:</strong> The highest-leverage interventions are: (1) Consistent sleep schedule — the single biggest predictor of HRV long-term, (2) Zone 2 aerobic training — directly builds cardiac adaptability, (3) Nasal breathing and slow exhale techniques — activates the parasympathetic system rapidly, (4) Cold exposure — temporarily boosts HRV post-session, (5) Alcohol elimination — the fastest way to see HRV improvement within 2 weeks.</p>
+              <p class="mt-2"><strong class="text-blue-300">Training Application:</strong> On low-HRV days, switch to lower-intensity work — a walk, mobility session, or light technique work. Forcing a heavy session when your HRV is suppressed leads to poor performance and higher injury risk. GlowAI's gym plan already builds in rest days — these exist precisely for HRV recovery.</p>
             </div>
           </div>
         </div>
@@ -1035,7 +1074,10 @@
             <div class="font-bold mb-1">Seed Cycling, Cortisol &amp; Hormonal Health</div>
             <div class="text-sm text-gray-400">How specific foods in specific phases of your cycle can support hormone balance, energy and mood stability.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(16,185,129,0.06)">
-              <strong class="text-green-300">Key Insight:</strong> Seeds like flaxseed and pumpkin seed are rich in lignans and zinc — compounds that support oestrogen metabolism and progesterone production. While direct RCT evidence on seed cycling is limited, the underlying nutritional science is solid. Pair this with managing cortisol via sleep and stress reduction for meaningful hormonal improvements.
+              <p><strong class="text-green-300">Key Insight:</strong> Seeds like flaxseed and pumpkin seed are rich in lignans and zinc — compounds that support oestrogen metabolism and progesterone production. While direct RCT evidence on seed cycling is limited, the underlying nutritional science is solid. Pair this with managing cortisol via sleep and stress reduction for meaningful hormonal improvements.</p>
+              <p class="mt-2"><strong class="text-green-300">What the Science Actually Says:</strong> Cortisol is the master disruptor of female hormones. Chronic elevated cortisol suppresses GnRH (gonadotropin-releasing hormone), which reduces LH and FSH — directly lowering oestrogen and progesterone. This is why stress (emotional, physical, or dietary) causes irregular cycles, low libido, and mood swings independent of any specific food intervention.</p>
+              <p class="mt-2"><strong class="text-green-300">The Nutrients That Matter:</strong> Zinc (pumpkin seeds, oysters, beef) supports progesterone synthesis and thyroid function. Magnesium reduces PMS symptoms in RCTs. B6 (salmon, chicken, potatoes) supports progesterone and reduces oestrogen dominance symptoms. Omega-3 fats reduce prostaglandins — the compounds driving menstrual cramps. These nutrients have direct RCT support, unlike seed cycling as a whole protocol.</p>
+              <p class="mt-2"><strong class="text-green-300">Highest Leverage:</strong> (1) Eliminate chronic under-eating — the fastest route to hormonal disruption is persistent calorie deficit below 1,400 kcal, (2) Consistent sleep — cortisol control is the highest-leverage hormonal intervention, (3) Resistance training — improves insulin sensitivity and supports healthy sex hormone balance, (4) Reduce alcohol — even moderate drinking significantly disrupts oestrogen metabolism.</p>
             </div>
           </div>
         </div>
@@ -1052,7 +1094,10 @@
             <div class="font-bold mb-1">Blue Light, Melatonin &amp; Your Circadian Rhythm</div>
             <div class="text-sm text-gray-400">Why your phone is destroying your sleep quality — and the exact protocol to fix it without giving up screens entirely.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(99,102,241,0.06)">
-              <strong class="text-indigo-300">Key Insight:</strong> Blue light (wavelength 480nm) directly suppresses melatonin production via intrinsically photosensitive retinal ganglion cells. A 2017 Harvard study found evening blue light exposure delayed melatonin onset by 1.5 hours and shifted circadian rhythms by 3 hours. Solution: blue light glasses after sunset, night mode on screens, and morning bright light exposure to anchor your circadian clock.
+              <p><strong class="text-indigo-300">Key Insight:</strong> Blue light (wavelength 480nm) directly suppresses melatonin production via intrinsically photosensitive retinal ganglion cells. A 2017 Harvard study found evening blue light exposure delayed melatonin onset by 1.5 hours and shifted circadian rhythms by 3 hours. Solution: blue light glasses after sunset, night mode on screens, and morning bright light exposure to anchor your circadian clock.</p>
+              <p class="mt-2"><strong class="text-indigo-300">The Bigger Picture — Circadian Biology:</strong> Your circadian rhythm controls not just sleep, but cortisol release, insulin sensitivity, appetite hormones, immune function, and athletic performance — all peak and trough at different times of day. Disrupting it through evening light exposure doesn't just affect sleep; it desynchronises every system simultaneously. Shift workers (who experience chronic circadian disruption) have 25–30% higher rates of obesity, diabetes, and cardiovascular disease.</p>
+              <p class="mt-2"><strong class="text-indigo-300">Morning Light: The Underrated Fix:</strong> Getting 5–15 minutes of sunlight within 30–60 minutes of waking is the single most powerful circadian-anchoring intervention — more effective than any supplement or drug. It sets your cortisol peak early, which cascades into earlier melatonin rise at night. No sun? A 10,000-lux light therapy lamp achieves the same effect in 5–10 minutes.</p>
+              <p class="mt-2"><strong class="text-indigo-300">Evening Protocol:</strong> Dim overhead lights after 8pm (use lamps instead). Enable true warm-tone lighting — orange/red wavelengths don't suppress melatonin. Blue light glasses help but are not as effective as simply reducing overall screen brightness and switching to warm tones. Blackout curtains + low-blue bulbs in your bedroom are a one-time investment with permanent sleep-quality returns.</p>
             </div>
           </div>
         </div>
@@ -1069,7 +1114,10 @@
             <div class="font-bold mb-1">Zone 2 Cardio: Why Slow Training Makes You Faster</div>
             <div class="text-sm text-gray-400">The counterintuitive training method elite endurance athletes swear by — and why it works for fat loss too.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(59,130,246,0.06)">
-              <strong class="text-blue-300">Key Insight:</strong> Zone 2 (60–70% max heart rate) training builds mitochondrial density — the powerhouses of your cells. More mitochondria = more fat oxidation at rest and during exercise. Elite athletes spend 80% of training in Zone 2, with only 20% at high intensity. For fat loss, 3×45 min Zone 2 per week (brisk walk, light jog, cycling) is more effective than constant high-intensity training.
+              <p><strong class="text-blue-300">Key Insight:</strong> Zone 2 (60–70% max heart rate) training builds mitochondrial density — the powerhouses of your cells. More mitochondria = more fat oxidation at rest and during exercise. Elite athletes spend 80% of training in Zone 2, with only 20% at high intensity. For fat loss, 3×45 min Zone 2 per week (brisk walk, light jog, cycling) is more effective than constant high-intensity training.</p>
+              <p class="mt-2"><strong class="text-blue-300">The Physiology:</strong> Zone 2 is the intensity where fat is the primary fuel — approximately 60% max HR. At this intensity, your slow-twitch muscle fibres are maximally recruited, and they respond by building more mitochondria (mitochondrial biogenesis). More mitochondria means higher VO2 max, greater fat-burning capacity at rest, and faster recovery from high-intensity work. This is why endurance athletes can push hard for hours — their base aerobic engine is enormous.</p>
+              <p class="mt-2"><strong class="text-blue-300">Zone 2 vs HIIT for Fat Loss:</strong> Both work, but they work differently. HIIT burns more calories per session but drives greater appetite stimulation. Zone 2 burns slightly fewer calories per session but does NOT significantly increase hunger — making it easier to sustain a calorie deficit. The 80/20 split (80% Zone 2, 20% high intensity) is optimal for both performance and body composition.</p>
+              <p class="mt-2"><strong class="text-blue-300">How to Find Zone 2:</strong> You should be able to hold a full conversation but feel like you're working. Your breathing should be elevated but not laboured. If you can't speak in sentences, you've gone too hard. Heart rate: approximately 180 minus your age (rough guide). Options: brisk walking on incline, easy cycling, light rowing, swimming.</p>
             </div>
           </div>
         </div>
@@ -1086,7 +1134,10 @@
             <div class="font-bold mb-1">The Psychology of Motivation: Dopamine, Habits &amp; Reward Systems</div>
             <div class="text-sm text-gray-400">Why willpower is the wrong strategy — and how to hack your brain's reward system to make healthy habits effortless.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(139,92,246,0.06)">
-              <strong class="text-purple-300">Key Insight:</strong> Dopamine is released not when you get a reward, but when you anticipate it. This is why streaks and progress tracking work — they create an anticipation-reward loop. Habit stacking (attaching a new habit to an existing one), implementation intentions ("I will do X at Y time in Z location"), and visual progress cues are the three evidence-backed strategies for sustainable behaviour change.
+              <p><strong class="text-purple-300">Key Insight:</strong> Dopamine is released not when you get a reward, but when you anticipate it. This is why streaks and progress tracking work — they create an anticipation-reward loop. Habit stacking (attaching a new habit to an existing one), implementation intentions ("I will do X at Y time in Z location"), and visual progress cues are the three evidence-backed strategies for sustainable behaviour change.</p>
+              <p class="mt-2"><strong class="text-purple-300">The Dopamine Trap:</strong> Social media, junk food, and gambling all exploit the same anticipation mechanism — but with a crucial difference: they produce a spike and crash (tolerance builds rapidly), while earned dopamine from goal achievement builds a stable baseline. Every time you choose the hard thing (workout, cold shower, declining junk food), you're building dopamine receptor sensitivity — making future choices easier.</p>
+              <p class="mt-2"><strong class="text-purple-300">Why Willpower Fails:</strong> Willpower is a finite resource that depletes through the day (ego depletion, Baumeister's research). It's the wrong tool for habit formation. The goal is to eliminate the need for willpower by restructuring your environment: remove friction from good habits, add friction to bad ones. Put your gym clothes out the night before. Keep junk food out of the house. Design your environment before you need willpower.</p>
+              <p class="mt-2"><strong class="text-purple-300">The GlowAI Approach:</strong> Your habit tracker, streak calendar, and XP system are all designed around the neuroscience of motivation — not generic advice. The streak creates loss aversion (you don't want to break it). The XP gives immediate reward feedback. The calendar provides a visual representation of identity ("I'm someone who does this daily"). These three together create the strongest possible habit reinforcement loop.</p>
             </div>
           </div>
         </div>
@@ -1103,17 +1154,19 @@
             <div class="font-bold mb-1">Magnesium: The Missing Mineral for Sleep, Stress &amp; Performance</div>
             <div class="text-sm text-gray-400">Over 75% of people are deficient. Here's what magnesium actually does and how to fix your intake.</div>
             <div class="article-summary hidden mt-3 text-sm text-gray-300 leading-relaxed p-3 rounded-xl" style="background:rgba(16,185,129,0.06)">
-              <strong class="text-green-300">Key Insight:</strong> Magnesium is involved in over 300 enzymatic reactions — including protein synthesis, nerve function, and melatonin regulation. Magnesium glycinate (200–400mg before bed) is the most bioavailable form and has the strongest evidence for improving sleep quality and reducing anxiety. Food sources: dark chocolate, nuts, seeds, legumes, leafy greens.
+              <p><strong class="text-green-300">Key Insight:</strong> Magnesium is involved in over 300 enzymatic reactions — including protein synthesis, nerve function, and melatonin regulation. Magnesium glycinate (200–400mg before bed) is the most bioavailable form and has the strongest evidence for improving sleep quality and reducing anxiety. Food sources: dark chocolate, nuts, seeds, legumes, leafy greens.</p>
+              <p class="mt-2"><strong class="text-green-300">Why Everyone is Deficient:</strong> Modern farming has depleted soil magnesium by up to 40% over the past 50 years, meaning food contains less than it used to. Alcohol, caffeine, sugar, and chronic stress all increase urinary magnesium excretion. Exercise (especially intense training) dramatically increases demand. The combination of depleted food sources and increased losses explains why 70–80% of Australians fall below the recommended intake.</p>
+              <p class="mt-2"><strong class="text-green-300">Forms That Actually Work:</strong> Magnesium oxide (the cheap form in most supplements) has only 4% absorption. Magnesium glycinate — 400mg before bed — is the best-evidenced form for sleep and anxiety. Magnesium malate is better for energy and muscle function. Magnesium L-threonate is emerging as the best form for cognitive benefits (crosses the blood-brain barrier). Avoid oxide, citrate is acceptable but glycinate is superior.</p>
+              <p class="mt-2"><strong class="text-green-300">Performance Impact:</strong> A 2014 RCT in Magnesium Research found magnesium supplementation (300mg daily) improved sleep efficiency by 13% and sleep onset time by 17 minutes in deficient adults. A 2017 meta-analysis confirmed significant reductions in anxiety scores. For athletes: magnesium reduces muscle cramps, improves insulin sensitivity, and is directly involved in ATP production — making it one of the highest-ROI supplements for training performance.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="text-center py-2" id="researchPremiumBtn">
-        <button onclick="openUpgrade()" class="text-sm text-purple-400 hover:text-purple-300 font-semibold">🔒 Unlock all articles — Premium</button>
-      </div>
-      <div id="researchPremiumBadge" style="display:none" class="text-center py-3 p-4 rounded-xl" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2)">
-        <div class="text-sm font-bold text-purple-300">✨ All articles unlocked — click any article to read</div>
+      </div><!-- end researchPremiumArticles -->
+
+      <div id="researchPremiumBadge" style="display:none;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2)" class="text-center py-3 p-4 rounded-xl">
+        <div class="text-sm font-bold text-purple-300">✨ All articles unlocked — click any article to expand</div>
       </div>
     </div>
   </div>
@@ -1177,6 +1230,10 @@
           </div>
         </div>
         <div class="text-xs text-gray-500">Values save automatically when you change them.</div>
+        <div id="bodyMetricsChartWrap" style="display:none" class="mt-2">
+          <div class="text-xs font-semibold text-gray-300 mb-2">Weight &amp; Height Over Time</div>
+          <canvas id="bodyMetricsChart" height="90"></canvas>
+        </div>
       </div>
       <div id="analyticsPremiumLock" class="absolute inset-0 flex items-center justify-center" style="background:rgba(5,5,8,0.7);border-radius:20px">
         <button onclick="openUpgrade()" class="flex items-center gap-2 bg-black border border-purple-500 rounded-xl px-4 py-2 text-sm font-semibold text-purple-300">
@@ -1426,7 +1483,7 @@ function showPage(name) {
   });
   window.scrollTo(0, 0);
   if (name === 'analytics') initAnalyticsCharts();
-  if (name === 'gym') initGymChart();
+  if (name === 'gym') { try { buildGymWeekPlan(); } catch(e) {} initGymChart(); }
   if (name === 'nutrition') { renderFoodLog(); initNutritionChart(); }
   if (name === 'sleep') { loadSleepStats(); initSleepChart(); generateSleepAnalysis(); }
   if (name === 'water') updateWaterWeekChart();
@@ -1554,6 +1611,7 @@ function initDashboard() {
       setText('nutFatGoal', '/ ' + cfg.fat + 'g goal');
     } catch(e) { console.warn('Personalisation error:', e); }
 
+    try { setText('motivationText', getDailyMotivation()); } catch(e) {}
     applyPremiumUI(user.isPremium);
     updateXPDisplay();
     loadHabitStates();
@@ -1563,7 +1621,6 @@ function initDashboard() {
     updateStats();
     updateWeekAtAGlance();
     updateDaysTracking();
-    setText('motivationText', getDailyMotivation());
     loadSettingsToggles();
     buildCalendar();
   } catch(e) {
@@ -1938,6 +1995,8 @@ function applyPremiumUI(isPremium) {
     show('gymPremiumContent');
     show('nutPremiumContent');
     show('analyticsBodyMetrics');
+    show('bodyMetricsChartWrap');
+    setTimeout(initBodyMetricsChart, 100);
     // Analytics locked content — restore full opacity
     const alc = document.getElementById('analyticsLockedContent');
     if (alc) alc.style.opacity = '1';
@@ -1960,7 +2019,8 @@ function applyPremiumUI(isPremium) {
     hide('glowChartLock');
     hide('habitChartLock');
     // Research
-    hide('researchPremiumBtn');
+    hide('researchLockedTeaser');
+    show('researchPremiumArticles');
     show('researchPremiumBadge');
     // Sidebar
     hide('sidebarUpgradeCTA');
@@ -1979,38 +2039,162 @@ function applyPremiumUI(isPremium) {
   }
 }
 
+// ============================================================
+// MEAL DATABASE — 80+ meals, rotates daily per user goal
+// ============================================================
+const MEAL_DB = {
+  breakfast: [
+    {n:'Scrambled Eggs & Avo Toast',d:'3 eggs scrambled + avocado on 2 sourdough slices + chilli flakes',cal:480,p:28,t:'any'},
+    {n:'Protein Oat Bowl',d:'Oats (60g) + 1 scoop whey + banana + cinnamon + almond milk',cal:430,p:34,t:'any'},
+    {n:'Greek Yoghurt Parfait',d:'Greek yoghurt (200g) + mixed berries (80g) + granola (30g) + honey',cal:390,p:22,t:'cut'},
+    {n:'Power Oat Bowl',d:'Oats (100g) + whey (1 scoop) + banana + peanut butter (1 tbsp) + honey',cal:620,p:42,t:'bulk'},
+    {n:'Smoked Salmon Bagel',d:'Wholegrain bagel + cream cheese (30g) + smoked salmon (80g) + capers + cucumber',cal:450,p:28,t:'any'},
+    {n:'Spinach Omelette',d:'4-egg omelette + baby spinach + feta (30g) + cherry tomatoes + olive oil',cal:410,p:32,t:'cut'},
+    {n:'Banana Protein Pancakes',d:'2 bananas blended + 2 eggs + 1 scoop protein + honey drizzle',cal:480,p:36,t:'any'},
+    {n:'High-Protein French Toast',d:'3 slices sourdough dipped in egg + protein milk batter + maple syrup',cal:550,p:38,t:'bulk'},
+    {n:'Cottage Cheese & Berries',d:'Cottage cheese (200g) + mixed berries + 1 tbsp honey + walnuts (20g)',cal:320,p:28,t:'cut'},
+    {n:'Full Protein Breakfast',d:'2 eggs + turkey bacon (3 strips) + grilled tomato + mushrooms + 1 slice toast',cal:420,p:34,t:'any'},
+    {n:'Muesli Bowl',d:'Natural muesli (70g) + whole milk (200ml) + sliced apple + cinnamon',cal:480,p:18,t:'any'},
+    {n:'Protein Shake & Banana',d:'2 scoops whey (chocolate) + 300ml whole milk + 1 banana',cal:520,p:52,t:'bulk'},
+    {n:'Overnight Oats',d:'Oats (60g) soaked in Greek yoghurt (150g) + chia seeds + banana + berries',cal:440,p:24,t:'any'},
+    {n:'Egg & Veg Frittata',d:'4 eggs + zucchini + red onion + capsicum + feta — baked 15 min',cal:360,p:28,t:'cut'},
+    {n:'Ricotta Toast',d:'2 sourdough slices + ricotta (80g) + honey + sliced strawberries + mint',cal:420,p:20,t:'any'},
+    {n:'Peanut Butter Power Oats',d:'Oats (80g) + peanut butter (2 tbsp) + honey + banana + whey (0.5 scoop)',cal:580,p:34,t:'bulk'},
+    {n:'Smoked Salmon Scramble',d:'3 eggs + smoked salmon (60g) + cream cheese (20g) + chives on sourdough',cal:420,p:36,t:'any'},
+    {n:'Chia Seed Pudding',d:'Chia seeds (40g) soaked in coconut milk (250ml) + mango + toasted coconut',cal:350,p:10,t:'cut'},
+    {n:'High-Protein Acai Bowl',d:'Acai blend + banana + berries + granola (30g) + whey (1 scoop) blended in',cal:490,p:28,t:'any'},
+    {n:'Turkey Egg Muffins',d:'4 mini egg muffins: eggs + diced turkey breast + spinach + cheese — meal-prepped',cal:280,p:30,t:'cut'},
+  ],
+  lunch: [
+    {n:'Chicken & Rice Bowl',d:'Chicken breast (200g, grilled) + brown rice (150g) + mixed veg + soy sauce',cal:580,p:52,t:'any'},
+    {n:'Tuna Salad Wrap',d:'Tuna (130g tin) + light mayo + celery + whole grain wrap + lettuce + tomato',cal:440,p:40,t:'cut'},
+    {n:'Beef & Quinoa Bowl',d:'Lean beef mince (150g) + quinoa (120g) + roasted capsicum + avocado + lime',cal:620,p:44,t:'bulk'},
+    {n:'Greek Salad & Chicken',d:'Grilled chicken (180g) + cucumber + tomato + olives + feta (40g) + olive oil',cal:420,p:42,t:'cut'},
+    {n:'Salmon Teriyaki Bowl',d:'Salmon fillet (160g) + rice (150g) + edamame + cucumber + teriyaki sauce',cal:590,p:42,t:'any'},
+    {n:'Turkey Veg Stir-fry',d:'Turkey breast (180g) + broccoli + capsicum + snap peas + oyster sauce + rice (120g)',cal:510,p:46,t:'any'},
+    {n:'Egg & Avocado Power Bowl',d:'3 hard-boiled eggs + avocado (half) + cherry tomatoes + wholegrain crackers',cal:460,p:24,t:'cut'},
+    {n:'Chicken Caesar Wrap',d:'Chicken breast (160g) + romaine + parmesan + Caesar dressing in whole wheat wrap',cal:520,p:44,t:'any'},
+    {n:'Pulled Chicken Sweet Potato',d:'Pulled chicken breast (200g) + baked sweet potato (250g) + coleslaw',cal:560,p:50,t:'bulk'},
+    {n:'Cottage Cheese Plate',d:'Cottage cheese (200g) + wholegrain crackers (8) + celery + cucumber + tuna (90g)',cal:380,p:38,t:'cut'},
+    {n:'Red Lentil Soup',d:'Red lentil soup (400g) + 1 slice crusty bread + Greek yoghurt dollop',cal:480,p:26,t:'any'},
+    {n:'Steak & Salad',d:'Sirloin steak (180g, grilled) + garden salad + olive oil + lemon + grain bread',cal:560,p:50,t:'any'},
+    {n:'Tofu Veg Stir-fry',d:'Firm tofu (200g) + bok choy + broccoli + shiitake + sesame oil + soy over noodles',cal:480,p:28,t:'cut'},
+    {n:'Prawn & Mango Salad',d:'Cooked prawns (150g) + mango (100g) + avocado + mixed leaves + lime dressing',cal:360,p:30,t:'cut'},
+    {n:'Chicken Burrito Bowl',d:'Chicken breast (180g) + black beans (80g) + rice (120g) + salsa + coriander',cal:620,p:52,t:'bulk'},
+    {n:'Salmon Rice Paper Rolls',d:'4 rice paper rolls: smoked salmon + avocado + cucumber + mint + dipping sauce',cal:400,p:26,t:'cut'},
+    {n:'Lean Beef Pita',d:'Lean beef strips (150g) + wholemeal pita + tabbouli + hummus (30g) + lettuce',cal:540,p:40,t:'any'},
+    {n:'Tuna Pasta Salad',d:'Wholemeal pasta (120g dry) + tuna (130g tin) + sun-dried tomatoes + olive oil + basil',cal:540,p:40,t:'any'},
+    {n:'Chicken & Bean Soup',d:'Chicken breast (150g) + white beans (100g) + kale + carrots + chicken broth',cal:420,p:40,t:'cut'},
+    {n:'Prawn Fried Rice',d:'Prawns (150g) + brown rice (150g) + egg (2) + veg + light soy + ginger',cal:530,p:40,t:'any'},
+  ],
+  snack: [
+    {n:'Greek Yoghurt & Honey',d:'Full-fat Greek yoghurt (200g) + 1 tsp honey + walnuts (15g)',cal:260,p:18,t:'any'},
+    {n:'Protein Shake',d:'1 scoop whey protein + 300ml milk (or water)',cal:220,p:28,t:'any'},
+    {n:'Apple & Peanut Butter',d:'1 large apple, sliced + 2 tbsp natural peanut butter',cal:280,p:8,t:'any'},
+    {n:'Hard-Boiled Eggs',d:'3 hard-boiled eggs, lightly salted',cal:210,p:19,t:'any'},
+    {n:'Rice Cakes & Cottage Cheese',d:'4 plain rice cakes + cottage cheese (150g) + chives',cal:220,p:20,t:'cut'},
+    {n:'Mixed Nuts',d:'Almonds (20g) + cashews (15g) + macadamias (10g)',cal:280,p:8,t:'any'},
+    {n:'Banana & Protein Bar',d:'1 medium banana + 1 protein bar (~20g protein)',cal:320,p:22,t:'bulk'},
+    {n:'Tuna on Rice Cakes',d:'Tuna (90g tin) + 4 rice cakes + squeeze of lemon',cal:230,p:26,t:'cut'},
+    {n:'Dark Chocolate & Almonds',d:'2 squares 70%+ dark chocolate + 20 almonds',cal:240,p:7,t:'any'},
+    {n:'Edamame Bowl',d:'Edamame (200g steamed, lightly salted)',cal:200,p:18,t:'cut'},
+    {n:'Protein Smoothie',d:'Frozen banana + berries (80g) + spinach + 1 scoop protein + almond milk',cal:290,p:26,t:'any'},
+    {n:'Cheese & Crackers',d:'Tasty cheese (40g) + 6 wholegrain crackers + sliced tomato',cal:300,p:14,t:'any'},
+    {n:'Cucumber & Hummus',d:'1 whole cucumber (sliced) + hummus (60g) + cherry tomatoes',cal:160,p:6,t:'cut'},
+    {n:'Chicken Rice Cake Stack',d:'Cooked chicken (80g) + 3 rice cakes + avocado spread',cal:280,p:22,t:'any'},
+    {n:'Mango & Greek Yoghurt',d:'Greek yoghurt (150g) + diced mango (100g) + chia seeds (1 tbsp)',cal:230,p:14,t:'cut'},
+  ],
+  dinner: [
+    {n:'Salmon & Sweet Potato',d:'Salmon fillet (180g) + sweet potato mash (250g) + green beans + butter + lemon',cal:540,p:42,t:'any'},
+    {n:'Chicken Stir-fry',d:'Chicken breast (200g) + broccoli + bok choy + capsicum + cashews + oyster sauce + rice',cal:580,p:50,t:'any'},
+    {n:'Beef Bolognese',d:'Lean mince (150g) + tomato sauce + wholemeal pasta (100g dry) + parmesan (20g)',cal:620,p:44,t:'bulk'},
+    {n:'Baked Chicken Thigh',d:'2 chicken thighs (skinless) + roasted zucchini + capsicum + onion + quinoa (80g)',cal:580,p:48,t:'any'},
+    {n:'Grilled Barramundi',d:'Barramundi (200g) + lemon herb marinade + asparagus + basmati rice (120g cooked)',cal:490,p:46,t:'any'},
+    {n:'Turkey Meatballs',d:'Turkey meatballs (200g) + zucchini noodles + tomato passata + parmesan (15g)',cal:420,p:44,t:'cut'},
+    {n:'Beef & Veg Curry',d:'Lean beef (160g) + potato + chickpeas + spinach + coconut curry sauce + brown rice (100g)',cal:620,p:40,t:'bulk'},
+    {n:'Grilled Tuna Steak',d:'Yellowfin tuna (200g) + sesame crust + edamame + soba noodles (80g) + ginger soy',cal:510,p:50,t:'any'},
+    {n:'Chicken Tacos',d:'Chicken breast strips (180g) + 3 corn tortillas + salsa + avocado + jalapeño + Greek yoghurt',cal:560,p:44,t:'any'},
+    {n:'Lamb Kofta & Salad',d:'Lamb kofta (180g) + tzatziki + pita (1) + Greek salad',cal:560,p:38,t:'any'},
+    {n:'Prawn Stir-fry',d:'Prawns (200g) + bok choy + snap peas + ginger + garlic + hokkien noodles (100g)',cal:440,p:36,t:'cut'},
+    {n:'Chicken & Bean Chilli',d:'Chicken breast (180g) + black beans (100g) + diced tomato + corn + spices + rice',cal:560,p:50,t:'any'},
+    {n:'Baked Cod & Greens',d:'Cod fillet (200g) + lemon butter + broccoli + asparagus + roasted cherry tomatoes',cal:360,p:44,t:'cut'},
+    {n:'Pork Tenderloin',d:'Pork tenderloin (180g) + roasted apple + spinach + cauliflower mash (200g)',cal:480,p:46,t:'any'},
+    {n:'Chicken Pesto Pasta',d:'Chicken breast (160g) + wholemeal pasta (100g dry) + pesto (30g) + tomatoes + parmesan',cal:590,p:46,t:'any'},
+    {n:'Eye Fillet Steak',d:'Eye fillet steak (180g) + broccolini + mushrooms + garlic butter + 1 small potato',cal:540,p:48,t:'any'},
+    {n:'Thai Chicken Bowl',d:'Chicken breast (180g) + coconut milk sauce + capsicum + zucchini + Thai basil + jasmine rice',cal:520,p:44,t:'any'},
+    {n:'Stuffed Capsicum',d:'2 capsicums stuffed with lean mince (150g) + brown rice (80g) + tomato + cheese',cal:500,p:38,t:'any'},
+    {n:'Chicken Roasted Veg Tray',d:'Chicken thigh (200g) + sweet potato + zucchini + red onion + olive oil + herbs — baked',cal:540,p:44,t:'any'},
+    {n:'Lean Beef Burger',d:'Lean beef patty (150g) + wholegrain bun + lettuce + tomato + mustard + sweet potato fries',cal:640,p:42,t:'bulk'},
+  ]
+};
+
 function buildMealPlan() {
   const el = document.getElementById('mealPlanContent');
   if (!el) return;
-  const cfg = getPersonalizedConfig();
+  let cfg;
+  try { cfg = getPersonalizedConfig(); } catch(e) { cfg = { cals:2100, protein:150 }; }
   const cal = cfg.cals || 2100;
   const protein = cfg.protein || 150;
+  const dayNum = GlowData.dayNumber();
   const isLow = cal < 1900;
-  const meals = isLow ? [
-    { label: 'Breakfast', desc: 'Eggs (3) + spinach omelette + 1 slice sourdough', cal: 380, p: 28 },
-    { label: 'Lunch', desc: 'Tuna (150g) + mixed salad + olive oil dressing', cal: 420, p: 38 },
-    { label: 'Snack', desc: 'Protein shake + small apple', cal: 220, p: 25 },
-    { label: 'Dinner', desc: 'Chicken thigh (160g) + roasted vegetables + quinoa (80g)', cal: 480, p: 38 }
-  ] : [
-    { label: 'Breakfast', desc: 'Oats (80g) + protein powder (1 scoop) + banana + honey', cal: 500, p: 36 },
-    { label: 'Lunch', desc: 'Chicken breast (200g) + brown rice (150g) + mixed veg', cal: 570, p: 52 },
-    { label: 'Snack', desc: 'Greek yoghurt (200g) + mixed nuts (30g) + berries', cal: 360, p: 22 },
-    { label: 'Dinner', desc: 'Salmon (180g) + sweet potato (200g) + green beans + butter', cal: 520, p: 42 }
+  const preferType = isLow ? 'cut' : 'bulk';
+
+  const pick = (arr, offset) => {
+    const pref = arr.filter(m => m.t === preferType || m.t === 'any');
+    const pool = pref.length >= 5 ? pref : arr;
+    return pool[(dayNum + offset) % pool.length];
+  };
+
+  const todayMeals = [
+    { emoji:'🌅', label:'Breakfast', ...pick(MEAL_DB.breakfast, 0) },
+    { emoji:'🥗', label:'Lunch',     ...pick(MEAL_DB.lunch,     7) },
+    { emoji:'🍎', label:'Snack',     ...pick(MEAL_DB.snack,     3) },
+    { emoji:'🍽️', label:'Dinner',   ...pick(MEAL_DB.dinner,   14) },
   ];
-  el.innerHTML = meals.map(m =>
-    `<div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)">
-      <strong class="text-white">${m.label}:</strong> ${m.desc}
-      <div class="text-xs text-gray-400 mt-1">${m.cal} kcal · ${m.p}g protein</div>
-    </div>`
-  ).join('') + `<div class="text-xs text-gray-400 mt-2">Target: ~${cal} kcal · ~${protein}g protein. Full AI grocery list & custom meal planning — coming soon.</div>`;
+  const totalCal = todayMeals.reduce((a, m) => a + (m.cal || 0), 0);
+  const totalProt = todayMeals.reduce((a, m) => a + (m.p || 0), 0);
+
+  el.innerHTML = todayMeals.map(m => `
+    <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.12)">
+      <div class="flex justify-between items-center mb-1">
+        <span class="text-sm font-bold text-white">${m.emoji} ${m.label}</span>
+        <span class="text-xs text-purple-300">${m.cal} kcal · ${m.p}g protein</span>
+      </div>
+      <div class="text-sm text-gray-200 font-medium">${m.n}</div>
+      <div class="text-xs text-gray-400 mt-0.5">${m.d}</div>
+    </div>`).join('') + `
+    <div class="flex justify-between items-center mt-1 p-3 rounded-xl" style="background:rgba(139,92,246,0.04);border:1px solid rgba(139,92,246,0.1)">
+      <span class="text-xs text-gray-400">Today's total</span>
+      <span class="text-xs font-bold text-purple-300">${totalCal} kcal · ${totalProt}g protein</span>
+    </div>
+    <div class="text-xs text-gray-500 text-center mt-2">Goal: ~${cal} kcal · ~${protein}g protein · Rotates daily from 75+ meals</div>`;
 }
 
 function saveBodyMetrics() {
   const w = parseFloat(document.getElementById('metricsWeight')?.value);
   const h = parseFloat(document.getElementById('metricsHeight')?.value);
+  if (!w && !h) { GlowUtils.toast('Enter a value to save', 'error'); return; }
+
+  // Persist to history
+  const u = GlowAuth.getUser();
+  if (u) {
+    const k = 'g_' + u.id + '_bm';
+    let hist = [];
+    try { hist = JSON.parse(localStorage.getItem(k) || '[]'); } catch(e) {}
+    const dateKey = GlowData.today();
+    const idx = hist.findIndex(e => e.date === dateKey);
+    const entry = idx >= 0 ? hist[idx] : { date: dateKey };
+    if (w) entry.weight = w;
+    if (h) entry.height = h;
+    if (idx >= 0) hist[idx] = entry; else hist.push(entry);
+    if (hist.length > 90) hist.splice(0, hist.length - 90);
+    try { localStorage.setItem(k, JSON.stringify(hist)); } catch(e) {}
+  }
+
   if (w) { GlowData.profile.set({ bodyWeight: w }); GlowAuth.updateUser({ bodyWeight: w }); setText('metricsWeightDisplay', w + 'kg'); }
   if (h) setText('metricsHeightDisplay', h + 'cm');
   GlowUtils.toast('Body metrics saved ✓');
+  initBodyMetricsChart(true);
 }
 
 function activateTrial() {
@@ -2558,6 +2742,112 @@ function collectExerciseData() {
 }
 
 // ============================================================
+// GYM — 7-day weekly plan
+// ============================================================
+function buildGymWeekPlan() {
+  const grid = document.getElementById('gymWeekPlan');
+  if (!grid) return;
+  const profile = GlowData.profile.get();
+  const a = (profile && profile.answers) ? profile.answers : {};
+  const goal = a.primary_goal || '';
+  const today = new Date().getDay(); // 0=Sun…6=Sat
+
+  let schedule;
+  if (goal === 'Build muscle & strength') {
+    schedule = [
+      { day:'Sun', label:'Rest', icon:'😴', rest:true },
+      { day:'Mon', label:'Push A', icon:'💪', rest:false },
+      { day:'Tue', label:'Pull A', icon:'🏋️', rest:false },
+      { day:'Wed', label:'Legs', icon:'🦵', rest:false },
+      { day:'Thu', label:'Push B', icon:'💪', rest:false },
+      { day:'Fri', label:'Pull B', icon:'🏋️', rest:false },
+      { day:'Sat', label:'Rest', icon:'😴', rest:true },
+    ];
+  } else if (goal === 'Lose fat & get lean') {
+    schedule = [
+      { day:'Sun', label:'Long Walk', icon:'🚶', rest:false },
+      { day:'Mon', label:'HIIT', icon:'⚡', rest:false },
+      { day:'Tue', label:'Strength', icon:'💪', rest:false },
+      { day:'Wed', label:'LISS', icon:'🏃', rest:false },
+      { day:'Thu', label:'HIIT', icon:'⚡', rest:false },
+      { day:'Fri', label:'Metabolic', icon:'🔥', rest:false },
+      { day:'Sat', label:'Rest', icon:'😴', rest:true },
+    ];
+  } else {
+    schedule = [
+      { day:'Sun', label:'Rest', icon:'😴', rest:true },
+      { day:'Mon', label:'Upper', icon:'💪', rest:false },
+      { day:'Tue', label:'Lower', icon:'🦵', rest:false },
+      { day:'Wed', label:'Full Body', icon:'⚡', rest:false },
+      { day:'Thu', label:'Upper', icon:'💪', rest:false },
+      { day:'Fri', label:'Lower', icon:'🦵', rest:false },
+      { day:'Sat', label:'Active Recovery', icon:'🧘', rest:false },
+    ];
+  }
+
+  grid.innerHTML = schedule.map((s, i) => {
+    const isToday = i === today;
+    const border = isToday ? 'border:1px solid #8b5cf6;' : 'border:1px solid rgba(139,92,246,0.12);';
+    const bg = isToday ? 'background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(236,72,153,0.15));' : s.rest ? 'background:rgba(255,255,255,0.02);' : 'background:rgba(139,92,246,0.06);';
+    const textColor = isToday ? 'color:#fff;' : s.rest ? 'color:#4b5563;' : 'color:#d1d5db;';
+    return `<div class="text-center p-1.5 rounded-xl" style="${bg}${border}${textColor}">
+      <div class="text-xs font-semibold">${s.day}</div>
+      <div class="text-base my-0.5">${s.icon}</div>
+      <div class="text-xs leading-tight" style="font-size:9px">${s.label}</div>
+      ${isToday ? '<div style="font-size:8px;color:#c4b5fd;margin-top:2px">TODAY</div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// BODY METRICS — history chart
+// ============================================================
+function initBodyMetricsChart(force) {
+  const ctx = document.getElementById('bodyMetricsChart');
+  if (!ctx) return;
+  if (ctx.chart && !force) return;
+  if (ctx.chart) { ctx.chart.destroy(); ctx.chart = null; }
+
+  const u = GlowAuth.getUser();
+  const k = u ? ('g_' + u.id + '_bm') : null;
+  let history = [];
+  try { history = k ? JSON.parse(localStorage.getItem(k) || '[]') : []; } catch(e) {}
+  history = history.slice(-30);
+
+  if (!history.length) {
+    const wrap = document.getElementById('bodyMetricsChartWrap');
+    if (wrap) wrap.style.display = 'none';
+    return;
+  }
+  const wrap = document.getElementById('bodyMetricsChartWrap');
+  if (wrap) wrap.style.display = 'block';
+
+  const labels = history.map(e => { try { const d = new Date(e.date); return d.toLocaleDateString('en-AU', { day:'numeric', month:'short' }); } catch(x) { return e.date; } });
+  const weights = history.map(e => e.weight || null);
+  const heights = history.map(e => e.height || null);
+
+  ctx.chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label:'Weight (kg)', data:weights, borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.1)', tension:0.4, fill:true, borderWidth:2, spanGaps:true, yAxisID:'yW' },
+        { label:'Height (cm)', data:heights, borderColor:'#06b6d4', backgroundColor:'rgba(6,182,212,0.05)', tension:0.4, fill:false, borderWidth:2, spanGaps:true, yAxisID:'yH' }
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:'#9ca3af',font:{size:10}}}},
+      scales:{
+        x:{ticks:{color:'#6b7280',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}},
+        yW:{type:'linear',position:'left',ticks:{color:'#8b5cf6',font:{size:10}},grid:{color:'rgba(255,255,255,0.05)'}},
+        yH:{type:'linear',position:'right',ticks:{color:'#06b6d4',font:{size:10}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+// ============================================================
 // SKINCARE
 // ============================================================
 function loadSkincarePage() {
@@ -2583,7 +2873,26 @@ function loadSkincarePage() {
   const isYoung = ageGroup === 'Under 18' || ageGroup === '18–24';
   const isBelowMaxHeight = (gender === 'Female' && ageGroup === 'Under 18') ||
                             (gender === 'Male' && (ageGroup === 'Under 18' || ageGroup === '18–24'));
-  if (isBelowMaxHeight && heightCm) {
+  const _skUser = GlowAuth.getUser();
+  const _skPrem = _skUser && _skUser.isPremium;
+  if (isBelowMaxHeight && heightCm && !_skPrem) {
+    heightPredictionHtml = `
+      <div class="card mb-6" style="background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(139,92,246,0.06))">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="text-2xl">📏</div>
+          <div><div class="font-bold">Predicted Adult Height</div><div class="text-xs text-gray-400">Based on your current height and age</div></div>
+        </div>
+        <div class="text-center py-5">
+          <div class="text-4xl font-black mb-1" style="filter:blur(8px);pointer-events:none;user-select:none">??? cm</div>
+          <div class="text-sm text-gray-500 mt-2">🔒 Premium feature</div>
+        </div>
+        <div class="mt-2 p-3 rounded-xl" style="background:rgba(99,102,241,0.08)">
+          <p class="text-sm text-gray-300 mb-3">Your personalised height prediction is ready. Upgrade to Premium to see your estimated adult height and range.</p>
+          <button onclick="openUpgrade()" class="btn-primary w-full text-sm py-2">Unlock with Premium — $4.99/mo</button>
+        </div>
+      </div>`;
+  }
+  if (isBelowMaxHeight && heightCm && _skPrem) {
     const prediction = GlowUtils.predictHeight(heightCm, ageGroup, gender,
       answers.father_height ? parseFloat(answers.father_height) : null,
       answers.mother_height ? parseFloat(answers.mother_height) : null);
