@@ -541,16 +541,18 @@
         </div>
       </div>
 
-      <div class="exercise-item">
+      <div class="exercise-item" data-exercise="Dumbbell Lateral Raises">
         <div class="font-semibold text-sm mb-1">Dumbbell Lateral Raises</div>
         <div class="text-xs text-gray-400 mb-2">Shoulders · Isolation · 4 × 12–15</div>
-        <div class="text-xs text-gray-500">3 more exercises in today's session</div>
+        <div class="grid grid-cols-4 gap-2 text-xs text-gray-400 mb-2"><div>Set</div><div>Weight</div><div>Reps</div><div>Done</div></div>
+        <div class="set-row grid grid-cols-4 gap-2 text-sm mb-1"><div class="text-gray-400">1</div><div><input type="text" value="10" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="15" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div></div>
+        <div class="set-row grid grid-cols-4 gap-2 text-sm"><div class="text-gray-400">2</div><div><input type="text" value="10" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="12" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div></div>
       </div>
 
-      <!-- Premium blur -->
+      <!-- Premium lock (free users) -->
       <div id="gymPremiumLock" class="relative mt-3">
-        <div class="exercise-item opacity-30">
-          <div class="font-semibold text-sm">Tricep Pushdowns + 3 more...</div>
+        <div class="exercise-item opacity-20">
+          <div class="font-semibold text-sm">Tricep Pushdowns · Cable Fly · Incline Press...</div>
         </div>
         <div class="absolute inset-0 flex items-center justify-center">
           <button onclick="openUpgrade()" class="flex items-center gap-2 bg-black border border-purple-500 rounded-xl px-4 py-2 text-sm font-semibold text-purple-300">
@@ -558,12 +560,43 @@
           </button>
         </div>
       </div>
+
+      <!-- Premium full exercises (premium users only) -->
+      <div id="gymPremiumContent" style="display:none">
+        <div class="exercise-item" data-exercise="Tricep Pushdowns">
+          <div class="font-semibold text-sm mb-1">Tricep Pushdowns</div>
+          <div class="text-xs text-gray-400 mb-2">Triceps · Isolation · 3 × 12</div>
+          <div class="grid grid-cols-4 gap-2 text-xs text-gray-400 mb-2"><div>Set</div><div>Weight</div><div>Reps</div><div>Done</div></div>
+          <div class="set-row grid grid-cols-4 gap-2 text-sm mb-1"><div class="text-gray-400">1</div><div><input type="text" value="25" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="12" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div></div>
+          <div class="set-row grid grid-cols-4 gap-2 text-sm"><div class="text-gray-400">2</div><div><input type="text" value="30" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="10" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div></div>
+        </div>
+        <div class="exercise-item" data-exercise="Cable Fly">
+          <div class="font-semibold text-sm mb-1">Cable Fly</div>
+          <div class="text-xs text-gray-400 mb-2">Chest · Isolation · 3 × 15</div>
+          <div class="grid grid-cols-4 gap-2 text-xs text-gray-400 mb-2"><div>Set</div><div>Weight</div><div>Reps</div><div>Done</div></div>
+          <div class="set-row grid grid-cols-4 gap-2 text-sm mb-1"><div class="text-gray-400">1</div><div><input type="text" value="15" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="15" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div></div>
+          <div class="set-row grid grid-cols-4 gap-2 text-sm"><div class="text-gray-400">2</div><div><input type="text" value="15" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="12" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div></div>
+        </div>
+        <div class="exercise-item" data-exercise="Incline Dumbbell Press">
+          <div class="font-semibold text-sm mb-1">Incline Dumbbell Press</div>
+          <div class="text-xs text-gray-400 mb-2">Upper Chest · Compound · 3 × 10</div>
+          <div class="grid grid-cols-4 gap-2 text-xs text-gray-400 mb-2"><div>Set</div><div>Weight</div><div>Reps</div><div>Done</div></div>
+          <div class="set-row grid grid-cols-4 gap-2 text-sm mb-1"><div class="text-gray-400">1</div><div><input type="text" value="22" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="10" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div></div>
+          <div class="set-row grid grid-cols-4 gap-2 text-sm"><div class="text-gray-400">2</div><div><input type="text" value="24" class="inp-weight bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="text" value="8" class="inp-reps bg-transparent border-b border-gray-700 text-center text-white outline-none" style="width:40px"/></div><div><input type="checkbox" class="accent-purple-500 w-4 h-4"/></div></div>
+        </div>
+      </div>
     </div>
 
     <!-- Strength progress -->
-    <div class="card">
+    <div class="card" style="position:relative">
       <div class="font-bold mb-4">Strength Progress</div>
       <canvas id="strengthChart" height="80"></canvas>
+      <div id="gymChartLock" class="absolute inset-0 flex flex-col items-center justify-center" style="background:rgba(5,5,8,0.85);border-radius:20px;backdrop-filter:blur(4px)">
+        <div class="text-2xl mb-2">📊</div>
+        <div class="text-sm font-bold text-white mb-1">Strength Charts</div>
+        <div class="text-xs text-gray-400 mb-3 text-center px-4">Track your progress over time with Premium</div>
+        <button onclick="openUpgrade()" class="btn-primary text-xs py-2 px-4">Unlock Premium</button>
+      </div>
     </div>
   </div>
 
@@ -628,17 +661,34 @@
       <div id="foodLogList">
         <div class="text-sm text-gray-500 py-6 text-center">No food logged yet — tap + Add Food to start tracking.</div>
       </div>
-      <!-- Premium -->
+      <!-- Premium lock (free users) -->
       <div id="nutPremiumLock" class="mt-4 p-4 rounded-xl text-center" style="background:rgba(139,92,246,0.06);border:1px dashed rgba(139,92,246,0.2)">
         <div class="text-sm text-gray-400 mb-2">🔒 AI meal suggestions, grocery lists & meal planning are <strong class="text-purple-300">Premium</strong></div>
         <button onclick="openUpgrade()" class="btn-primary text-xs py-2 px-5">Unlock Premium</button>
       </div>
+      <!-- Premium meal planning content (hidden until premium) -->
+      <div id="nutPremiumContent" style="display:none" class="mt-4 p-4 rounded-xl" style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2)">
+        <div class="font-bold text-sm mb-3 text-purple-300">✨ Your AI Meal Plan (based on your goals)</div>
+        <div id="mealPlanContent" class="space-y-3 text-sm text-gray-300">
+          <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)"><strong class="text-white">Breakfast:</strong> Oats (80g) + protein powder (1 scoop) + banana · ~480 kcal · 35g protein</div>
+          <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)"><strong class="text-white">Lunch:</strong> Chicken breast (200g) + brown rice (150g) + mixed veg · ~550 kcal · 50g protein</div>
+          <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)"><strong class="text-white">Snack:</strong> Greek yoghurt (200g) + mixed nuts (30g) · ~350 kcal · 22g protein</div>
+          <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)"><strong class="text-white">Dinner:</strong> Salmon (180g) + sweet potato (200g) + greens · ~480 kcal · 40g protein</div>
+          <div class="text-xs text-gray-400 mt-2">Full AI grocery list & custom meal planning — coming soon for Premium members.</div>
+        </div>
+      </div>
     </div>
 
     <!-- Nutrition chart -->
-    <div class="card">
+    <div class="card" style="position:relative">
       <div class="font-bold mb-4">Weekly Calorie Trend</div>
       <canvas id="nutritionChart" height="80"></canvas>
+      <div id="nutChartLock" class="absolute inset-0 flex flex-col items-center justify-center" style="background:rgba(5,5,8,0.85);border-radius:20px;backdrop-filter:blur(4px)">
+        <div class="text-2xl mb-2">📊</div>
+        <div class="text-sm font-bold text-white mb-1">Calorie Trend Chart</div>
+        <div class="text-xs text-gray-400 mb-3 text-center px-4">See your weekly nutrition data with Premium</div>
+        <button onclick="openUpgrade()" class="btn-primary text-xs py-2 px-4">Unlock Premium</button>
+      </div>
     </div>
   </div>
 
@@ -689,9 +739,15 @@
     </div>
 
     <!-- Sleep chart -->
-    <div class="card mb-6">
+    <div class="card mb-6" style="position:relative">
       <div class="font-bold mb-4">Sleep This Week</div>
       <canvas id="sleepChart" height="80"></canvas>
+      <div id="sleepChartLock" class="absolute inset-0 flex flex-col items-center justify-center" style="background:rgba(5,5,8,0.85);border-radius:20px;backdrop-filter:blur(4px)">
+        <div class="text-2xl mb-2">😴</div>
+        <div class="text-sm font-bold text-white mb-1">Sleep Chart</div>
+        <div class="text-xs text-gray-400 mb-3 text-center px-4">Track your weekly sleep patterns with Premium</div>
+        <button onclick="openUpgrade()" class="btn-primary text-xs py-2 px-4">Unlock Premium</button>
+      </div>
     </div>
 
     <!-- AI sleep insights -->
@@ -745,10 +801,16 @@
     </div>
 
     <!-- Water this week -->
-    <div class="card mb-6">
+    <div class="card mb-6" style="position:relative">
       <div class="font-bold mb-4">Hydration This Week</div>
       <div id="waterWeekList" class="space-y-2">
         <div class="text-sm text-gray-500 text-center py-2">Loading...</div>
+      </div>
+      <div id="waterChartLock" class="absolute inset-0 flex flex-col items-center justify-center" style="background:rgba(5,5,8,0.85);border-radius:20px;backdrop-filter:blur(4px)">
+        <div class="text-2xl mb-2">💧</div>
+        <div class="text-sm font-bold text-white mb-1">Weekly Hydration</div>
+        <div class="text-xs text-gray-400 mb-3 text-center px-4">Track your weekly water intake with Premium</div>
+        <button onclick="openUpgrade()" class="btn-primary text-xs py-2 px-4">Unlock Premium</button>
       </div>
     </div>
 
@@ -1047,8 +1109,11 @@
         </div>
       </div>
 
-      <div class="text-center py-2">
-        <button onclick="openUpgrade()" class="text-sm text-purple-400 hover:text-purple-300 font-semibold">🔒 Unlock 120+ more articles — Premium</button>
+      <div class="text-center py-2" id="researchPremiumBtn">
+        <button onclick="openUpgrade()" class="text-sm text-purple-400 hover:text-purple-300 font-semibold">🔒 Unlock all articles — Premium</button>
+      </div>
+      <div id="researchPremiumBadge" style="display:none" class="text-center py-3 p-4 rounded-xl" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2)">
+        <div class="text-sm font-bold text-purple-300">✨ All articles unlocked — click any article to read</div>
       </div>
     </div>
   </div>
@@ -1064,22 +1129,54 @@
       <div class="card-sm text-center"><div class="text-2xl font-black text-white">—</div><div class="text-xs text-gray-400 mt-1">Habit Rate</div></div>
     </div>
 
-    <div class="card mb-6">
+    <div class="card mb-6" style="position:relative">
       <div class="font-bold mb-4">Glow Score Over Time</div>
       <canvas id="glowChart" height="90"></canvas>
+      <div id="glowChartLock" class="absolute inset-0 flex flex-col items-center justify-center" style="background:rgba(5,5,8,0.85);border-radius:20px;backdrop-filter:blur(4px)">
+        <div class="text-2xl mb-2">📈</div>
+        <div class="text-sm font-bold text-white mb-1">Glow Score Chart</div>
+        <div class="text-xs text-gray-400 mb-3 text-center px-4">Track your Glow Score over time with Premium</div>
+        <button onclick="openUpgrade()" class="btn-primary text-xs py-2 px-4">Unlock Premium</button>
+      </div>
     </div>
 
-    <div class="card mb-6">
+    <div class="card mb-6" style="position:relative">
       <div class="font-bold mb-4">Weekly Habit Completion</div>
       <canvas id="habitChart" height="80"></canvas>
+      <div id="habitChartLock" class="absolute inset-0 flex flex-col items-center justify-center" style="background:rgba(5,5,8,0.85);border-radius:20px;backdrop-filter:blur(4px)">
+        <div class="text-2xl mb-2">🎯</div>
+        <div class="text-sm font-bold text-white mb-1">Habit Chart</div>
+        <div class="text-xs text-gray-400 mb-3 text-center px-4">See your weekly habit data with Premium</div>
+        <button onclick="openUpgrade()" class="btn-primary text-xs py-2 px-4">Unlock Premium</button>
+      </div>
     </div>
 
     <!-- Premium analytics -->
-    <div class="card relative" style="min-height:120px">
+    <div class="card relative" style="min-height:180px">
       <div class="font-bold mb-3">Body Metrics Tracking</div>
-      <div id="analyticsLockedContent" class="opacity-30">
-        <div class="flex justify-between text-sm mb-2"><span>Weight</span><span>58.4kg → 56.2kg</span></div>
-        <div class="xp-bar"><div class="xp-fill" style="width:40%"></div></div>
+      <div id="analyticsLockedContent" class="opacity-30 space-y-3">
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span>Weight</span><span id="metricsWeightDisplay">—</span></div>
+          <div class="xp-bar"><div id="metricsWeightBar" class="xp-fill" style="width:40%"></div></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-1"><span>Height</span><span id="metricsHeightDisplay">—</span></div>
+          <div class="xp-bar"><div class="xp-fill" style="width:100%;background:linear-gradient(90deg,#06b6d4,#3b82f6)"></div></div>
+        </div>
+      </div>
+      <!-- Premium body metrics input (shown for premium users) -->
+      <div id="analyticsBodyMetrics" style="display:none" class="mt-3 space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">Current Weight (kg)</label>
+            <input id="metricsWeight" type="number" placeholder="e.g. 70" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500" onchange="saveBodyMetrics()"/>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">Current Height (cm)</label>
+            <input id="metricsHeight" type="number" placeholder="e.g. 175" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500" onchange="saveBodyMetrics()"/>
+          </div>
+        </div>
+        <div class="text-xs text-gray-500">Values save automatically when you change them.</div>
       </div>
       <div id="analyticsPremiumLock" class="absolute inset-0 flex items-center justify-center" style="background:rgba(5,5,8,0.7);border-radius:20px">
         <button onclick="openUpgrade()" class="flex items-center gap-2 bg-black border border-purple-500 rounded-xl px-4 py-2 text-sm font-semibold text-purple-300">
@@ -1422,67 +1519,71 @@ function getPersonalizedConfig() {
 function initDashboard() {
   const user = GlowAuth.getUser();
   if (!user) return;
-  const initials = GlowUtils.initials(user.name);
-  const firstName = user.name.split(' ')[0];
-  const dayNum = GlowData.dayNumber();
 
-  // Sidebar
-  setText('sidebarAvatar', initials);
-  setText('sidebarName', user.name);
-  setText('sidebarDay', 'Day ' + dayNum);
-  setText('sidebarPlan', user.isPremium ? '✨ Premium' : 'Free Plan');
+  try {
+    const initials = GlowUtils.initials(user.name || '?');
+    const firstName = (user.name || 'there').split(' ')[0];
+    const dayNum = GlowData.dayNumber();
 
-  // Mobile header
-  setText('mobileAvatar', initials);
+    setText('sidebarAvatar', initials);
+    setText('sidebarName', user.name || '');
+    setText('sidebarDay', 'Day ' + dayNum);
+    setText('sidebarPlan', user.isPremium ? '✨ Premium' : 'Free Plan');
+    setText('mobileAvatar', initials);
+    setText('settingsAvatar', initials);
+    setText('settingsName', user.name || '');
+    setText('settingsEmail', user.email || '');
+    setText('settingsPlan', user.isPremium ? '✨ Premium' : 'Free Plan');
+    setText('dashDate', GlowUtils.formatDate());
+    setText('dashGreeting', GlowUtils.greeting() + ', ' + firstName + '! ' + GlowUtils.greetingEmoji());
+    setText('dayCount', 'Day ' + dayNum + ' of 90');
 
-  // Settings account
-  setText('settingsAvatar', initials);
-  setText('settingsName', user.name);
-  setText('settingsEmail', user.email);
-  setText('settingsPlan', user.isPremium ? '✨ Premium' : 'Free Plan');
+    const sk = GlowData.streak.get();
+    setText('streakCount', (sk.count || 0) + ' day streak');
+    setText('mobileStreak', '🔥 ' + (sk.count || 0) + ' days');
 
-  // Dashboard header
-  setText('dashDate', GlowUtils.formatDate());
-  setText('dashGreeting', GlowUtils.greeting() + ', ' + firstName + '! ' + GlowUtils.greetingEmoji());
-  setText('dayCount', 'Day ' + dayNum + ' of 90');
+    try {
+      var cfg = getPersonalizedConfig();
+      window._glowGoal = { cal: cfg.cals, protein: cfg.protein, carbs: cfg.carbs, fat: cfg.fat };
+      setText('aiInsightText', cfg.insight);
+      setText('gymSessionType', cfg.workoutType);
+      setText('gymSessionHeader', cfg.workoutHeader);
+      setText('nutCalGoalDisplay', cfg.cals);
+      setText('nutProteinGoal', '/ ' + cfg.protein + 'g goal');
+      setText('nutCarbsGoal', '/ ' + cfg.carbs + 'g goal');
+      setText('nutFatGoal', '/ ' + cfg.fat + 'g goal');
+    } catch(e) { console.warn('Personalisation error:', e); }
 
-  // Streak
-  const sk = GlowData.streak.get();
-  setText('streakCount', sk.count + ' day streak');
-  setText('mobileStreak', '🔥 ' + sk.count + ' days');
-
-  // Apply quiz-based personalisation
-  var cfg = getPersonalizedConfig();
-  window._glowGoal = { cal: cfg.cals, protein: cfg.protein, carbs: cfg.carbs, fat: cfg.fat };
-  setText('aiInsightText', cfg.insight);
-  setText('gymSessionType', cfg.workoutType);
-  setText('gymSessionHeader', cfg.workoutHeader);
-  setText('nutCalGoalDisplay', cfg.cals);
-  setText('nutProteinGoal', '/ ' + cfg.protein + 'g goal');
-  setText('nutCarbsGoal',   '/ ' + cfg.carbs   + 'g goal');
-  setText('nutFatGoal',     '/ ' + cfg.fat      + 'g goal');
-
-  // Apply premium UI (hides all paywalls for premium users)
-  applyPremiumUI(user.isPremium);
-
-  updateXPDisplay();
-  loadHabitStates();
-  initWater();
-  loadSleepStats();
-  renderFoodLog();
-  updateStats(); // also calls updateProgressRings internally
-  updateWeekAtAGlance();
-  updateDaysTracking();
-  setText('motivationText', getDailyMotivation());
-  loadSettingsToggles();
-  buildCalendar();
+    applyPremiumUI(user.isPremium);
+    updateXPDisplay();
+    loadHabitStates();
+    initWater();
+    loadSleepStats();
+    renderFoodLog();
+    updateStats();
+    updateWeekAtAGlance();
+    updateDaysTracking();
+    setText('motivationText', getDailyMotivation());
+    loadSettingsToggles();
+    buildCalendar();
+  } catch(e) {
+    console.error('initDashboard error:', e);
+  }
 }
+
+// Global JS error handler — shows errors as toast for debugging
+window.onerror = function(msg, src, line, col, err) {
+  console.error('JS Error:', msg, 'at', src, line);
+  if (typeof GlowUtils !== 'undefined' && GlowUtils.toast) {
+    GlowUtils.toast('Error: ' + msg.slice(0, 80), 'error');
+  }
+  return false;
+};
 
 // Wait for Firebase auth state, then init or redirect
 GlowAuth.onReady(user => {
   if (!user) { window.location.href = 'index.html'; return; }
   initDashboard();
-  // Ask for notification permission after a short delay (non-intrusive)
   setTimeout(() => requestNotificationPermission(), 3000);
 });
 
@@ -1615,12 +1716,18 @@ function initWater() {
 }
 
 function addWater(ml) {
-  _waterMl = Math.min(_waterMl + ml, 5000);
-  GlowData.water.set(_waterMl);
-  updateWaterUI();
-  updateWaterWeekChart();
-  updateStats();
-  GlowUtils.toast('💧 ' + (_waterMl / 1000).toFixed(1) + 'L logged');
+  try {
+    if (typeof _waterMl !== 'number' || isNaN(_waterMl)) _waterMl = GlowData.water.get() || 0;
+    _waterMl = Math.min(_waterMl + ml, 5000);
+    GlowData.water.set(_waterMl);
+    updateWaterUI();
+    updateWaterWeekChart();
+    updateStats();
+    GlowUtils.toast('💧 ' + (_waterMl / 1000).toFixed(1) + 'L logged');
+  } catch(e) {
+    console.error('addWater error:', e);
+    GlowUtils.toast('Could not log water — please try again', 'error');
+  }
 }
 
 function toggleDrop(el) {
@@ -1666,18 +1773,25 @@ function selectSleepQuality(btn) {
 }
 
 function saveSleepLog() {
-  const bed = document.getElementById('sleepBedtime').value;
-  const wake = document.getElementById('sleepWake').value;
-  if (!bed || !wake) { GlowUtils.toast('Please set bedtime and wake time', 'error'); return; }
-  const hours = GlowUtils.sleepHours(bed, wake);
-  GlowData.sleep.save(GlowData.today(), { bed, wake, hours, quality: _sleepQuality });
-  GlowData.xp.add(15);
-  updateXPDisplay();
-  loadSleepStats();
-  updateStats();
-  GlowUtils.toast('😴 Sleep logged — ' + hours + 'h · +15 XP');
-  const ctx = document.getElementById('sleepChart');
-  if (ctx && ctx.chart) { ctx.chart.destroy(); ctx.chart = null; initSleepChart(); }
+  try {
+    const bedEl = document.getElementById('sleepBedtime');
+    const wakeEl = document.getElementById('sleepWake');
+    const bed = (bedEl && bedEl.value) || '22:30';
+    const wake = (wakeEl && wakeEl.value) || '06:30';
+    const hours = GlowUtils.sleepHours(bed, wake);
+    if (!hours || isNaN(hours)) { GlowUtils.toast('Check your sleep times and try again', 'error'); return; }
+    GlowData.sleep.save(GlowData.today(), { bed, wake, hours, quality: _sleepQuality });
+    GlowData.xp.add(15);
+    updateXPDisplay();
+    loadSleepStats();
+    updateStats();
+    GlowUtils.toast('😴 Sleep logged — ' + hours + 'h · +15 XP');
+    const ctx = document.getElementById('sleepChart');
+    if (ctx && ctx.chart) { ctx.chart.destroy(); ctx.chart = null; initSleepChart(); }
+  } catch(e) {
+    console.error('saveSleepLog error:', e);
+    GlowUtils.toast('Could not save sleep — please try again', 'error');
+  }
 }
 
 function loadSleepStats() {
@@ -1812,29 +1926,91 @@ function showPostPayment() {
 }
 
 function applyPremiumUI(isPremium) {
-  const setVis = (id, show) => { const el = document.getElementById(id); if (el) el.style.display = show ? '' : 'none'; };
+  const hide = id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; };
+  const show = (id, display) => { const el = document.getElementById(id); if (el) el.style.display = display || 'block'; };
   if (isPremium) {
-    // Hide all upgrade prompts inside sections
-    setVis('gymPremiumLock', false);
-    setVis('nutPremiumLock', false);
-    setVis('habitsPremiumLock', false);
-    setVis('analyticsPremiumLock', false);
-    // Make analytics locked content fully visible
+    // Section paywalls — hide locks
+    hide('gymPremiumLock');
+    hide('nutPremiumLock');
+    hide('habitsPremiumLock');
+    hide('analyticsPremiumLock');
+    // Section premium content — show
+    show('gymPremiumContent');
+    show('nutPremiumContent');
+    show('analyticsBodyMetrics');
+    // Analytics locked content — restore full opacity
     const alc = document.getElementById('analyticsLockedContent');
     if (alc) alc.style.opacity = '1';
+    // Load body metrics from profile
+    const prof = GlowData.profile.get();
+    const bStats = (prof && prof.answers && prof.answers.body_stats) || {};
+    const savedW = prof && prof.bodyWeight;
+    const savedH = prof && prof.answers && prof.answers.body_stats && prof.answers.body_stats.heightCm;
+    const mw = document.getElementById('metricsWeight');
+    const mh = document.getElementById('metricsHeight');
+    if (mw && savedW) mw.value = savedW;
+    if (mh && savedH) mh.value = savedH;
+    if (savedW) setText('metricsWeightDisplay', savedW + 'kg');
+    if (savedH) setText('metricsHeightDisplay', savedH + 'cm');
+    // Chart locks — hide for premium
+    hide('gymChartLock');
+    hide('nutChartLock');
+    hide('sleepChartLock');
+    hide('waterChartLock');
+    hide('glowChartLock');
+    hide('habitChartLock');
+    // Research
+    hide('researchPremiumBtn');
+    show('researchPremiumBadge');
     // Sidebar
-    setVis('sidebarUpgradeCTA', false);
+    hide('sidebarUpgradeCTA');
     const premBadge = document.getElementById('sidebarPremiumBadge');
     if (premBadge) premBadge.classList.remove('hidden');
-    setVis('settingsUpgradeBtn', false);
+    hide('settingsUpgradeBtn');
     const settingsPremActive = document.getElementById('settingsPremiumActive');
     if (settingsPremActive) settingsPremActive.classList.remove('hidden');
     setText('sidebarPlan', '✨ Premium');
     setText('settingsPlan', '✨ Premium');
+    // Meal plan content — personalise based on goals
+    buildMealPlan();
     // Chat status bar
     const csb = document.getElementById('chatStatusBar');
-    if (csb) csb.innerHTML = '<span class="text-purple-300 font-semibold">✨ Premium — AI Coach coming soon for you!</span>';
+    if (csb) csb.innerHTML = '<span style="color:#c4b5fd;font-weight:600">✨ Premium — AI Coach coming soon for you!</span>';
   }
+}
+
+function buildMealPlan() {
+  const el = document.getElementById('mealPlanContent');
+  if (!el) return;
+  const cfg = getPersonalizedConfig();
+  const cal = cfg.cals || 2100;
+  const protein = cfg.protein || 150;
+  const isLow = cal < 1900;
+  const meals = isLow ? [
+    { label: 'Breakfast', desc: 'Eggs (3) + spinach omelette + 1 slice sourdough', cal: 380, p: 28 },
+    { label: 'Lunch', desc: 'Tuna (150g) + mixed salad + olive oil dressing', cal: 420, p: 38 },
+    { label: 'Snack', desc: 'Protein shake + small apple', cal: 220, p: 25 },
+    { label: 'Dinner', desc: 'Chicken thigh (160g) + roasted vegetables + quinoa (80g)', cal: 480, p: 38 }
+  ] : [
+    { label: 'Breakfast', desc: 'Oats (80g) + protein powder (1 scoop) + banana + honey', cal: 500, p: 36 },
+    { label: 'Lunch', desc: 'Chicken breast (200g) + brown rice (150g) + mixed veg', cal: 570, p: 52 },
+    { label: 'Snack', desc: 'Greek yoghurt (200g) + mixed nuts (30g) + berries', cal: 360, p: 22 },
+    { label: 'Dinner', desc: 'Salmon (180g) + sweet potato (200g) + green beans + butter', cal: 520, p: 42 }
+  ];
+  el.innerHTML = meals.map(m =>
+    `<div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)">
+      <strong class="text-white">${m.label}:</strong> ${m.desc}
+      <div class="text-xs text-gray-400 mt-1">${m.cal} kcal · ${m.p}g protein</div>
+    </div>`
+  ).join('') + `<div class="text-xs text-gray-400 mt-2">Target: ~${cal} kcal · ~${protein}g protein. Full AI grocery list & custom meal planning — coming soon.</div>`;
+}
+
+function saveBodyMetrics() {
+  const w = parseFloat(document.getElementById('metricsWeight')?.value);
+  const h = parseFloat(document.getElementById('metricsHeight')?.value);
+  if (w) { GlowData.profile.set({ bodyWeight: w }); GlowAuth.updateUser({ bodyWeight: w }); setText('metricsWeightDisplay', w + 'kg'); }
+  if (h) setText('metricsHeightDisplay', h + 'cm');
+  GlowUtils.toast('Body metrics saved ✓');
 }
 
 function activateTrial() {
@@ -2236,7 +2412,7 @@ function updateProgressRings() {
 function addCustomWater() {
   const input = document.getElementById('waterCustomInput');
   const ml = parseInt(input.value);
-  if (!ml || ml < 1 || ml > 2000) { GlowUtils.toast('Enter a valid amount (1–2000ml)', 'error'); return; }
+  if (!ml || ml < 1 || ml > 5000) { GlowUtils.toast('Enter a valid amount (1–5000ml)', 'error'); return; }
   addWater(ml);
   input.value = '';
 }
