@@ -17,10 +17,30 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="glow.js"></script>
+  <script src="products.js"></script>
+  <script src="barcode-scanner.js"></script>
   <style>
     *{font-family:'Inter',sans-serif;}
     :root{--purple:#8B5CF6;--pink:#EC4899;--bg:#050508;--surface:#0f0f18;--surface2:#16162a;--border:rgba(139,92,246,0.15);}
-    body{background:var(--bg);color:#fff;overflow-x:hidden;}
+    body{background:var(--bg);color:#fff;overflow-x:hidden;transition:background-color 0.3s,color 0.3s;}
+
+    /* Light Mode */
+    body.light-mode{--bg:#f8f7fc;--surface:#ffffff;--surface2:#f3f0ff;--border:rgba(139,92,246,0.2);color:#1f2937;}
+    body.light-mode input,body.light-mode textarea{background:#f3f0ff !important;border-color:#ddd6fe !important;color:#1f2937 !important;}
+    body.light-mode input::placeholder,body.light-mode textarea::placeholder{color:#9ca3af;}
+    body.light-mode input:focus,body.light-mode textarea:focus{border-color:#8b5cf6 !important;}
+    body.light-mode .card,body.light-mode .card-sm{background:var(--surface);border-color:#ddd6fe;}
+    body.light-mode .habit-item{background:rgba(139,92,246,0.05);border-color:#ddd6fe;}
+    body.light-mode .habit-item:hover{background:rgba(139,92,246,0.1);}
+    body.light-mode .nav-item{color:#6b7280;}
+    body.light-mode .nav-item:hover{background:rgba(139,92,246,0.08);color:#4f46e5;}
+    body.light-mode .nav-item.active{background:rgba(139,92,246,0.1);color:#6d28d9;border-color:#ddd6fe;}
+    body.light-mode .glass{background:rgba(139,92,246,0.05);border-color:#ddd6fe;}
+    body.light-mode .chat-ai{background:rgba(139,92,246,0.1);border-color:#ddd6fe;color:#4f46e5;}
+    body.light-mode .food-item,body.light-mode .exercise-item{background:rgba(139,92,246,0.05);border-color:#ddd6fe;}
+    body.light-mode .section-header{color:#1f2937;}
+    body.light-mode ::-webkit-scrollbar-track{background:#f8f7fc;}
+    body.light-mode ::-webkit-scrollbar-thumb{background:#c4b5fd;}
 
     /* Scrollbar */
     ::-webkit-scrollbar{width:4px;height:4px}
@@ -41,7 +61,7 @@
 
     /* Main content */
     .main{margin-left:240px;min-height:100vh;padding:28px}
-    @media(max-width:768px){.sidebar{transform:translateX(-100%)}.main{margin-left:0;padding:16px}.sidebar.open{transform:translateX(0)}}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%)}.main{margin-left:0;padding:16px;padding-bottom:90px;padding-top:80px}.sidebar.open{transform:translateX(0)}}
 
     /* Cards */
     .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px}
@@ -100,8 +120,9 @@
     /* Mobile bottom nav */
     .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:8px 0;z-index:50}
     @media(max-width:768px){.mobile-nav{display:flex;justify-content:space-around}}
-    .mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 12px;cursor:pointer;font-size:11px;color:#6b7280;font-weight:500}
-    .mobile-nav-item.active,.mobile-nav-item:hover{color:#c4b5fd}
+    .mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 12px;cursor:pointer;font-size:11px;color:#6b7280;font-weight:500;transition:all 0.2s ease;border-radius:12px}
+    .mobile-nav-item.active{background:rgba(139,92,246,0.15);color:#c4b5fd;transform:scale(1.05)}
+    .mobile-nav-item:hover{color:#c4b5fd;background:rgba(139,92,246,0.08)}
     .mobile-nav-item .m-icon{font-size:22px}
 
     /* XP bar */
@@ -131,7 +152,7 @@
      SIDEBAR
 ================================================================ -->
 <aside class="sidebar">
-  <div class="flex items-center gap-2 mb-8 px-2">
+  <div class="flex items-center gap-2 mb-8 px-2 cursor-pointer" onclick="showPage('dashboard')">
     <div class="w-8 h-8 rounded-lg grad-bg flex items-center justify-center text-base">✨</div>
     <span class="font-black text-xl">Glow<span class="grad-text">AI</span></span>
   </div>
@@ -154,6 +175,7 @@
     <button class="nav-item" onclick="showPage('water')"><span class="nav-icon">💧</span>Water</button>
     <button class="nav-item" onclick="showPage('skincare')"><span class="nav-icon">🫧</span>Skincare & Profile</button>
     <button class="nav-item" onclick="showPage('chat')"><span class="nav-icon">💬</span>AI Coach <span style="font-size:9px;background:rgba(139,92,246,0.3);border-radius:4px;padding:1px 5px;color:#c4b5fd;margin-left:4px">Soon</span></button>
+    <button class="nav-item" onclick="showPage('mindfulness')"><span class="nav-icon">🧘</span>Mindfulness</button>
     <button class="nav-item" onclick="showPage('research')"><span class="nav-icon">🔬</span>Research</button>
     <button class="nav-item" onclick="showPage('analytics')"><span class="nav-icon">📊</span>Analytics</button>
     <button class="nav-item" onclick="showPage('settings')"><span class="nav-icon">⚙️</span>Settings</button>
@@ -183,7 +205,7 @@
   </div>
   <div class="flex items-center gap-3">
     <span id="mobileStreak" class="text-xs text-gray-400">🔥 0 days</span>
-    <div id="mobileAvatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center font-bold text-sm">?</div>
+    <div id="mobileAvatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center font-bold text-sm cursor-pointer hover:opacity-80 transition" onclick="showPage('settings')" title="Settings">?</div>
   </div>
 </div>
 
@@ -258,39 +280,61 @@
       <!-- Progress rings -->
       <div class="card">
         <div class="font-bold text-sm mb-4">Today's Progress</div>
-        <div class="flex justify-around">
+        <div class="grid grid-cols-5 gap-0">
           <div class="text-center">
-            <div class="ring-wrap">
-              <svg width="80" height="80" viewBox="0 0 80 80">
+            <div class="ring-wrap" style="display:inline-block">
+              <svg width="58" height="58" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(139,92,246,0.15)" stroke-width="6"/>
                 <circle id="ringHabits" cx="40" cy="40" r="32" fill="none" stroke="#8b5cf6" stroke-width="6"
                   stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"/>
               </svg>
-              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold"><span id="ringHabitsLabel">0%</span></div>
+              <div class="absolute inset-0 flex items-center justify-center" style="font-size:9px;font-weight:700"><span id="ringHabitsLabel">0%</span></div>
             </div>
-            <div class="text-xs text-gray-400 mt-2">Habits</div>
+            <div class="text-xs text-gray-400 mt-1">Habits</div>
           </div>
           <div class="text-center">
-            <div class="ring-wrap">
-              <svg width="80" height="80" viewBox="0 0 80 80">
+            <div class="ring-wrap" style="display:inline-block">
+              <svg width="58" height="58" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="6"/>
                 <circle id="ringNutrition" cx="40" cy="40" r="32" fill="none" stroke="#10b981" stroke-width="6"
                   stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"/>
               </svg>
-              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold"><span id="ringNutritionLabel">0%</span></div>
+              <div class="absolute inset-0 flex items-center justify-center" style="font-size:9px;font-weight:700"><span id="ringNutritionLabel">0%</span></div>
             </div>
-            <div class="text-xs text-gray-400 mt-2">Nutrition</div>
+            <div class="text-xs text-gray-400 mt-1">Food</div>
           </div>
           <div class="text-center">
-            <div class="ring-wrap">
-              <svg width="80" height="80" viewBox="0 0 80 80">
+            <div class="ring-wrap" style="display:inline-block">
+              <svg width="58" height="58" viewBox="0 0 80 80">
                 <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(6,182,212,0.15)" stroke-width="6"/>
                 <circle id="ringWater" cx="40" cy="40" r="32" fill="none" stroke="#06b6d4" stroke-width="6"
                   stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"/>
               </svg>
-              <div class="absolute inset-0 flex items-center justify-center text-sm font-bold"><span id="ringWaterLabel">0%</span></div>
+              <div class="absolute inset-0 flex items-center justify-center" style="font-size:9px;font-weight:700"><span id="ringWaterLabel">0%</span></div>
             </div>
-            <div class="text-xs text-gray-400 mt-2">Water</div>
+            <div class="text-xs text-gray-400 mt-1">Water</div>
+          </div>
+          <div class="text-center" onclick="showPage('sleep')" style="cursor:pointer">
+            <div class="ring-wrap" style="display:inline-block">
+              <svg width="58" height="58" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="6"/>
+                <circle id="ringSleep" cx="40" cy="40" r="32" fill="none" stroke="#6366f1" stroke-width="6"
+                  stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"/>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center" style="font-size:9px;font-weight:700"><span id="ringSleepLabel">—</span></div>
+            </div>
+            <div class="text-xs text-gray-400 mt-1">Sleep</div>
+          </div>
+          <div class="text-center" onclick="showPage('gym')" style="cursor:pointer">
+            <div class="ring-wrap" style="display:inline-block">
+              <svg width="58" height="58" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(245,158,11,0.15)" stroke-width="6"/>
+                <circle id="ringGym" cx="40" cy="40" r="32" fill="none" stroke="#f59e0b" stroke-width="6"
+                  stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round"/>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center" style="font-size:9px;font-weight:700"><span id="ringGymLabel">—</span></div>
+            </div>
+            <div class="text-xs text-gray-400 mt-1">Gym</div>
           </div>
         </div>
 
@@ -304,52 +348,12 @@
       <div class="card">
         <div class="flex items-center justify-between mb-4">
           <div class="font-bold text-sm">Today's Actions</div>
-          <div id="dashTasksCount" class="text-xs text-gray-400">0 of 6 done</div>
-        </div>
-        <div id="taskList">
-          <div class="habit-item" data-habit-id="h1" onclick="toggleTask(this)">
-            <div class="habit-check"></div>
-            <div>
-              <div class="habit-text font-medium text-sm">Morning workout</div>
-              <div class="text-xs text-gray-500">+20 XP · Gym</div>
-            </div>
-          </div>
-          <div class="habit-item" data-habit-id="h2" onclick="toggleTask(this)">
-            <div class="habit-check"></div>
-            <div>
-              <div class="habit-text font-medium text-sm">Drink 500ml water on waking</div>
-              <div class="text-xs text-gray-500">+5 XP · Water</div>
-            </div>
-          </div>
-          <div class="habit-item" data-habit-id="h3" onclick="toggleTask(this)">
-            <div class="habit-check"></div>
-            <div>
-              <div class="habit-text font-medium text-sm">Log breakfast macros</div>
-              <div class="text-xs text-gray-500">+10 XP · Nutrition</div>
-            </div>
-          </div>
-          <div class="habit-item" data-habit-id="h4" onclick="toggleTask(this)">
-            <div class="habit-check"></div>
-            <div>
-              <div class="habit-text font-medium text-sm">No social media before 9am</div>
-              <div class="text-xs text-gray-500">+15 XP · Habits</div>
-            </div>
-          </div>
-          <div class="habit-item" data-habit-id="h5" onclick="toggleTask(this)">
-            <div class="habit-check"></div>
-            <div>
-              <div class="habit-text font-medium text-sm">10 min evening walk</div>
-              <div class="text-xs text-gray-500">+10 XP · Movement</div>
-            </div>
-          </div>
-          <div class="habit-item" data-habit-id="h6" onclick="toggleTask(this)">
-            <div class="habit-check"></div>
-            <div>
-              <div class="habit-text font-medium text-sm">Read for 20 mins before bed</div>
-              <div class="text-xs text-gray-500">+10 XP · Sleep hygiene</div>
-            </div>
+          <div class="flex items-center gap-2">
+            <div id="dashTasksCount" class="text-xs text-gray-400">0 of 6 done</div>
+            <button onclick="openAddHabitModal()" title="Add habit" class="text-purple-400 hover:text-white transition-all text-lg leading-none" style="line-height:1">+</button>
           </div>
         </div>
+        <div id="taskList"></div>
       </div>
     </div>
 
@@ -365,6 +369,31 @@
         <div class="font-bold text-sm mb-2">Daily Motivation</div>
         <div id="motivationText" class="text-sm text-gray-300 leading-relaxed italic"></div>
         <div class="text-xs text-gray-500 mt-3">— GlowAI Coach</div>
+      </div>
+    </div>
+
+    <!-- Mindfulness Quick Card -->
+    <div class="card mb-6" id="mindfulnessCard">
+      <div class="flex items-center justify-between mb-4">
+        <div class="font-bold">🧘 Mindfulness</div>
+        <button onclick="showPage('mindfulness')" class="text-xs text-purple-400 hover:text-purple-300">View all →</button>
+      </div>
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <div class="card-sm text-center">
+          <div id="dashMedSessions" class="text-2xl font-black text-white">0</div>
+          <div class="text-xs text-gray-400">sessions today</div>
+        </div>
+        <div class="card-sm text-center">
+          <div id="dashMedMins" class="text-2xl font-black text-white">0</div>
+          <div class="text-xs text-gray-400">min this week</div>
+        </div>
+        <div class="card-sm text-center">
+          <div id="dashMoodToday" class="text-2xl">—</div>
+          <div class="text-xs text-gray-400">mood today</div>
+        </div>
+      </div>
+      <div id="dashMedQuickStart">
+        <button onclick="startMeditation('m1')" class="w-full p-3 rounded-xl text-sm font-bold bg-purple-600 hover:bg-purple-700 text-white transition">📦 Quick Start: Box Breathing</button>
       </div>
     </div>
 
@@ -403,55 +432,13 @@
     <div class="card mb-6">
       <div class="flex items-center justify-between mb-4">
         <div class="font-bold">Today's Habits</div>
-        <div id="habitsPageCount" class="text-sm text-purple-400 font-semibold">0/6 ✓</div>
-      </div>
-      <div class="habit-item" data-habit-id="h4" onclick="toggleTask(this)">
-        <div class="habit-check"></div>
-        <div class="flex-1"><div class="habit-text font-medium text-sm">No social media before 9am</div><div class="text-xs text-gray-500">Discipline · +15 XP</div></div>
-        <div class="text-xs text-purple-400 font-bold">+15 XP</div>
-      </div>
-      <div class="habit-item" data-habit-id="h2" onclick="toggleTask(this)">
-        <div class="habit-check"></div>
-        <div class="flex-1"><div class="habit-text font-medium text-sm">Morning hydration (500ml)</div><div class="text-xs text-gray-500">Water · +5 XP</div></div>
-        <div class="text-xs text-purple-400 font-bold">+5 XP</div>
-      </div>
-      <div class="habit-item" data-habit-id="h1" onclick="toggleTask(this)">
-        <div class="habit-check"></div>
-        <div class="flex-1"><div class="habit-text font-medium text-sm">Workout logged</div><div class="text-xs text-gray-500">Fitness · +20 XP</div></div>
-        <div class="text-xs text-purple-400 font-bold">+20 XP</div>
-      </div>
-      <div class="habit-item" data-habit-id="h3" onclick="toggleTask(this)">
-        <div class="habit-check"></div>
-        <div class="flex-1"><div class="habit-text font-medium text-sm">Log breakfast macros</div><div class="text-xs text-gray-500">Nutrition · +10 XP</div></div>
-        <div class="text-xs text-purple-400 font-bold">+10 XP</div>
-      </div>
-      <div class="habit-item" data-habit-id="h5" onclick="toggleTask(this)">
-        <div class="habit-check"></div>
-        <div class="flex-1"><div class="habit-text font-medium text-sm">Evening walk (10 min)</div><div class="text-xs text-gray-500">Movement · +10 XP</div></div>
-        <div class="text-xs text-gray-400 font-bold">+10 XP</div>
-      </div>
-      <div class="habit-item" data-habit-id="h6" onclick="toggleTask(this)">
-        <div class="habit-check"></div>
-        <div class="flex-1"><div class="habit-text font-medium text-sm">Read for 20 mins before bed</div><div class="text-xs text-gray-500">Sleep hygiene · +10 XP</div></div>
-        <div class="text-xs text-gray-400 font-bold">+10 XP</div>
-      </div>
-
-      <!-- Premium locked habits -->
-      <div id="habitsPremiumLock" class="mt-4 p-4 rounded-xl relative" style="background:rgba(139,92,246,0.05);border:1px dashed rgba(139,92,246,0.2)">
-        <div class="flex items-center gap-3 mb-2 opacity-40">
-          <div class="habit-check"></div>
-          <div class="font-medium text-sm">5 min morning meditation</div>
-        </div>
-        <div class="flex items-center gap-3 opacity-40">
-          <div class="habit-check"></div>
-          <div class="font-medium text-sm">Cold shower (1 min)</div>
-        </div>
-        <div class="absolute inset-0 flex items-center justify-center">
-          <button onclick="openUpgrade()" class="flex items-center gap-2 bg-black border border-purple-500 rounded-xl px-4 py-2 text-sm font-semibold text-purple-300 hover:bg-purple-900 transition-all">
-            🔒 Unlock 8 more habits with Premium
-          </button>
+        <div class="flex items-center gap-3">
+          <div id="habitsPageCount" class="text-sm text-purple-400 font-semibold">0/6 ✓</div>
+          <button onclick="openAddHabitModal()" class="text-xs font-bold text-purple-400 hover:text-white transition-all px-3 py-1 rounded-lg" style="border:1px solid rgba(139,92,246,0.3);background:rgba(139,92,246,0.08)">+ Add</button>
         </div>
       </div>
+      <!-- Dynamically rendered by renderHabitLists() -->
+      <div id="habitsPageDynamic"></div>
     </div>
 
     <!-- Streak Calendar -->
@@ -476,12 +463,12 @@
       </div>
       <div class="card-sm text-center">
         <div class="text-2xl mb-1">⏱️</div>
-        <div class="text-xl font-black text-white">48 min</div>
+        <div id="gymEstTime" class="text-xl font-black text-white">—</div>
         <div class="text-xs text-gray-400 mt-1">Estimated time</div>
       </div>
       <div class="card-sm text-center">
         <div class="text-2xl mb-1">🔥</div>
-        <div class="text-xl font-black text-white">~380</div>
+        <div id="gymEstCals" class="text-xl font-black text-white">—</div>
         <div class="text-xs text-gray-400 mt-1">Cals burned</div>
       </div>
     </div>
@@ -497,6 +484,12 @@
       <div class="flex items-center justify-between mb-4">
         <div id="gymSessionHeader" class="font-bold">Today's Workout — Push A</div>
         <button id="startSessionBtn" onclick="startSession()" class="btn-primary text-xs py-1.5 px-4">▶ Start Session</button>
+      </div>
+
+      <!-- Session Timer -->
+      <div id="gymTimerContainer" style="display:none;margin-bottom:16px;padding:12px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:12px;text-align:center">
+        <div class="text-xs text-gray-400 mb-1">⏱️ Session Time</div>
+        <div id="gymTimer" style="font-size:24px;font-weight:bold;color:#22c55e;font-family:monospace">00:00:00</div>
       </div>
 
       <div class="exercise-item" id="ex1" data-exercise="Bench Press">
@@ -680,7 +673,7 @@
           <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)"><strong class="text-white">Lunch:</strong> Chicken breast (200g) + brown rice (150g) + mixed veg · ~550 kcal · 50g protein</div>
           <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)"><strong class="text-white">Snack:</strong> Greek yoghurt (200g) + mixed nuts (30g) · ~350 kcal · 22g protein</div>
           <div class="p-3 rounded-xl" style="background:rgba(139,92,246,0.08)"><strong class="text-white">Dinner:</strong> Salmon (180g) + sweet potato (200g) + greens · ~480 kcal · 40g protein</div>
-          <div class="text-xs text-gray-400 mt-2">Full AI grocery list & custom meal planning — coming soon for Premium members.</div>
+          <div class="text-xs text-gray-400 mt-2">Tap <strong style="color:#c4b5fd">Add Food</strong> above to log your actual meals and track your macros in real time.</div>
         </div>
       </div>
     </div>
@@ -763,6 +756,26 @@
         <div class="font-bold text-sm">AI Sleep Analysis</div>
       </div>
       <div id="sleepAnalysis"></div>
+    </div>
+
+    <!-- Bedtime meditations -->
+    <div class="card mt-6">
+      <div class="font-bold mb-4">🧘 Bedtime Meditations</div>
+      <p class="text-sm text-gray-400 mb-4">Wind down your mind before sleep</p>
+      <div class="space-y-3">
+        <button onclick="startMeditation('m6')" class="w-full p-4 rounded-xl text-left transition hover:bg-opacity-80 card-sm">
+          <div class="font-bold text-sm">🌙 Sleep Wind-Down</div>
+          <div class="text-xs text-gray-400 mt-1">10 min · Help your body relax</div>
+        </button>
+        <button onclick="startMeditation('m7')" class="w-full p-4 rounded-xl text-left transition hover:bg-opacity-80 card-sm">
+          <div class="font-bold text-sm">4️⃣ 4-7-8 Breathing</div>
+          <div class="text-xs text-gray-400 mt-1">5 min · Powerful relaxation technique</div>
+        </button>
+        <button onclick="startMeditation('m2')" class="w-full p-4 rounded-xl text-left transition hover:bg-opacity-80 card-sm">
+          <div class="font-bold text-sm">🌊 Body Scan for Sleep</div>
+          <div class="text-xs text-gray-400 mt-1">5 min · Release tension throughout body</div>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1247,6 +1260,7 @@
   <div id="page-settings" class="page">
     <div class="section-header">⚙️ Settings</div>
 
+    <!-- Account card -->
     <div class="card mb-4">
       <div class="font-bold mb-4">Account</div>
       <div class="flex items-center gap-4 mb-4">
@@ -1261,6 +1275,88 @@
       <div id="settingsPremiumActive" class="hidden text-center p-3 rounded-xl mb-2" style="background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(236,72,153,0.1));border:1px solid rgba(139,92,246,0.3)"><span class="text-sm font-bold text-purple-300">✨ Premium Active — Thank you!</span></div>
     </div>
 
+    <!-- Theme/Appearance -->
+    <div class="card mb-4">
+      <div class="font-bold mb-4">🌗 Appearance</div>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between py-2">
+          <div><div class="text-sm font-medium">Theme</div><div class="text-xs text-gray-400">Light or Dark mode</div></div>
+          <div class="flex items-center gap-3">
+            <span id="themeLabel" class="text-xs font-semibold text-gray-300">Dark Mode</span>
+            <div id="tog-theme" class="w-10 h-6 bg-purple-600 rounded-full relative cursor-pointer" onclick="toggleTheme(this)"><div class="w-4 h-4 bg-white rounded-full absolute left-1 top-1 transition-all"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile details -->
+    <div class="card mb-4">
+      <div class="font-bold mb-4">Profile Details</div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">First Name</label>
+            <input id="profileFirstName" type="text" placeholder="Your name" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">Date of Birth</label>
+            <input id="profileDOB" type="date" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">Height (cm)</label>
+            <input id="profileHeight" type="number" placeholder="e.g. 170" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">Weight (kg)</label>
+            <input id="profileWeight" type="number" placeholder="e.g. 70" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">🔥 Daily Calorie Goal</label>
+          <input id="profileCalGoal" type="number" placeholder="e.g. 2100" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">💜 Protein (g)</label>
+            <input id="profileProteinGoal" type="number" placeholder="e.g. 150" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">🟡 Carbs (g)</label>
+            <input id="profileCarbsGoal" type="number" placeholder="e.g. 240" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+          </div>
+          <div>
+            <label class="text-xs text-gray-400 mb-1 block">🩷 Fat (g)</label>
+            <input id="profileFatGoal" type="number" placeholder="e.g. 75" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">💧 Daily Water Goal (ml)</label>
+          <input id="profileWaterGoal" type="number" placeholder="e.g. 3000" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+        </div>
+        <button onclick="saveProfileSettings()" class="btn-primary w-full text-sm py-2">💾 Save Nutrition Goals</button>
+      </div>
+    </div>
+
+    <!-- Change password -->
+    <div class="card mb-4">
+      <div class="font-bold mb-4">Change Password</div>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">New Password</label>
+          <input id="newPassword" type="password" placeholder="New password (min 6 chars)" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">Confirm New Password</label>
+          <input id="confirmPassword" type="password" placeholder="Confirm new password" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-purple-500"/>
+        </div>
+        <button onclick="changePassword()" class="btn-primary w-full text-sm py-2">Update Password</button>
+        <button onclick="sendPasswordReset()" class="btn-outline w-full text-sm py-2">📧 Send Password Reset Email</button>
+      </div>
+    </div>
+
+    <!-- Notifications -->
     <div class="card mb-4">
       <div class="font-bold mb-4">Notifications</div>
       <div class="space-y-3">
@@ -1276,34 +1372,42 @@
           <div><div class="text-sm font-medium">Bedtime reminder</div><div class="text-xs text-gray-400">Sleep schedule alerts</div></div>
           <div id="tog-bedtimeReminder" class="w-10 h-6 bg-gray-700 rounded-full relative cursor-pointer" onclick="toggleSetting('bedtimeReminder',this)"><div class="w-4 h-4 bg-white rounded-full absolute left-1 top-1 transition-all"></div></div>
         </div>
+        <div class="flex items-center justify-between py-2">
+          <div><div class="text-sm font-medium">Workout reminders</div><div class="text-xs text-gray-400">Reminder to log your gym session</div></div>
+          <div id="tog-workoutReminders" class="w-10 h-6 bg-gray-700 rounded-full relative cursor-pointer" onclick="toggleSetting('workoutReminders',this)"><div class="w-4 h-4 bg-white rounded-full absolute left-1 top-1 transition-all"></div></div>
+        </div>
       </div>
     </div>
 
+    <!-- Integrations -->
     <div class="card mb-4">
-      <div class="font-bold mb-4">Integrations</div>
+      <div class="font-bold mb-4">App</div>
       <div class="space-y-3">
         <div class="flex items-center justify-between py-2">
           <div class="flex items-center gap-3"><div class="text-xl">🔔</div><div><div class="text-sm font-medium">Push Notifications</div><div class="text-xs text-gray-400">Daily reminders & habit nudges</div></div></div>
           <span class="text-xs text-green-400 font-semibold">Active</span>
         </div>
         <div class="flex items-center justify-between py-2">
-          <div class="flex items-center gap-3"><div class="text-xl">☁️</div><div><div class="text-sm font-medium">Cloud Sync</div><div class="text-xs text-gray-400">Your data syncs across devices via Firebase</div></div></div>
+          <div class="flex items-center gap-3"><div class="text-xl">☁️</div><div><div class="text-sm font-medium">Cloud Sync</div><div class="text-xs text-gray-400">Data syncs across devices via Firebase</div></div></div>
           <span class="text-xs text-green-400 font-semibold">Active</span>
         </div>
         <div class="flex items-center justify-between py-2">
-          <div class="flex items-center gap-3"><div class="text-xl">📱</div><div><div class="text-sm font-medium">Install as App</div><div class="text-xs text-gray-400">Add to home screen for app-like experience</div></div></div>
+          <div class="flex items-center gap-3"><div class="text-xl">📱</div><div><div class="text-sm font-medium">Install as App</div><div class="text-xs text-gray-400">Add to home screen for app experience</div></div></div>
           <button onclick="installPWA()" class="lock-badge" style="cursor:pointer">Install</button>
+        </div>
+        <div class="flex items-center justify-between py-2">
+          <div class="flex items-center gap-3"><div class="text-xl">🌙</div><div><div class="text-sm font-medium">Dark Mode</div><div class="text-xs text-gray-400">Always on — designed for dark</div></div></div>
+          <span class="text-xs text-green-400 font-semibold">On</span>
         </div>
       </div>
     </div>
 
+    <!-- Legal & support -->
     <div class="card">
       <div class="space-y-1">
-        <button class="nav-item w-full text-left" style="color:#9ca3af">🔒 Privacy Policy</button>
-        <button class="nav-item w-full text-left" style="color:#9ca3af">📋 Terms of Service</button>
-        <button class="nav-item w-full text-left" style="color:#9ca3af">💬 Contact Support</button>
+        <a href="privacy.html" target="_blank" rel="noopener" class="nav-item w-full text-left block" style="color:#9ca3af;text-decoration:none">🔒 Privacy Policy</a>
+        <a href="terms.html" target="_blank" rel="noopener" class="nav-item w-full text-left block" style="color:#9ca3af;text-decoration:none">📋 Terms of Service</a>
         <button onclick="doLogout()" class="nav-item w-full text-left" style="color:#ef4444">🚪 Log Out</button>
-        <button class="nav-item w-full text-left" style="color:#6b7280"><a href="index.html">← Back to Landing Page</a></button>
       </div>
     </div>
   </div>
@@ -1314,6 +1418,108 @@
     <!-- Content based on quiz answers -->
     <div id="skincareContent">
       <div class="text-sm text-gray-500 text-center py-8">Loading your personalised skincare plan...</div>
+    </div>
+  </div>
+
+  <!-- ====== MINDFULNESS PAGE ====== -->
+  <div id="page-mindfulness" class="page">
+    <div class="section-header">🧘 Mindfulness & Mental Health</div>
+
+    <!-- STATS ROW -->
+    <div class="grid md:grid-cols-3 gap-4 mb-6">
+      <div class="card-sm text-center">
+        <div id="medStatsToday" class="text-3xl font-black text-purple-400">0</div>
+        <div class="text-xs text-gray-400 mt-1">Sessions today</div>
+      </div>
+      <div class="card-sm text-center">
+        <div id="medStatsWeek" class="text-3xl font-black text-pink-400">0</div>
+        <div class="text-xs text-gray-400 mt-1">Minutes this week</div>
+      </div>
+      <div class="card-sm text-center">
+        <div id="medStatsStreak" class="text-3xl font-black text-blue-400">🔥 0</div>
+        <div class="text-xs text-gray-400 mt-1">Meditation streak</div>
+      </div>
+    </div>
+
+    <!-- MOOD CHECK-IN -->
+    <div class="card mb-6">
+      <div class="font-bold mb-4">How are you feeling today?</div>
+      <div class="flex justify-center gap-3 mb-4" id="moodCheckIn">
+        <button class="mood-btn text-4xl w-16 h-16 rounded-2xl hover:scale-110 transition" onclick="setMoodCheck(1)" data-mood="1">😔</button>
+        <button class="mood-btn text-4xl w-16 h-16 rounded-2xl hover:scale-110 transition" onclick="setMoodCheck(2)" data-mood="2">😐</button>
+        <button class="mood-btn text-4xl w-16 h-16 rounded-2xl hover:scale-110 transition" onclick="setMoodCheck(3)" data-mood="3">🙂</button>
+        <button class="mood-btn text-4xl w-16 h-16 rounded-2xl hover:scale-110 transition" onclick="setMoodCheck(4)" data-mood="4">😊</button>
+        <button class="mood-btn text-4xl w-16 h-16 rounded-2xl hover:scale-110 transition" onclick="setMoodCheck(5)" data-mood="5">😄</button>
+      </div>
+      <div id="moodFeedback" class="text-sm text-center text-gray-400"></div>
+    </div>
+
+    <!-- RECOMMENDED FOR YOU -->
+    <div class="card mb-6">
+      <div class="font-bold mb-4">🎯 Recommended For You</div>
+      <div id="recommendedMeditationsContainer" class="grid md:grid-cols-3 gap-4">
+        <div class="text-center py-4 text-gray-400 text-sm">Personalizing based on your answers...</div>
+      </div>
+    </div>
+
+    <!-- MEDITATION LIBRARY -->
+    <div class="card mb-6">
+      <div class="font-bold mb-4">📚 Meditation Library</div>
+
+      <!-- Filter tabs -->
+      <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-purple-600 text-white" onclick="filterMeditations('all')">All</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="filterMeditations('stress')">Stress & Anxiety</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="filterMeditations('focus')">Focus & Clarity</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="filterMeditations('sleep')">Sleep</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="filterMeditations('mood')">Mood & Emotion</button>
+      </div>
+
+      <!-- Meditation cards grid -->
+      <div id="meditationLibrary" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="text-center py-8 text-gray-400">Loading meditation routines...</div>
+      </div>
+    </div>
+
+    <!-- BREATHING EXERCISES -->
+    <div class="card mb-6">
+      <div class="font-bold mb-4">🌬️ Breathing Exercises (Free to All)</div>
+      <div class="flex gap-2 mb-6">
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-purple-600 text-white" onclick="switchBreathingExercise('box')">Box Breathing</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="switchBreathingExercise('478')">4-7-8 Breathing</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="switchBreathingExercise('coherent')">Coherent (5:5)</button>
+      </div>
+
+      <!-- Breathing circle -->
+      <div class="flex flex-col items-center justify-center gap-6 py-8">
+        <div id="breathingCircle" class="relative w-40 h-40 rounded-full border-4 border-purple-500 flex items-center justify-center" style="background:rgba(139,92,246,0.1)">
+          <div id="breathingPhase" class="text-2xl font-bold text-center">
+            <div id="breathingText" class="text-3xl font-black text-purple-400">Inhale</div>
+            <div id="breathingCount" class="text-xl text-gray-400 mt-2">4</div>
+          </div>
+        </div>
+        <button id="startBreathingBtn" onclick="startBreathingExercise()" class="btn-primary px-8 py-3">Start Breathing</button>
+        <p class="text-sm text-gray-400 text-center max-w-md">Follow the circle as it expands and contracts. Focus on your breath to calm your mind.</p>
+      </div>
+    </div>
+
+    <!-- MENTAL HEALTH TIPS -->
+    <div class="card mb-6">
+      <div class="font-bold mb-4">💡 Mental Health Tips</div>
+
+      <!-- Filter tabs for tips -->
+      <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-purple-600 text-white" onclick="filterTips('all')">All Tips</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="filterTips('stress')">Stress</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="filterTips('focus')">Focus</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="filterTips('sleep')">Sleep</button>
+        <button class="px-4 py-2 text-sm font-bold rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300" onclick="filterTips('mood')">Mood</button>
+      </div>
+
+      <!-- Tips grid -->
+      <div id="mentalHealthTips" class="grid md:grid-cols-2 gap-4">
+        <div class="text-center py-8 text-gray-400">Loading mental health tips...</div>
+      </div>
     </div>
   </div>
 
@@ -1335,10 +1541,52 @@
   <div class="mobile-nav-item" onclick="showPage('nutrition');setMobileActive(this)">
     <div class="m-icon">🥗</div><div>Food</div>
   </div>
-  <div class="mobile-nav-item" onclick="showPage('chat');setMobileActive(this)">
-    <div class="m-icon">💬</div><div>Coach</div>
+  <div id="timeBasedNav" class="mobile-nav-item" onclick="handleTimeBasedNav();setMobileActive(this)">
+    <div class="m-icon">💧</div><div>Water</div>
   </div>
 </nav>
+
+<!-- ================================================================
+     MEDITATION PLAYER OVERLAY
+================================================================ -->
+<div id="meditationPlayer" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center p-6" style="background:rgba(0,0,0,0.95)">
+  <div id="medAmbient" class="absolute inset-0"></div>
+
+  <div class="relative z-10 w-full h-full flex flex-col items-center justify-center max-w-md mx-auto">
+    <!-- Close button -->
+    <button id="medClose" onclick="closeMeditation()" class="absolute top-6 right-6 text-3xl text-gray-400 hover:text-white transition">×</button>
+
+    <!-- Voice toggle -->
+    <button id="ttsToggle" onclick="toggleMedVoice()" class="absolute top-6 left-6 text-sm font-bold text-gray-400 hover:text-white transition">🔊 Voice On</button>
+
+    <!-- Title -->
+    <div id="medTitle" class="text-3xl font-black text-center mb-2">Meditation</div>
+    <div id="medSubtitle" class="text-lg text-gray-300 text-center mb-8">10 min · focus</div>
+
+    <!-- SVG Timer Ring -->
+    <div class="relative w-48 h-48 mb-8">
+      <svg viewBox="0 0 100 100" class="w-full h-full">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="3"/>
+        <circle id="medTimerRing" cx="50" cy="50" r="45" fill="none" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1s linear"/>
+      </svg>
+      <div class="absolute inset-0 flex items-center justify-center flex-col">
+        <div id="medTimeDisplay" class="text-5xl font-black text-white">5:00</div>
+      </div>
+    </div>
+
+    <!-- Step text -->
+    <div id="medStepText" class="text-center text-xl text-white mb-8 leading-relaxed max-w-sm min-h-16">Close your eyes and begin...</div>
+
+    <!-- Step progress dots -->
+    <div id="medStepDots" class="flex gap-2 mb-8"></div>
+
+    <!-- Controls -->
+    <div class="flex gap-4 mb-6">
+      <button id="medPlayPause" onclick="toggleMedPause()" class="btn-primary px-8 py-3 text-sm">⏸ Pause</button>
+      <button onclick="closeMeditation()" class="px-8 py-3 text-sm rounded-full bg-red-600 hover:bg-red-700 text-white font-bold transition">✕ End</button>
+    </div>
+  </div>
+</div>
 
 <!-- ================================================================
      UPGRADE MODAL
@@ -1419,13 +1667,34 @@
      FOOD ADD MODAL
 ================================================================ -->
 <div class="modal-overlay" id="foodModal" onclick="if(event.target===this)closeAddFood()">
-  <div class="modal-card" style="max-width:380px">
+  <div class="modal-card" style="max-width:420px">
     <div class="flex items-center justify-between mb-5">
-      <h2 class="text-lg font-black">Add Food</h2>
+      <h2 class="text-lg font-black">🥗 Add Food</h2>
       <button onclick="closeAddFood()" class="text-gray-500 hover:text-white text-xl leading-none">×</button>
     </div>
-    <div class="space-y-3">
-      <input id="foodName" type="text" placeholder="Food name (e.g. Chicken breast)" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-purple-500" onkeydown="if(event.key==='Enter')submitFood()"/>
+
+    <!-- Tabs: Manual vs Barcode -->
+    <div class="flex gap-2 mb-4" id="foodInputTabs">
+      <button class="flex-1 py-2 px-3 text-sm font-bold rounded-lg active" onclick="switchFoodTab('manual')" style="background:rgba(139,92,246,0.3);color:#a78bfa;border:1px solid rgba(139,92,246,0.4)">📝 Manual</button>
+      <button class="flex-1 py-2 px-3 text-sm font-bold rounded-lg" onclick="switchFoodTab('barcode')" style="background:rgba(139,92,246,0.1);color:#6b7280;border:1px solid rgba(139,92,246,0.2)">📱 Scan</button>
+    </div>
+
+    <!-- MANUAL INPUT TAB -->
+    <div id="foodTab-manual" class="space-y-3">
+      <!-- Product search dropdown -->
+      <div>
+        <label class="text-xs text-gray-400 mb-1 block">Product Name</label>
+        <input id="foodName" type="text" placeholder="Type to search (e.g. chicken)" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-purple-500" oninput="searchFoodProducts(this.value)"/>
+        <div id="foodSearch-results" class="hidden mt-2 bg-gray-800 rounded-xl border border-gray-700 max-h-40 overflow-y-auto"></div>
+      </div>
+
+      <!-- Amount (grams/ml) -->
+      <div>
+        <label class="text-xs text-gray-400 mb-1 block">Amount (g/ml)</label>
+        <input id="foodAmount" type="number" min="1" placeholder="100" value="100" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-purple-500" oninput="autocalcMacros()"/>
+      </div>
+
+      <!-- Macros (auto-calculated from product) -->
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-xs text-gray-400 mb-1 block">Calories (kcal)</label>
@@ -1433,19 +1702,80 @@
         </div>
         <div>
           <label class="text-xs text-gray-400 mb-1 block">Protein (g)</label>
-          <input id="foodProtein" type="number" min="0" placeholder="0" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"/>
+          <input id="foodProtein" type="number" step="0.1" min="0" placeholder="0" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"/>
         </div>
         <div>
           <label class="text-xs text-gray-400 mb-1 block">Carbs (g)</label>
-          <input id="foodCarbs" type="number" min="0" placeholder="0" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"/>
+          <input id="foodCarbs" type="number" step="0.1" min="0" placeholder="0" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"/>
         </div>
         <div>
           <label class="text-xs text-gray-400 mb-1 block">Fat (g)</label>
-          <input id="foodFat" type="number" min="0" placeholder="0" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"/>
+          <input id="foodFat" type="number" step="0.1" min="0" placeholder="0" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"/>
+        </div>
+      </div>
+
+      <button onclick="submitFood()" class="btn-primary w-full mt-5">Add to Log ✓</button>
+    </div>
+
+    <!-- BARCODE SCAN TAB -->
+    <div id="foodTab-barcode" class="hidden space-y-3">
+      <div class="text-sm text-gray-300 text-center mb-3">Position barcode in front of camera</div>
+      <div id="barcodeVideo" style="width:100%;height:200px;background:#000;border-radius:12px;border:1px solid #666;position:relative">
+        <video id="barcode-video" style="width:100%;height:100%;border-radius:12px;display:none"></video>
+        <div id="barcodeReady" style="display:flex;align-items:center;justify-content:center;height:100%;color:#999">Camera initializing...</div>
+      </div>
+      <button id="barcodeStartBtn" onclick="startScanBarcode()" class="btn-primary w-full">🎥 Start Scanning</button>
+      <button id="barcodeStopBtn" onclick="stopScanBarcode()" class="hidden w-full py-2 px-4 rounded-xl text-white" style="background:#dc2626;border:1px solid rgba(220,38,38,0.5)">Stop Scanning</button>
+
+      <div id="barcodeResult" class="hidden p-3 rounded-xl" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3)">
+        <div class="text-xs text-gray-400">Barcode found:</div>
+        <div id="barcodeResultText" class="text-sm font-bold text-green-400 mt-1"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Custom Habit Modal -->
+<div class="modal-overlay" id="addHabitModal" onclick="if(event.target===this)closeAddHabitModal()">
+  <div class="modal-card" style="max-width:360px">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-lg font-black">Add Custom Habit</h2>
+      <button onclick="closeAddHabitModal()" class="text-gray-500 hover:text-white text-xl leading-none">×</button>
+    </div>
+    <div class="space-y-3">
+      <div>
+        <label class="text-xs text-gray-400 mb-1 block">Habit Name</label>
+        <input id="newHabitText" type="text" maxlength="60" placeholder="e.g. Meditate for 10 mins" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-purple-500" onkeydown="if(event.key==='Enter')submitCustomHabit()"/>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">Emoji (optional)</label>
+          <input id="newHabitEmoji" type="text" maxlength="4" placeholder="e.g. 🧘" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500"/>
+        </div>
+        <div>
+          <label class="text-xs text-gray-400 mb-1 block">XP Reward</label>
+          <select id="newHabitXP" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-purple-500">
+            <option value="5">+5 XP (Easy)</option>
+            <option value="10" selected>+10 XP (Medium)</option>
+            <option value="15">+15 XP (Hard)</option>
+            <option value="20">+20 XP (Epic)</option>
+          </select>
         </div>
       </div>
     </div>
-    <button onclick="submitFood()" class="btn-primary w-full mt-5">Add to Log ✓</button>
+    <input type="hidden" id="editHabitId" value=""/>
+    <button onclick="submitCustomHabit()" class="btn-primary w-full mt-5">Save Habit ✓</button>
+  </div>
+</div>
+
+<!-- Gym Day Detail Modal -->
+<div class="modal-overlay" id="gymDayModal" onclick="if(event.target===this)closeGymDayModal()">
+  <div class="modal-card" style="max-width:480px;max-height:85vh;overflow-y:auto">
+    <div class="flex items-center justify-between mb-5">
+      <h2 id="gymDayModalTitle" class="text-lg font-black">Workout Details</h2>
+      <button onclick="closeGymDayModal()" class="text-gray-500 hover:text-white text-xl leading-none">×</button>
+    </div>
+    <div id="gymDayModalContent"></div>
   </div>
 </div>
 
@@ -1483,19 +1813,49 @@ function showPage(name) {
   });
   window.scrollTo(0, 0);
   if (name === 'analytics') initAnalyticsCharts();
-  if (name === 'gym') { try { buildGymWeekPlan(); } catch(e) {} initGymChart(); }
+  if (name === 'gym') { try { buildGymWeekPlan(); } catch(e) { console.warn('buildGymWeekPlan error:', e); } initGymChart(); }
   if (name === 'nutrition') { renderFoodLog(); initNutritionChart(); }
   if (name === 'sleep') { loadSleepStats(); initSleepChart(); generateSleepAnalysis(); }
   if (name === 'water') updateWaterWeekChart();
   if (name === 'chat') showChatPage();
   if (name === 'skincare') loadSkincarePage();
+  if (name === 'settings') loadSettingsPage();
+  if (name === 'mindfulness') loadMindfulnessPage();
   if (name === 'dashboard') { updateProgressRings(); updateWeekAtAGlance(); updateDaysTracking(); }
 }
 
 function setMobileActive(el) {
   document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
+  if (el) el.classList.add('active');
 }
+
+// Time-based nav: Sleep before 9am, Water 9am-10pm, Sleep after 10pm
+function getTimeBasedNav() {
+  const h = new Date().getHours();
+  if (h < 9 || h >= 22) {
+    return { icon: '😴', label: 'Sleep', page: 'sleep' };
+  } else {
+    return { icon: '💧', label: 'Water', page: 'water' };
+  }
+}
+
+function updateTimeBasedNav() {
+  const nav = getTimeBasedNav();
+  const el = document.getElementById('timeBasedNav');
+  if (el) {
+    el.innerHTML = `<div class="m-icon">${nav.icon}</div><div>${nav.label}</div>`;
+    el.onclick = () => { handleTimeBasedNav(); setMobileActive(el); };
+  }
+}
+
+function handleTimeBasedNav() {
+  const nav = getTimeBasedNav();
+  showPage(nav.page);
+}
+
+// Update nav every hour and on page visibility change
+setInterval(updateTimeBasedNav, 60000);
+document.addEventListener('visibilitychange', updateTimeBasedNav);
 
 // ============================================================
 // PERSONALISATION — reads quiz answers and returns config
@@ -1611,7 +1971,10 @@ function initDashboard() {
       setText('nutFatGoal', '/ ' + cfg.fat + 'g goal');
     } catch(e) { console.warn('Personalisation error:', e); }
 
-    try { setText('motivationText', getDailyMotivation()); } catch(e) {}
+    try {
+      setText('motivationText', getDailyMotivation());
+      setupMidnightMotivationRefresh();
+    } catch(e) { console.error('Motivation error:', e); }
     applyPremiumUI(user.isPremium);
     updateXPDisplay();
     loadHabitStates();
@@ -1623,6 +1986,7 @@ function initDashboard() {
     updateDaysTracking();
     loadSettingsToggles();
     buildCalendar();
+    updateTimeBasedNav();
   } catch(e) {
     console.error('initDashboard error:', e);
   }
@@ -1640,6 +2004,7 @@ window.onerror = function(msg, src, line, col, err) {
 // Wait for Firebase auth state, then init or redirect
 GlowAuth.onReady(user => {
   if (!user) { window.location.href = 'index.html'; return; }
+  initTheme();
   initDashboard();
   setTimeout(() => requestNotificationPermission(), 3000);
 });
@@ -1660,36 +2025,57 @@ function updateXPDisplay() {
 }
 
 // ============================================================
-// HABITS
+// HABITS — unified dynamic render (8 habits: 2 free, 6 premium)
 // ============================================================
-function loadHabitStates() {
+function renderHabitLists() {
   const today = GlowData.habits.today();
   const user = GlowAuth.getUser();
   const isPremium = user && user.isPremium;
-  document.querySelectorAll('[data-habit-id]').forEach(el => {
-    const id = el.dataset.habitId;
-    const isDone = today[id] === true;
-    const check = el.querySelector('.habit-check');
-    el.classList.toggle('done', isDone);
-    if (check) check.textContent = isDone ? '✓' : '';
-    // Reset any previously applied premium styling
-    el.style.opacity = '';
-    const badge = el.querySelector('.text-xs');
-    if (badge) badge.innerHTML = badge.innerHTML.replace(/\s*·\s*<span[^>]*>🔒 Premium<\/span>/, '');
-  });
-  // Mark premium habits for free users — they are still clickable (they show upgrade modal)
-  if (!isPremium) {
-    ['h3','h4','h5','h6'].forEach(id => {
-      document.querySelectorAll('[data-habit-id="' + id + '"]').forEach(el => {
-        el.style.opacity = '0.5';
-        const badge = el.querySelector('.text-xs');
-        if (badge && !badge.innerHTML.includes('Premium')) {
-          badge.innerHTML = badge.innerHTML + ' · <span style="color:#c4b5fd">🔒 Premium</span>';
-        }
-      });
-    });
+  const allDefs = GlowData.habits.allHabits();
+  const visibleHabits = isPremium ? allDefs : GlowData.habits.freeHabits();
+  const custom = (typeof getCustomHabits === 'function') ? getCustomHabits() : [];
+
+  const makeDef = (h, compact) => {
+    const isDone = today[h.id] === true;
+    const isLocked = h.premium && !isPremium;
+    const lockTag = isLocked ? ` · <span style="color:#c4b5fd;font-size:10px">🔒 Premium</span>` : '';
+    const xpTag = compact ? '' : `<div class="text-xs font-bold text-purple-400 ml-1">+${h.xp}</div>`;
+    return `<div class="habit-item${isDone ? ' done' : ''}" data-habit-id="${h.id}" onclick="toggleTask(this)"${isLocked ? ' style="opacity:0.55"' : ''}>
+      <div class="habit-check">${isDone ? '✓' : ''}</div>
+      <div class="flex-1"><div class="habit-text font-medium text-sm">${h.text}</div><div class="text-xs text-gray-500">${h.category} · +${h.xp} XP${lockTag}</div></div>
+      ${xpTag}
+    </div>`;
+  };
+
+  const makeCustom = (h, compact) => {
+    const isDone = today[h.id] === true;
+    const emoji = h.emoji || '⭐';
+    const editBtns = compact ? '' : `<button onclick="event.stopPropagation();editCustomHabit('${h.id}')" class="text-gray-600 hover:text-gray-300 text-xs px-1" title="Edit">✏️</button><button onclick="event.stopPropagation();removeCustomHabit('${h.id}')" class="text-gray-600 hover:text-red-400 text-xs px-1" title="Remove">✕</button>`;
+    return `<div class="habit-item${isDone ? ' done' : ''}" data-habit-id="${h.id}" onclick="toggleCustomHabit('${h.id}')">
+      <div class="habit-check">${isDone ? '✓' : ''}</div>
+      <div class="flex-1"><div class="habit-text font-medium text-sm">${emoji} ${h.text}</div><div class="text-xs text-gray-500">Custom · +${h.xp} XP</div></div>
+      <div class="flex items-center gap-1"><div class="text-xs font-bold text-purple-400">+${h.xp}</div>${editBtns}</div>
+    </div>`;
+  };
+
+  // Dashboard task list (compact — no edit/remove buttons)
+  const tl = document.getElementById('taskList');
+  if (tl) {
+    tl.innerHTML = visibleHabits.map(h => makeDef(h, true)).join('') + custom.map(h => makeCustom(h, true)).join('');
   }
+
+  // Habits page full list (with edit/remove buttons on custom)
+  const hpd = document.getElementById('habitsPageDynamic');
+  if (hpd) {
+    const addBtn = isPremium ? `<button onclick="openAddHabitModal()" class="w-full mt-3 py-2 rounded-xl text-sm font-semibold text-purple-400 hover:text-white transition-all" style="border:1px dashed rgba(139,92,246,0.3);background:rgba(139,92,246,0.04)">+ Add Custom Habit</button>` : `<div class="w-full mt-4 p-3 rounded-xl text-center text-xs text-gray-400" style="background:rgba(139,92,246,0.05);border:1px dashed rgba(139,92,246,0.2)">🔒 Custom habits available with Premium</div>`;
+    hpd.innerHTML = visibleHabits.map(h => makeDef(h, false)).join('') + custom.map(h => makeCustom(h, false)).join('') + addBtn;
+  }
+
   updateHabitsCount();
+}
+
+function loadHabitStates() {
+  renderHabitLists();
 }
 
 function toggleTask(el) {
@@ -1697,19 +2083,11 @@ function toggleTask(el) {
   if (!id) return;
   const user = GlowAuth.getUser();
   const isPremium = user && user.isPremium;
-  if (!isPremium && (id === 'h3' || id === 'h4' || id === 'h5' || id === 'h6')) {
-    openUpgrade(); return;
-  }
+  const allDefs = GlowData.habits.allHabits();
+  const def = allDefs.find(h => h.id === id);
+  if (!isPremium && def && def.premium) { openUpgrade(); return; }
+
   const willBeDone = !el.classList.contains('done');
-  const defs = GlowData.habits.defs();
-  const def = defs.find(h => h.id === id);
-
-  document.querySelectorAll('[data-habit-id="' + id + '"]').forEach(item => {
-    item.classList.toggle('done', willBeDone);
-    const check = item.querySelector('.habit-check');
-    if (check) check.textContent = willBeDone ? '✓' : '';
-  });
-
   GlowData.habits.set(id, willBeDone);
 
   const xpAmt = def ? def.xp : 10;
@@ -1723,8 +2101,8 @@ function toggleTask(el) {
     setText('mobileStreak', '🔥 ' + sk.count + ' days');
   }
 
+  renderHabitLists();
   updateXPDisplay();
-  updateHabitsCount();
   updateStats();
 }
 
@@ -1732,13 +2110,19 @@ function updateHabitsCount() {
   const today = GlowData.habits.today();
   const user = GlowAuth.getUser();
   const isPremium = user && user.isPremium;
-  const total = isPremium ? 6 : 2;
-  const allDone = Object.values(today).filter(Boolean).length;
+  const customHabits = getCustomHabits ? getCustomHabits() : [];
+  const baseTotal = isPremium ? 8 : 2;
+  const total = baseTotal + customHabits.length;
   const freeIds = ['h1','h2'];
-  const freeDone = isPremium ? allDone : freeIds.filter(id => today[id] === true).length;
-  setText('habitsStat', freeDone + '/' + total);
-  setText('habitsPageCount', freeDone + '/' + total + ' ✓');
-  setText('dashTasksCount', freeDone + ' of ' + total + ' done');
+  const allIds = ['h1','h2','h3','h4','h5','h6','h7','h8'];
+  const freeDone = isPremium
+    ? allIds.filter(id => today[id] === true).length
+    : freeIds.filter(id => today[id] === true).length;
+  const customDone = customHabits.filter(h => today[h.id] === true).length;
+  const done = freeDone + customDone;
+  setText('habitsStat', done + '/' + total);
+  setText('habitsPageCount', done + '/' + total + ' ✓');
+  setText('dashTasksCount', done + ' of ' + total + ' done');
 }
 
 // ============================================================
@@ -1753,13 +2137,7 @@ function updateStats() {
   const lastSleep = GlowData.sleep.lastNight();
   setText('sleepStat', lastSleep ? lastSleep.hours + 'h' : '—');
   updateProgressRings();
-  const todayH = GlowData.habits.today();
-  const userH = GlowAuth.getUser();
-  const isPremiumH = userH && userH.isPremium;
-  const totalH2 = isPremiumH ? 6 : 2;
-  const freeIdsH = ['h1','h2'];
-  const doneFreeH = isPremiumH ? Object.values(todayH).filter(Boolean).length : freeIdsH.filter(id => todayH[id] === true).length;
-  setText('habitsStat', doneFreeH + '/' + totalH2);
+  updateHabitsCount();
 }
 
 // ============================================================
@@ -1917,14 +2295,117 @@ function updateNutritionDisplay(list) {
 
 function openAddFood() {
   document.getElementById('foodModal').classList.add('open');
-  ['foodName','foodCal','foodProtein','foodCarbs','foodFat'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.value = '';
+  ['foodName','foodCal','foodProtein','foodCarbs','foodFat','foodAmount'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = id === 'foodAmount' ? '100' : '';
   });
+  switchFoodTab('manual');
   setTimeout(() => { const n = document.getElementById('foodName'); if (n) n.focus(); }, 50);
 }
 
 function closeAddFood() {
+  stopScanBarcode();
   document.getElementById('foodModal').classList.remove('open');
+}
+
+// Switch between manual and barcode tabs
+function switchFoodTab(tab) {
+  ['manual', 'barcode'].forEach(t => {
+    const el = document.getElementById('foodTab-' + t);
+    if (el) el.classList.toggle('hidden', t !== tab);
+  });
+  const btns = document.querySelectorAll('#foodInputTabs button');
+  btns.forEach((btn, i) => {
+    const isActive = (i === 0 && tab === 'manual') || (i === 1 && tab === 'barcode');
+    if (isActive) {
+      btn.style.background = 'rgba(139,92,246,0.3)';
+      btn.style.color = '#a78bfa';
+      btn.style.borderColor = 'rgba(139,92,246,0.4)';
+    } else {
+      btn.style.background = 'rgba(139,92,246,0.1)';
+      btn.style.color = '#6b7280';
+      btn.style.borderColor = 'rgba(139,92,246,0.2)';
+    }
+  });
+}
+
+// Search products from database
+function searchFoodProducts(query) {
+  const results = searchProducts(query);
+  const resultsDiv = document.getElementById('foodSearch-results');
+
+  if (!query || query.length < 2 || results.length === 0) {
+    resultsDiv.classList.add('hidden');
+    return;
+  }
+
+  resultsDiv.innerHTML = results.map(p =>
+    `<div onclick="selectFoodProduct('${p.id}')" style="padding:10px;border-bottom:1px solid #333;cursor:pointer;font-size:13px" onmouseover="this.style.background='rgba(139,92,246,0.2)'" onmouseout="this.style.background=''">
+      <div class="font-bold text-white">${p.name}</div>
+      <div class="text-xs text-gray-400">${p.cal} cal • P:${p.protein}g C:${p.carbs}g F:${p.fat}g</div>
+    </div>`
+  ).join('');
+
+  resultsDiv.classList.remove('hidden');
+}
+
+// Select product from search
+let _selectedProduct = null;
+function selectFoodProduct(productId) {
+  _selectedProduct = getProductById(productId);
+  if (!_selectedProduct) return;
+
+  document.getElementById('foodName').value = _selectedProduct.name;
+  document.getElementById('foodSearch-results').classList.add('hidden');
+  document.getElementById('foodAmount').focus();
+  autocalcMacros();
+}
+
+// Auto-calculate macros based on product + amount
+function autocalcMacros() {
+  if (!_selectedProduct) return;
+  const amount = parseFloat(document.getElementById('foodAmount').value) || 100;
+  const macros = calcMacrosForPortion(_selectedProduct, amount);
+  document.getElementById('foodCal').value = macros.cal;
+  document.getElementById('foodProtein').value = macros.protein;
+  document.getElementById('foodCarbs').value = macros.carbs;
+  document.getElementById('foodFat').value = macros.fat;
+}
+
+// Barcode scanning
+function startScanBarcode() {
+  document.getElementById('barcodeStartBtn').classList.add('hidden');
+  document.getElementById('barcodeStopBtn').classList.remove('hidden');
+  document.getElementById('barcodeReady').style.display = 'none';
+  document.getElementById('barcode-video').style.display = 'block';
+
+  initBarcodeScanner('barcode-video', (barcode) => {
+    document.getElementById('barcodeResult').classList.remove('hidden');
+    document.getElementById('barcodeResultText').textContent = barcode;
+
+    // Try to lookup in Open Food Facts
+    lookupOpenFoodFacts(barcode).then(product => {
+      if (product) {
+        _selectedProduct = product;
+        document.getElementById('foodName').value = product.name;
+        document.getElementById('foodAmount').value = '100';
+        autocalcMacros();
+        setTimeout(() => switchFoodTab('manual'), 500);
+      } else {
+        GlowUtils.toast('Product not found — enter details manually', 'info');
+        switchFoodTab('manual');
+      }
+    });
+  });
+}
+
+function stopScanBarcode() {
+  stopBarcodeScanner();
+  document.getElementById('barcodeStartBtn').classList.remove('hidden');
+  document.getElementById('barcodeStopBtn').classList.add('hidden');
+  document.getElementById('barcode-video').style.display = 'none';
+  document.getElementById('barcodeReady').style.display = 'flex';
+  document.getElementById('barcodeResult').classList.add('hidden');
 }
 
 function submitFood() {
@@ -1932,11 +2413,12 @@ function submitFood() {
   if (!name) { GlowUtils.toast('Please enter a food name', 'error'); return; }
   GlowData.food.add({
     name,
-    cal:     parseInt(document.getElementById('foodCal').value, 10)     || 0,
-    protein: parseInt(document.getElementById('foodProtein').value, 10) || 0,
-    carbs:   parseInt(document.getElementById('foodCarbs').value, 10)   || 0,
-    fat:     parseInt(document.getElementById('foodFat').value, 10)     || 0,
+    cal:     Math.round(parseFloat(document.getElementById('foodCal').value) || 0),
+    protein: Math.round((parseFloat(document.getElementById('foodProtein').value) || 0) * 10) / 10,
+    carbs:   Math.round((parseFloat(document.getElementById('foodCarbs').value) || 0) * 10) / 10,
+    fat:     Math.round((parseFloat(document.getElementById('foodFat').value) || 0) * 10) / 10,
   });
+  _selectedProduct = null;
   closeAddFood();
   renderFoodLog();
   updateStats();
@@ -1948,7 +2430,7 @@ function submitFood() {
 // ============================================================
 function loadSettingsToggles() {
   const s = GlowData.settings.get();
-  ['dailyReminders','waterReminders','bedtimeReminder'].forEach(key => {
+  ['dailyReminders','waterReminders','bedtimeReminder','workoutReminders'].forEach(key => {
     const el = document.getElementById('tog-' + key);
     if (el) setToggle(el, !!s[key]);
   });
@@ -1967,7 +2449,128 @@ function setToggle(el, on) {
   if (dot) { dot.style.right = on ? '4px' : 'auto'; dot.style.left = on ? 'auto' : '4px'; }
 }
 
+function toggleTheme(el) {
+  const isLightMode = document.body.classList.toggle('light-mode');
+  localStorage.setItem('glowTheme', isLightMode ? 'light' : 'dark');
+  setToggle(el, isLightMode);
+  const label = document.getElementById('themeLabel');
+  if (label) label.textContent = isLightMode ? 'Light Mode' : 'Dark Mode';
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('glowTheme');
+  const isLight = saved === 'light';
+  if (isLight) {
+    document.body.classList.add('light-mode');
+    const toggle = document.getElementById('tog-theme');
+    if (toggle) setToggle(toggle, true);
+    const label = document.getElementById('themeLabel');
+    if (label) label.textContent = 'Light Mode';
+  }
+}
+
 function doLogout() { GlowAuth.logout(); }
+
+function loadSettingsPage() {
+  const user = GlowAuth.getUser();
+  if (!user) return;
+  const profile = GlowData.profile.get();
+  setText('settingsName', user.name || '—');
+  setText('settingsEmail', user.email || '—');
+  setText('settingsPlan', user.isPremium ? '✨ Premium Active' : 'Free Plan');
+  const av = document.getElementById('settingsAvatar');
+  if (av) av.textContent = GlowUtils.initials(user.name);
+  const el = id => document.getElementById(id);
+  if (el('profileFirstName')) el('profileFirstName').value = profile.firstName || user.name || '';
+  if (el('profileDOB')) el('profileDOB').value = profile.dob || '';
+  if (el('profileHeight')) el('profileHeight').value = profile.height || (profile.answers && profile.answers.body_stats && profile.answers.body_stats.heightCm) || '';
+  if (el('profileWeight')) el('profileWeight').value = profile.bodyWeight || profile.weight || '';
+  if (el('profileCalGoal')) el('profileCalGoal').value = profile.calorieGoal || (window._glowGoal && window._glowGoal.cal) || 2100;
+  if (el('profileProteinGoal')) el('profileProteinGoal').value = profile.proteinGoal || (window._glowGoal && window._glowGoal.protein) || 150;
+  if (el('profileCarbsGoal')) el('profileCarbsGoal').value = profile.carbsGoal || (window._glowGoal && window._glowGoal.carbs) || 240;
+  if (el('profileFatGoal')) el('profileFatGoal').value = profile.fatGoal || (window._glowGoal && window._glowGoal.fat) || 75;
+  if (el('profileWaterGoal')) el('profileWaterGoal').value = profile.waterGoal || 3000;
+  const upBtn = el('settingsUpgradeBtn');
+  const premBadge = el('settingsPremiumActive');
+  if (user.isPremium) {
+    if (upBtn) upBtn.style.display = 'none';
+    if (premBadge) premBadge.classList.remove('hidden');
+  } else {
+    if (upBtn) upBtn.style.display = '';
+    if (premBadge) premBadge.classList.add('hidden');
+  }
+  loadSettingsToggles();
+}
+
+function saveProfileSettings() {
+  const user = GlowAuth.getUser();
+  if (!user) { GlowUtils.toast('Please log in first', 'error'); return; }
+  const firstName = (document.getElementById('profileFirstName')?.value || '').trim();
+  const dob = document.getElementById('profileDOB')?.value || '';
+  const height = parseFloat(document.getElementById('profileHeight')?.value) || null;
+  const weight = parseFloat(document.getElementById('profileWeight')?.value) || null;
+  const calGoal = parseInt(document.getElementById('profileCalGoal')?.value) || 2100;
+  const proteinGoal = parseInt(document.getElementById('profileProteinGoal')?.value) || 150;
+  const carbsGoal = parseInt(document.getElementById('profileCarbsGoal')?.value) || 240;
+  const fatGoal = parseInt(document.getElementById('profileFatGoal')?.value) || 75;
+  const waterGoal = parseInt(document.getElementById('profileWaterGoal')?.value) || 3000;
+  const updates = {};
+  if (firstName) updates.firstName = firstName;
+  if (dob) updates.dob = dob;
+  if (height) updates.height = height;
+  if (weight) updates.bodyWeight = weight;
+  if (calGoal) updates.calorieGoal = calGoal;
+  if (proteinGoal) updates.proteinGoal = proteinGoal;
+  if (carbsGoal) updates.carbsGoal = carbsGoal;
+  if (fatGoal) updates.fatGoal = fatGoal;
+  if (waterGoal) updates.waterGoal = waterGoal;
+
+  // Also update global nutrition goals for live tracking
+  window._glowGoal = { cal: calGoal, protein: proteinGoal, carbs: carbsGoal, fat: fatGoal };
+  GlowData.profile.set(updates);
+  if (firstName && firstName !== user.name) {
+    GlowAuth.updateUser({ name: firstName });
+    const fbUser = typeof firebase !== 'undefined' ? firebase.auth().currentUser : null;
+    if (fbUser) fbUser.updateProfile({ displayName: firstName }).catch(() => {});
+  }
+  if (calGoal && window._glowGoal) window._glowGoal.cal = calGoal;
+  if (waterGoal) window._glowWaterGoal = waterGoal;
+  GlowUtils.toast('Profile saved ✓');
+  loadSettingsPage();
+}
+
+async function changePassword() {
+  const newPw = document.getElementById('newPassword')?.value || '';
+  const confirmPw = document.getElementById('confirmPassword')?.value || '';
+  if (!newPw || newPw.length < 6) { GlowUtils.toast('Password must be at least 6 characters', 'error'); return; }
+  if (newPw !== confirmPw) { GlowUtils.toast('Passwords do not match', 'error'); return; }
+  const fbUser = typeof firebase !== 'undefined' ? firebase.auth().currentUser : null;
+  if (!fbUser) { GlowUtils.toast('Please log out and log back in to change your password', 'error'); return; }
+  try {
+    await fbUser.updatePassword(newPw);
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    GlowUtils.toast('Password updated ✓');
+  } catch(e) {
+    if (e.code === 'auth/requires-recent-login') {
+      GlowUtils.toast('Log out and log back in, then try again', 'error');
+    } else {
+      GlowUtils.toast(e.message || 'Update failed — please try again', 'error');
+    }
+  }
+}
+
+async function sendPasswordReset() {
+  const user = GlowAuth.getUser();
+  const email = user && user.email;
+  if (!email) { GlowUtils.toast('No email on file — please log in', 'error'); return; }
+  try {
+    if (typeof firebase !== 'undefined') await firebase.auth().sendPasswordResetEmail(email);
+    GlowUtils.toast('Reset email sent to ' + email + ' ✓');
+  } catch(e) {
+    GlowUtils.toast(e.message || 'Could not send reset email', 'error');
+  }
+}
 
 // ============================================================
 // UPGRADE / PREMIUM
@@ -2328,52 +2931,81 @@ function appendChat(text, who) {
 // ============================================================
 function initGymChart() {
   const ctx = document.getElementById('strengthChart');
-  if (!ctx || ctx.chart) return;
+  if (!ctx) return;
+  if (ctx.chart) { ctx.chart.destroy(); ctx.chart = null; }
 
   const gymHistory = (GlowData.gym && GlowData.gym.all) ? GlowData.gym.all() : {};
-  const dates = Object.keys(gymHistory).sort().slice(-12);
+  const allDates = Object.keys(gymHistory).sort();
 
-  const benchData = dates.map(d => {
+  // Collect all unique exercise names that have weight data
+  const exerciseWeights = {}; // { exerciseName: { date: maxWeight } }
+  allDates.forEach(d => {
     const session = gymHistory[d];
-    if (!session || !session.exercises) return null;
-    const bench = session.exercises['Bench Press'];
-    if (!bench || !bench.length) return null;
-    return Math.max(...bench.map(s => s.weight));
+    if (!session || !session.exercises) return;
+    Object.entries(session.exercises).forEach(([name, sets]) => {
+      if (!Array.isArray(sets)) return;
+      const maxW = Math.max(...sets.map(s => parseFloat(s.weight) || 0).filter(w => w > 0));
+      if (!maxW) return;
+      if (!exerciseWeights[name]) exerciseWeights[name] = {};
+      exerciseWeights[name][d] = maxW;
+    });
   });
 
-  const ohpData = dates.map(d => {
-    const session = gymHistory[d];
-    if (!session || !session.exercises) return null;
-    const ohp = session.exercises['Overhead Press'];
-    if (!ohp || !ohp.length) return null;
-    return Math.max(...ohp.map(s => s.weight));
+  // Pick the top 3 exercises with the most data points
+  const trackedExercises = Object.entries(exerciseWeights)
+    .sort((a, b) => Object.keys(b[1]).length - Object.keys(a[1]).length)
+    .slice(0, 3);
+
+  const hasData = trackedExercises.length > 0 && allDates.length > 0;
+
+  // Show empty state if no real data
+  const wrap = ctx.parentElement;
+  let noDataEl = wrap && wrap.querySelector('.gym-no-data');
+  if (!hasData) {
+    ctx.style.display = 'none';
+    if (!noDataEl && wrap) {
+      noDataEl = document.createElement('div');
+      noDataEl.className = 'gym-no-data';
+      noDataEl.style.cssText = 'text-align:center;padding:40px 20px;color:#6b7280';
+      noDataEl.innerHTML = '<div style="font-size:2rem;margin-bottom:8px">📊</div><div style="font-size:14px;font-weight:600;color:#9ca3af;margin-bottom:4px">No strength data yet</div><div style="font-size:12px">Complete a session and log your sets to see your progress here</div>';
+      wrap.appendChild(noDataEl);
+    }
+    return;
+  }
+
+  // Have real data — show chart
+  if (noDataEl) noDataEl.remove();
+  ctx.style.display = '';
+
+  const COLORS = ['#8b5cf6','#ec4899','#06b6d4'];
+  const labels = allDates.slice(-16).map(d => {
+    try { return new Date(d).toLocaleDateString('en-AU', { day:'numeric', month:'short' }); } catch(x) { return d; }
   });
 
-  const hasData = benchData.some(v => v !== null) || ohpData.some(v => v !== null);
-
-  const labels = hasData && dates.length > 0 ? dates.map(d => {
-    const dt = new Date(d);
-    return dt.toLocaleDateString('en-AU', { day:'numeric', month:'short' });
-  }) : ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'];
-
-  const benchPlot = hasData ? benchData : [45,47.5,50,50,52.5,55,55,57.5,60,60,60,62.5];
-  const ohpPlot = hasData ? ohpData : [25,27.5,27.5,30,30,32.5,35,35,37.5,40,40,42.5];
+  const datasets = trackedExercises.map(([name, byDate], idx) => ({
+    label: name + ' (kg)',
+    data: allDates.slice(-16).map(d => byDate[d] || null),
+    borderColor: COLORS[idx] || '#8b5cf6',
+    backgroundColor: (COLORS[idx] || '#8b5cf6').replace(')', ',0.08)').replace('rgb', 'rgba'),
+    tension: 0.4, fill: true, borderWidth: 2, spanGaps: true,
+    pointRadius: 4, pointHoverRadius: 6
+  }));
 
   ctx.chart = new Chart(ctx, {
     type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Bench Press (kg)',
-        data: benchPlot,
-        borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.1)', tension:0.4, fill:true, borderWidth:2, spanGaps:true
-      },{
-        label: 'OHP (kg)',
-        data: ohpPlot,
-        borderColor:'#ec4899', backgroundColor:'rgba(236,72,153,0.05)', tension:0.4, fill:true, borderWidth:2, spanGaps:true
-      }]
-    },
-    options:{responsive:true,plugins:{legend:{labels:{color:'#9ca3af',font:{size:11}}}},scales:{x:{ticks:{color:'#6b7280'},grid:{color:'rgba(255,255,255,0.05)'}},y:{ticks:{color:'#6b7280'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#9ca3af', font: { size: 11 } } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw + ' kg' } }
+      },
+      scales: {
+        x: { ticks: { color: '#6b7280', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#6b7280', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: 'Weight (kg)', color: '#6b7280', font: { size: 10 } } }
+      }
+    }
   });
 }
 
@@ -2538,8 +3170,25 @@ const MOTIVATIONS = [
 ];
 
 function getDailyMotivation() {
-  const dayNum = GlowData.dayNumber();
-  return MOTIVATIONS[(dayNum - 1) % MOTIVATIONS.length];
+  if (!MOTIVATIONS || MOTIVATIONS.length === 0) {
+    return "Every day is a chance to be better than yesterday. Keep going! 💪";
+  }
+  const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  let seed = 0;
+  for (let i = 0; i < dateStr.length; i++) seed = (seed * 31 + dateStr.charCodeAt(i)) >>> 0;
+  const quote = MOTIVATIONS[seed % MOTIVATIONS.length];
+  return quote || MOTIVATIONS[0];
+}
+
+// Refresh motivation at midnight
+function setupMidnightMotivationRefresh() {
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const msUntilMidnight = tomorrow.getTime() - now.getTime();
+  setTimeout(() => {
+    setText('motivationText', getDailyMotivation());
+    setupMidnightMotivationRefresh();
+  }, msUntilMidnight);
 }
 
 // ============================================================
@@ -2588,6 +3237,29 @@ function updateProgressRings() {
   const ringN = document.getElementById('ringNutrition');
   if (ringN) ringN.setAttribute('stroke-dashoffset', circum - (nutPct / 100) * circum);
   setText('ringNutritionLabel', nutPct + '%');
+  // Sleep ring (goal 8h)
+  const lastSleep = GlowData.sleep.lastNight();
+  const ringSl = document.getElementById('ringSleep');
+  if (lastSleep && lastSleep.hours) {
+    const slPct = Math.round(Math.min(lastSleep.hours / 8, 1) * 100);
+    if (ringSl) ringSl.setAttribute('stroke-dashoffset', circum - (slPct / 100) * circum);
+    setText('ringSleepLabel', lastSleep.hours + 'h');
+  } else {
+    if (ringSl) ringSl.setAttribute('stroke-dashoffset', circum);
+    setText('ringSleepLabel', '—');
+  }
+  // Gym ring (1 session = 100%)
+  const gymAll = GlowData.gym.all();
+  const todayKey = GlowData.today();
+  const gymDone = gymAll && gymAll[todayKey];
+  const ringGy = document.getElementById('ringGym');
+  if (gymDone) {
+    if (ringGy) ringGy.setAttribute('stroke-dashoffset', 0);
+    setText('ringGymLabel', '✓');
+  } else {
+    if (ringGy) ringGy.setAttribute('stroke-dashoffset', circum);
+    setText('ringGymLabel', '—');
+  }
 }
 
 // ============================================================
@@ -2702,26 +3374,55 @@ function toggleArticleOrUpgrade(card, articleIndex) {
 }
 
 // ============================================================
-// GYM - Start Session
+// GYM - Start Session with Timer
 // ============================================================
+let _gymSessionStart = null;
+let _gymSessionTimer = null;
+
 function startSession() {
   const btn = document.getElementById('startSessionBtn');
+  const timerContainer = document.getElementById('gymTimerContainer');
   if (!btn) return;
+
   if (btn.dataset.active === 'true') {
+    // End session
     btn.dataset.active = 'false';
     btn.textContent = '▶ Start Session';
     btn.style.background = '';
-    const sessionData = { date: GlowData.today(), exercises: collectExerciseData(), completedAt: new Date().toISOString() };
+    if (timerContainer) timerContainer.style.display = 'none';
+    if (_gymSessionTimer) clearInterval(_gymSessionTimer);
+
+    const sessionData = { date: GlowData.today(), exercises: collectExerciseData(), completedAt: new Date().toISOString(), duration: _gymSessionStart ? Math.round((Date.now() - _gymSessionStart) / 1000) : 0 };
     if (GlowData.gym && GlowData.gym.saveToday) GlowData.gym.saveToday(sessionData);
     GlowData.xp.add(30);
     updateXPDisplay();
-    GlowUtils.toast('Session saved! +30 XP 💪', 'success');
+    const durationMin = Math.floor(sessionData.duration / 60);
+    const durationSec = sessionData.duration % 60;
+    GlowUtils.toast(`Session saved! ${durationMin}:${String(durationSec).padStart(2, '0')} · +30 XP 💪`, 'success');
     const ctx = document.getElementById('strengthChart');
     if (ctx && ctx.chart) { ctx.chart.destroy(); ctx.chart = null; initGymChart(); }
+    _gymSessionStart = null;
   } else {
+    // Start session
     btn.dataset.active = 'true';
     btn.textContent = '✅ End & Save Session';
     btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+    if (timerContainer) timerContainer.style.display = 'block';
+
+    _gymSessionStart = Date.now();
+    if (_gymSessionTimer) clearInterval(_gymSessionTimer);
+    _gymSessionTimer = setInterval(() => {
+      if (_gymSessionStart) {
+        const elapsed = Math.round((Date.now() - _gymSessionStart) / 1000);
+        const h = Math.floor(elapsed / 3600);
+        const m = Math.floor((elapsed % 3600) / 60);
+        const s = elapsed % 60;
+        const timerEl = document.getElementById('gymTimer');
+        if (timerEl) {
+          timerEl.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+      }
+    }, 1000);
     GlowUtils.toast('Session started! Complete your sets 💪');
   }
 }
@@ -2755,33 +3456,33 @@ function buildGymWeekPlan() {
   let schedule;
   if (goal === 'Build muscle & strength') {
     schedule = [
-      { day:'Sun', label:'Rest', icon:'😴', rest:true },
-      { day:'Mon', label:'Push A', icon:'💪', rest:false },
-      { day:'Tue', label:'Pull A', icon:'🏋️', rest:false },
-      { day:'Wed', label:'Legs', icon:'🦵', rest:false },
-      { day:'Thu', label:'Push B', icon:'💪', rest:false },
-      { day:'Fri', label:'Pull B', icon:'🏋️', rest:false },
-      { day:'Sat', label:'Rest', icon:'😴', rest:true },
+      { day:'Sun', label:'Rest Day',  icon:'😴', rest:true  },
+      { day:'Mon', label:'Push A',    icon:'💪', rest:false },
+      { day:'Tue', label:'Pull A',    icon:'🏋️', rest:false },
+      { day:'Wed', label:'Leg Day',   icon:'🦵', rest:false },
+      { day:'Thu', label:'Push B',    icon:'💪', rest:false },
+      { day:'Fri', label:'Pull B',    icon:'🏋️', rest:false },
+      { day:'Sat', label:'Rest Day',  icon:'😴', rest:true  },
     ];
   } else if (goal === 'Lose fat & get lean') {
     schedule = [
-      { day:'Sun', label:'Long Walk', icon:'🚶', rest:false },
-      { day:'Mon', label:'HIIT', icon:'⚡', rest:false },
-      { day:'Tue', label:'Strength', icon:'💪', rest:false },
-      { day:'Wed', label:'LISS', icon:'🏃', rest:false },
-      { day:'Thu', label:'HIIT', icon:'⚡', rest:false },
-      { day:'Fri', label:'Metabolic', icon:'🔥', rest:false },
-      { day:'Sat', label:'Rest', icon:'😴', rest:true },
+      { day:'Sun', label:'Long Walk',        icon:'🚶', rest:false },
+      { day:'Mon', label:'HIIT Circuit',     icon:'⚡', rest:false },
+      { day:'Tue', label:'Strength + Cardio',icon:'💪', rest:false },
+      { day:'Wed', label:'LISS Cardio',      icon:'🏃', rest:false },
+      { day:'Thu', label:'HIIT Circuit',     icon:'⚡', rest:false },
+      { day:'Fri', label:'Metabolic Circuit',icon:'🔥', rest:false },
+      { day:'Sat', label:'Rest Day',         icon:'😴', rest:true  },
     ];
   } else {
     schedule = [
-      { day:'Sun', label:'Rest', icon:'😴', rest:true },
-      { day:'Mon', label:'Upper', icon:'💪', rest:false },
-      { day:'Tue', label:'Lower', icon:'🦵', rest:false },
-      { day:'Wed', label:'Full Body', icon:'⚡', rest:false },
-      { day:'Thu', label:'Upper', icon:'💪', rest:false },
-      { day:'Fri', label:'Lower', icon:'🦵', rest:false },
-      { day:'Sat', label:'Active Recovery', icon:'🧘', rest:false },
+      { day:'Sun', label:'Rest Day',         icon:'😴', rest:true  },
+      { day:'Mon', label:'Upper Body',       icon:'💪', rest:false },
+      { day:'Tue', label:'Lower Body',       icon:'🦵', rest:false },
+      { day:'Wed', label:'Full Body',        icon:'⚡', rest:false },
+      { day:'Thu', label:'Upper Body',       icon:'💪', rest:false },
+      { day:'Fri', label:'Lower Body',       icon:'🦵', rest:false },
+      { day:'Sat', label:'Active Recovery',  icon:'🧘', rest:false },
     ];
   }
 
@@ -2790,13 +3491,36 @@ function buildGymWeekPlan() {
     const border = isToday ? 'border:1px solid #8b5cf6;' : 'border:1px solid rgba(139,92,246,0.12);';
     const bg = isToday ? 'background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(236,72,153,0.15));' : s.rest ? 'background:rgba(255,255,255,0.02);' : 'background:rgba(139,92,246,0.06);';
     const textColor = isToday ? 'color:#fff;' : s.rest ? 'color:#4b5563;' : 'color:#d1d5db;';
-    return `<div class="text-center p-1.5 rounded-xl" style="${bg}${border}${textColor}">
+    const shortLabel = s.label.length > 9 ? s.label.replace(' Circuit','').replace(' Cardio','').replace(' Body','').replace(' Recovery','Rec').replace(' Day','') : s.label;
+    return `<div class="text-center p-1.5 rounded-xl gym-day-card" data-gym-label="${s.label}" data-gym-today="${isToday}" style="${bg}${border}${textColor}cursor:pointer;transition:all 0.15s;user-select:none" title="View ${s.label} workout">
       <div class="text-xs font-semibold">${s.day}</div>
       <div class="text-base my-0.5">${s.icon}</div>
-      <div class="text-xs leading-tight" style="font-size:9px">${s.label}</div>
+      <div class="text-xs leading-tight" style="font-size:9px">${shortLabel}</div>
       ${isToday ? '<div style="font-size:8px;color:#c4b5fd;margin-top:2px">TODAY</div>' : ''}
     </div>`;
   }).join('');
+
+  // Attach click listeners AFTER setting innerHTML (avoids inline onclick issues)
+  grid.querySelectorAll('.gym-day-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const label = this.dataset.gymLabel;
+      const isToday = this.dataset.gymToday === 'true';
+      showGymDayModal(label, label, isToday);
+    });
+    card.addEventListener('mouseenter', function() { this.style.transform = 'scale(1.05)'; });
+    card.addEventListener('mouseleave', function() { this.style.transform = 'scale(1)'; });
+  });
+
+  // Update today's estimated time and cals
+  const todaySession = schedule[today];
+  if (todaySession) {
+    const timeMap = { 'Push A':50,'Push B':50,'Pull A':55,'Pull B':50,'Leg Day':60,'Full Body':55,'Upper Body':45,'Lower Body':45,'HIIT Circuit':35,'Metabolic Circuit':40,'LISS Cardio':40,'Long Walk':50,'Strength + Cardio':50,'Active Recovery':30,'Rest Day':0 };
+    const calMap  = { 'Push A':320,'Push B':300,'Pull A':360,'Pull B':310,'Leg Day':480,'Full Body':420,'Upper Body':280,'Lower Body':380,'HIIT Circuit':450,'Metabolic Circuit':420,'LISS Cardio':300,'Long Walk':250,'Strength + Cardio':380,'Active Recovery':100,'Rest Day':0 };
+    const t = timeMap[todaySession.label] || 45;
+    const c = calMap[todaySession.label] || 300;
+    setText('gymEstTime', t > 0 ? t + ' min' : '—');
+    setText('gymEstCals', c > 0 ? '~' + c : '—');
+  }
 }
 
 // ============================================================
@@ -3034,12 +3758,897 @@ function updateHeightPrediction() {
 }
 
 // ============================================================
+// CUSTOM HABITS
+// ============================================================
+function getCustomHabits() {
+  const u = GlowAuth.getUser();
+  if (!u) return [];
+  try { return JSON.parse(localStorage.getItem('g_' + u.id + '_ch') || '[]'); } catch(e) { return []; }
+}
+
+function saveCustomHabits(arr) {
+  const u = GlowAuth.getUser();
+  if (!u) return;
+  localStorage.setItem('g_' + u.id + '_ch', JSON.stringify(arr));
+}
+
+function renderCustomHabits() {
+  renderHabitLists();
+}
+
+function toggleCustomHabit(id) {
+  const habits = getCustomHabits();
+  const h = habits.find(x => x.id === id);
+  if (!h) return;
+  const today = GlowData.habits.today();
+  const willBeDone = !today[id];
+  GlowData.habits.set(id, willBeDone);
+  GlowData.xp.add(willBeDone ? h.xp : -h.xp);
+  if (willBeDone) {
+    GlowUtils.toast('+' + h.xp + ' XP · ' + h.text + ' ✓');
+    GlowData.streak.touch();
+    const sk = GlowData.streak.get();
+    setText('streakCount', sk.count + ' day streak');
+    setText('mobileStreak', '🔥 ' + sk.count + ' days');
+  }
+  renderHabitLists();
+  updateXPDisplay();
+  updateStats();
+}
+
+function openAddHabitModal() {
+  document.getElementById('newHabitText').value = '';
+  document.getElementById('newHabitEmoji').value = '';
+  document.getElementById('newHabitXP').value = '10';
+  document.getElementById('editHabitId').value = '';
+  document.getElementById('addHabitModal').classList.add('open');
+  setTimeout(() => document.getElementById('newHabitText').focus(), 100);
+}
+
+function closeAddHabitModal() {
+  document.getElementById('addHabitModal').classList.remove('open');
+}
+
+function editCustomHabit(id) {
+  const habits = getCustomHabits();
+  const h = habits.find(x => x.id === id);
+  if (!h) return;
+  document.getElementById('newHabitText').value = h.text;
+  document.getElementById('newHabitEmoji').value = h.emoji || '';
+  document.getElementById('newHabitXP').value = String(h.xp || 10);
+  document.getElementById('editHabitId').value = id;
+  document.getElementById('addHabitModal').classList.add('open');
+  setTimeout(() => document.getElementById('newHabitText').focus(), 100);
+}
+
+function submitCustomHabit() {
+  const text = (document.getElementById('newHabitText')?.value || '').trim();
+  if (!text) { GlowUtils.toast('Please enter a habit name', 'error'); return; }
+  const emoji = document.getElementById('newHabitEmoji')?.value?.trim() || '⭐';
+  const xp = parseInt(document.getElementById('newHabitXP')?.value) || 10;
+  const editId = document.getElementById('editHabitId')?.value || '';
+  const habits = getCustomHabits();
+  if (editId) {
+    const idx = habits.findIndex(h => h.id === editId);
+    if (idx !== -1) { habits[idx].text = text; habits[idx].emoji = emoji; habits[idx].xp = xp; }
+  } else {
+    habits.push({ id: 'ch_' + Date.now(), text, emoji, xp });
+  }
+  saveCustomHabits(habits);
+  closeAddHabitModal();
+  renderHabitLists();
+  GlowUtils.toast(editId ? 'Habit updated ✓' : 'Habit added ✓');
+}
+
+function removeCustomHabit(id) {
+  const habits = getCustomHabits().filter(h => h.id !== id);
+  saveCustomHabits(habits);
+  GlowData.habits.set(id, false);
+  renderHabitLists();
+  GlowUtils.toast('Habit removed');
+}
+
+// ============================================================
+// GYM EXERCISES DATABASE
+// ============================================================
+const GYM_WORKOUTS = {
+  'Push A': {
+    desc: 'Chest, Shoulders & Triceps — compound focus',
+    exercises: [
+      { name:'Barbell Bench Press', muscle:'Chest · Primary compound', sets:'4', reps:'6–8', rest:'3 min', tip:'Keep shoulder blades pinched back and feet flat on floor' },
+      { name:'Incline Dumbbell Press', muscle:'Upper Chest', sets:'3', reps:'10–12', rest:'90s', tip:'Keep elbows at ~75° to protect shoulders' },
+      { name:'Cable Chest Fly', muscle:'Chest · Isolation', sets:'3', reps:'12–15', rest:'60s', tip:'Feel the stretch at the bottom — squeeze hard at the top' },
+      { name:'Overhead Press (OHP)', muscle:'Shoulders · Compound', sets:'3', reps:'8–10', rest:'2 min', tip:'Brace your core, press in a straight line, don\'t flare elbows' },
+      { name:'Lateral Raise', muscle:'Side Delts', sets:'4', reps:'15–20', rest:'45s', tip:'Slight elbow bend, lead with your elbows not your hands' },
+      { name:'Tricep Pushdown (Cable)', muscle:'Triceps', sets:'3', reps:'12–15', rest:'60s', tip:'Lock elbows at your sides, fully extend on every rep' },
+      { name:'Overhead Tricep Extension', muscle:'Triceps · Long Head', sets:'3', reps:'10–12', rest:'60s', tip:'Keep elbows pointing forward, slow on the negative' }
+    ]
+  },
+  'Push B': {
+    desc: 'Shoulders Focus, Chest & Triceps',
+    exercises: [
+      { name:'Seated Dumbbell OHP', muscle:'Shoulders · Compound', sets:'4', reps:'8–10', rest:'2 min', tip:'Set bench to 90°, press directly overhead, control the descent' },
+      { name:'Arnold Press', muscle:'Shoulders · All Heads', sets:'3', reps:'10–12', rest:'90s', tip:'Rotate palms outward as you press — hits all three delt heads' },
+      { name:'Lateral Raise (Cable)', muscle:'Side Delts', sets:'4', reps:'15–20', rest:'45s', tip:'Cable keeps constant tension throughout the movement' },
+      { name:'Front Raise', muscle:'Front Delts', sets:'3', reps:'12–15', rest:'60s', tip:'Alternate arms or both together, don\'t swing' },
+      { name:'Close-Grip Bench Press', muscle:'Triceps & Chest', sets:'3', reps:'8–10', rest:'90s', tip:'Hands shoulder-width, elbows tracking over wrists' },
+      { name:'Rope Tricep Pushdown', muscle:'Triceps', sets:'3', reps:'12–15', rest:'60s', tip:'Split the rope at the bottom for maximum contraction' },
+      { name:'Dips (weighted)', muscle:'Chest & Triceps', sets:'3', reps:'8–12', rest:'90s', tip:'Lean forward slightly for chest focus, stay upright for tricep focus' }
+    ]
+  },
+  'Pull A': {
+    desc: 'Back & Biceps — compound strength focus',
+    exercises: [
+      { name:'Conventional Deadlift', muscle:'Full Back · Primary compound', sets:'4', reps:'4–6', rest:'3–4 min', tip:'Bar over mid-foot, neutral spine, drive the floor away' },
+      { name:'Bent-Over Barbell Row', muscle:'Upper & Mid Back', sets:'4', reps:'8–10', rest:'2 min', tip:'Hinge to 45°, pull bar to lower chest, squeeze lats at top' },
+      { name:'Lat Pulldown (wide grip)', muscle:'Lats', sets:'3', reps:'10–12', rest:'90s', tip:'Lean back slightly, pull to upper chest, full stretch at top' },
+      { name:'Seated Cable Row', muscle:'Mid Back & Rhomboids', sets:'3', reps:'12–15', rest:'90s', tip:'Keep chest up, row to lower abs, pause and squeeze' },
+      { name:'Face Pull', muscle:'Rear Delts & Rotator Cuff', sets:'4', reps:'15–20', rest:'60s', tip:'Rope to eye level, pull apart at the end — critical for shoulder health' },
+      { name:'Barbell Curl', muscle:'Biceps', sets:'3', reps:'10–12', rest:'60s', tip:'Don\'t swing — if you\'re swinging, lower the weight' },
+      { name:'Hammer Curl', muscle:'Brachialis & Biceps', sets:'3', reps:'12–15', rest:'60s', tip:'Neutral grip, slow eccentric, builds arm thickness' }
+    ]
+  },
+  'Pull B': {
+    desc: 'Back & Arms — volume and detail',
+    exercises: [
+      { name:'Weighted Pull-ups', muscle:'Lats & Biceps · Compound', sets:'4', reps:'6–10', rest:'2–3 min', tip:'Full dead hang at bottom, chin over bar, controlled descent' },
+      { name:'Single-Arm Dumbbell Row', muscle:'Lats & Upper Back', sets:'3', reps:'10–12', rest:'90s', tip:'Brace on bench, drive elbow up and back, keep torso flat' },
+      { name:'T-Bar Row', muscle:'Mid & Upper Back', sets:'3', reps:'8–10', rest:'2 min', tip:'Chest supported version is safer on the lower back' },
+      { name:'Straight-Arm Pulldown', muscle:'Lats · Isolation', sets:'3', reps:'12–15', rest:'60s', tip:'Keeps arms straight throughout — pure lat isolation' },
+      { name:'Reverse Pec Deck', muscle:'Rear Delts', sets:'4', reps:'15–20', rest:'45s', tip:'Face into the machine, squeeze rear delts at the back' },
+      { name:'Preacher Curl', muscle:'Biceps Peak', sets:'3', reps:'10–12', rest:'60s', tip:'Pad at armpit, full extension, squeeze at top' },
+      { name:'Incline Dumbbell Curl', muscle:'Biceps · Long Head', sets:'3', reps:'12–15', rest:'60s', tip:'Arms hang behind body at the bottom for maximum stretch' }
+    ]
+  },
+  'Leg Day': {
+    desc: 'Quads, Hamstrings, Glutes & Calves',
+    exercises: [
+      { name:'Barbell Back Squat', muscle:'Quads, Glutes · Primary compound', sets:'4', reps:'6–8', rest:'3 min', tip:'Bar on traps, chest up, knees tracking toes, break at the hips' },
+      { name:'Romanian Deadlift (RDL)', muscle:'Hamstrings & Glutes', sets:'4', reps:'10–12', rest:'2 min', tip:'Hinge at hips, soft knee, feel the stretch in hamstrings' },
+      { name:'Bulgarian Split Squat', muscle:'Quads & Glutes', sets:'3', reps:'10–12 per leg', rest:'90s', tip:'Rear foot elevated, front foot forward — most effective leg exercise' },
+      { name:'Leg Press', muscle:'Quads & Glutes', sets:'3', reps:'12–15', rest:'90s', tip:'Full range of motion — don\'t lock out at the top' },
+      { name:'Leg Curl (lying)', muscle:'Hamstrings', sets:'3', reps:'12–15', rest:'60s', tip:'Slow eccentric — hamstrings are injury-prone; don\'t rush' },
+      { name:'Leg Extension', muscle:'Quads · Isolation', sets:'3', reps:'15–20', rest:'60s', tip:'Use for quad burnout — control the movement' },
+      { name:'Standing Calf Raise', muscle:'Calves', sets:'4', reps:'15–20', rest:'45s', tip:'Full range — heel below step at bottom, full contraction at top' }
+    ]
+  },
+  'Full Body': {
+    desc: 'Complete full body session — all major muscle groups',
+    exercises: [
+      { name:'Barbell Squat', muscle:'Quads, Glutes · Primary', sets:'3', reps:'8–10', rest:'2 min', tip:'Control the descent, drive through heels' },
+      { name:'Bench Press', muscle:'Chest & Triceps', sets:'3', reps:'8–10', rest:'2 min', tip:'Full range of motion, controlled eccentric' },
+      { name:'Bent-Over Row', muscle:'Back & Biceps', sets:'3', reps:'10–12', rest:'90s', tip:'Maintain neutral spine throughout' },
+      { name:'Overhead Press', muscle:'Shoulders', sets:'3', reps:'10–12', rest:'90s', tip:'Brace core and squeeze glutes at the top' },
+      { name:'Romanian Deadlift', muscle:'Hamstrings & Glutes', sets:'3', reps:'10–12', rest:'90s', tip:'Keep bar close to legs, hinge at hips' },
+      { name:'Pull-ups or Lat Pulldown', muscle:'Lats', sets:'3', reps:'8–12', rest:'90s', tip:'Full stretch at top, squeeze lats at bottom' },
+      { name:'Plank', muscle:'Core', sets:'3', reps:'45–60 sec', rest:'30s', tip:'Don\'t let hips sag — squeeze everything' }
+    ]
+  },
+  'Upper Body': {
+    desc: 'Upper body push & pull balanced session',
+    exercises: [
+      { name:'Dumbbell Bench Press', muscle:'Chest', sets:'3', reps:'10–12', rest:'90s', tip:'Dumbbells allow greater range of motion than barbell' },
+      { name:'Pull-ups', muscle:'Back & Biceps', sets:'3', reps:'Max reps', rest:'90s', tip:'Dead hang to chin over bar — no kipping' },
+      { name:'Dumbbell Shoulder Press', muscle:'Shoulders', sets:'3', reps:'10–12', rest:'90s', tip:'Sit upright, press directly overhead' },
+      { name:'Dumbbell Row', muscle:'Upper Back', sets:'3', reps:'10–12', rest:'90s', tip:'Support yourself, drive elbow back and up' },
+      { name:'Dips', muscle:'Chest & Triceps', sets:'3', reps:'10–15', rest:'60s', tip:'Full range — shoulder width grip' },
+      { name:'Bicep Curl', muscle:'Biceps', sets:'3', reps:'12–15', rest:'60s', tip:'Full range, slow eccentric' },
+      { name:'Face Pull', muscle:'Rear Delts', sets:'3', reps:'15–20', rest:'45s', tip:'Essential for shoulder health and posture' }
+    ]
+  },
+  'Lower Body': {
+    desc: 'Lower body strength and hypertrophy',
+    exercises: [
+      { name:'Goblet Squat', muscle:'Quads & Glutes', sets:'3', reps:'12–15', rest:'90s', tip:'Hold dumbbell at chest, great for learning squat mechanics' },
+      { name:'Romanian Deadlift', muscle:'Hamstrings & Glutes', sets:'4', reps:'10–12', rest:'90s', tip:'Hip hinge pattern — feel the hamstring stretch' },
+      { name:'Lunges', muscle:'Quads & Glutes', sets:'3', reps:'12 per leg', rest:'60s', tip:'Keep torso upright, front knee over ankle' },
+      { name:'Leg Press', muscle:'Quads', sets:'3', reps:'12–15', rest:'90s', tip:'Wide stance targets glutes, narrow targets quads' },
+      { name:'Glute Bridge / Hip Thrust', muscle:'Glutes', sets:'4', reps:'15–20', rest:'60s', tip:'Squeeze at the top, don\'t hyperextend your back' },
+      { name:'Seated Calf Raise', muscle:'Soleus (calves)', sets:'3', reps:'15–20', rest:'45s', tip:'Slow and controlled — calves need high volume' }
+    ]
+  },
+  'HIIT Circuit': {
+    desc: 'High-intensity interval training — fat burning & conditioning',
+    exercises: [
+      { name:'Burpees', muscle:'Full Body', sets:'4', reps:'10–15', rest:'20s', tip:'Modify by stepping out instead of jumping if needed' },
+      { name:'Jump Squats', muscle:'Quads & Glutes', sets:'4', reps:'15', rest:'20s', tip:'Land softly — absorb through ankles, knees, hips' },
+      { name:'Mountain Climbers', muscle:'Core & Cardio', sets:'4', reps:'20 each leg', rest:'15s', tip:'Keep hips level, drive knees to chest fast' },
+      { name:'High Knees', muscle:'Cardio & Hip Flexors', sets:'4', reps:'30 sec', rest:'15s', tip:'Drive arms, stay on the balls of your feet' },
+      { name:'Push-ups', muscle:'Chest & Triceps', sets:'3', reps:'15–20', rest:'30s', tip:'Keep core tight, full range of motion' },
+      { name:'Box Jumps', muscle:'Power & Plyometrics', sets:'3', reps:'10', rest:'30s', tip:'Land with soft knees, step down (don\'t jump down)' },
+      { name:'Sprint Intervals', muscle:'Cardio', sets:'6', reps:'20 sec sprint / 40 sec walk', rest:'—', tip:'Give 95% effort on each sprint' }
+    ]
+  },
+  'Metabolic Circuit': {
+    desc: 'Metabolic conditioning — strength meets cardio',
+    exercises: [
+      { name:'Kettlebell Swing', muscle:'Posterior Chain & Cardio', sets:'5', reps:'20', rest:'30s', tip:'Hip hinge — not a squat. Drive hips forward explosively' },
+      { name:'Dumbbell Thruster', muscle:'Full Body', sets:'4', reps:'12', rest:'45s', tip:'Front squat into overhead press — one fluid movement' },
+      { name:'Battle Ropes', muscle:'Arms, Shoulders & Cardio', sets:'5', reps:'30 sec', rest:'30s', tip:'Maintain tension — never let the ropes go slack' },
+      { name:'Box Step-ups', muscle:'Glutes & Quads', sets:'3', reps:'15 each leg', rest:'45s', tip:'Drive through the heel of the stepping foot' },
+      { name:'Medicine Ball Slam', muscle:'Core & Full Body', sets:'4', reps:'15', rest:'30s', tip:'Fully extend overhead, slam with full force' },
+      { name:'Rowing Machine', muscle:'Full Body Cardio', sets:'4', reps:'250m', rest:'60s', tip:'Drive with legs first, then pull arms — 60% legs / 40% arms' }
+    ]
+  },
+  'LISS Cardio': {
+    desc: 'Low Intensity Steady State — fat burning & recovery',
+    exercises: [
+      { name:'Treadmill Walk/Jog', muscle:'Cardio', sets:'1', reps:'30–45 min @ 60–65% HR', rest:'—', tip:'Keep heart rate in zone 2: you should be able to hold a conversation' },
+      { name:'Cycling (stationary or outdoor)', muscle:'Cardio & Legs', sets:'1', reps:'30–45 min', rest:'—', tip:'Low resistance, comfortable pace — sustainable for the full duration' },
+      { name:'Rowing Machine', muscle:'Full Body Cardio', sets:'1', reps:'20–30 min', rest:'—', tip:'Maintain a steady stroke rate of 20–24 SPM' },
+      { name:'Elliptical', muscle:'Low-Impact Cardio', sets:'1', reps:'30–45 min', rest:'—', tip:'Great for recovery days — minimal joint stress' }
+    ]
+  },
+  'Long Walk': {
+    desc: 'Active recovery walk — zone 1 cardio & mindfulness',
+    exercises: [
+      { name:'Outdoor Walk', muscle:'Active Recovery', sets:'1', reps:'45–60 min', rest:'—', tip:'No phone if possible — use this as mindful recovery time' },
+      { name:'Incline Treadmill Walk', muscle:'Glutes & Calves', sets:'1', reps:'30–45 min @ 10–15% incline', rest:'—', tip:'Hunter McGregor protocol — burns significant calories at low intensity' }
+    ]
+  },
+  'Strength + Cardio': {
+    desc: 'Strength circuit followed by cardio finisher',
+    exercises: [
+      { name:'Barbell Squat', muscle:'Quads & Glutes', sets:'3', reps:'10–12', rest:'90s', tip:'Moderate weight — this is strength-endurance day' },
+      { name:'Dumbbell Bench Press', muscle:'Chest', sets:'3', reps:'12', rest:'90s', tip:'Keep chest up, full range' },
+      { name:'Barbell Row', muscle:'Back', sets:'3', reps:'12', rest:'90s', tip:'Control the movement, squeeze at top' },
+      { name:'Overhead Press', muscle:'Shoulders', sets:'3', reps:'12', rest:'90s', tip:'Full lockout overhead' },
+      { name:'Cardio Finisher', muscle:'Cardio', sets:'1', reps:'15 min HIIT or 20 min LISS', rest:'—', tip:'Complete this after the strength work — don\'t skip it' }
+    ]
+  },
+  'Active Recovery': {
+    desc: 'Mobility, stretching & light movement — essential for growth',
+    exercises: [
+      { name:'Foam Rolling', muscle:'Full Body Myofascial Release', sets:'1', reps:'2–3 min per major muscle group', rest:'—', tip:'Spend extra time on any areas that feel tight or sore' },
+      { name:'Hip Flexor Stretch', muscle:'Hip Flexors', sets:'3', reps:'60 sec per side', rest:'—', tip:'Lunge position, tuck pelvis under — counteracts sitting' },
+      { name:'Thoracic Extension', muscle:'Upper Back Mobility', sets:'3', reps:'10 reps over foam roller', rest:'—', tip:'Opens up the thoracic spine — great for posture' },
+      { name:'Hamstring Stretch', muscle:'Hamstrings', sets:'3', reps:'60 sec per side', rest:'—', tip:'Seated or lying — don\'t push past mild discomfort' },
+      { name:'Cat-Cow Stretch', muscle:'Spine Mobility', sets:'2', reps:'10 reps', rest:'—', tip:'Breathe into each position — inhale for cow, exhale for cat' },
+      { name:'Child\'s Pose', muscle:'Back & Hips', sets:'2', reps:'60 sec', rest:'—', tip:'Arms extended, breathe deeply into your lower back' },
+      { name:'Light Walk', muscle:'Active Blood Flow', sets:'1', reps:'15–20 min easy pace', rest:'—', tip:'Even light movement on rest days accelerates recovery' }
+    ]
+  },
+  'Rest Day': {
+    desc: 'Full rest — your muscles grow when you rest, not when you train',
+    exercises: [
+      { name:'Sleep 8+ hours', muscle:'Recovery', sets:'1', reps:'8+ hours', rest:'—', tip:'Sleep is when growth hormone peaks and muscles repair' },
+      { name:'High Protein Meal', muscle:'Nutrition', sets:'3', reps:'30–40g protein per meal', rest:'—', tip:'Keep protein high even on rest days to support recovery' },
+      { name:'Light Walk (optional)', muscle:'Active Recovery', sets:'1', reps:'20–30 min', rest:'—', tip:'Optional — promotes blood flow without adding fatigue' }
+    ]
+  }
+};
+
+function showGymDayModal(dayLabel, sessionTitle, isToday) {
+  const workout = GYM_WORKOUTS[dayLabel] || GYM_WORKOUTS['Active Recovery'];
+  const title = sessionTitle || dayLabel;
+  document.getElementById('gymDayModalTitle').textContent = (isToday ? '📍 Today — ' : '') + title;
+  const content = document.getElementById('gymDayModalContent');
+  const dayTag = isToday ? '<span style="background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.4);border-radius:50px;padding:2px 12px;font-size:11px;color:#c4b5fd;font-weight:700">TODAY</span>' : '';
+  content.innerHTML = `
+    <div class="text-sm text-gray-400 mb-4">${workout.desc} ${dayTag}</div>
+    <div class="space-y-3">
+      ${workout.exercises.map((ex, i) => `
+        <div class="exercise-item">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <div class="font-semibold text-sm">${i + 1}. ${ex.name}</div>
+              <div class="text-xs text-gray-400">${ex.muscle}</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs font-bold text-purple-400">${ex.sets} × ${ex.reps}</div>
+              <div class="text-xs text-gray-500">Rest: ${ex.rest}</div>
+            </div>
+          </div>
+          <div class="text-xs text-gray-400 mt-1 p-2 rounded-lg" style="background:rgba(139,92,246,0.06)">💡 ${ex.tip}</div>
+        </div>
+      `).join('')}
+    </div>
+    ${isToday ? '<button onclick="markGymDone();closeGymDayModal()" class="btn-primary w-full mt-4">✅ Mark Session Complete</button>' : ''}
+  `;
+  document.getElementById('gymDayModal').classList.add('open');
+}
+
+function closeGymDayModal() {
+  document.getElementById('gymDayModal').classList.remove('open');
+}
+
+function markGymDone() {
+  GlowData.gym.saveToday({ done: true, ts: Date.now() });
+  GlowData.xp.add(30);
+  GlowData.streak.touch();
+  GlowUtils.toast('+30 XP · Gym session logged ✓');
+  updateProgressRings();
+  updateXPDisplay();
+}
+
+// ============================================================
 // NOTIFICATIONS
 // ============================================================
 function requestNotificationPermission() {
   if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
   }
+}
+
+// ============================================================
+// MINDFULNESS & MEDITATION SYSTEM
+// ============================================================
+
+// Meditation routines library (20 routines: 5 free, 15 premium)
+const MEDITATIONS = [
+  // FREE
+  { id:'m1', emoji:'📦', title:'Box Breathing', category:'stress', duration:3, xp:10, premium:false,
+    steps: [
+      { dur:10, text:'Settle into a comfortable position. Close your eyes.', narration:'Settle into a comfortable position. Close your eyes.' },
+      { dur:30, text:'Inhale through your nose slowly for 4 counts.', narration:'Inhale through your nose slowly for 4 counts.' },
+      { dur:30, text:'Hold the breath for 4 counts. Feel the calm.', narration:'Hold the breath for 4 counts. Feel the calm.' },
+      { dur:30, text:'Exhale slowly through your mouth for 4 counts.', narration:'Exhale slowly through your mouth for 4 counts.' },
+      { dur:30, text:'Hold empty for 4 counts before next inhale.', narration:'Hold empty for 4 counts before next inhale.' },
+      { dur:30, text:'Repeat this cycle. Notice your heart slowing.', narration:'Repeat this cycle. Notice your heart slowing.' },
+      { dur:20, text:'You are calm. You are grounded. Keep breathing.', narration:'You are calm. You are grounded. Keep breathing.' },
+      { dur:20, text:'Gently open your eyes. You have completed this session.', narration:'Gently open your eyes. You have completed this session.' }
+    ]
+  },
+  { id:'m2', emoji:'🌊', title:'5-Min Body Scan', category:'stress', duration:5, xp:15, premium:false,
+    steps: [
+      { dur:15, text:'Lie down or sit comfortably. Release any tension.', narration:'Lie down or sit comfortably. Release any tension.' },
+      { dur:20, text:'Starting at your toes: notice any sensations without judgment.', narration:'Starting at your toes: notice any sensations without judgment.' },
+      { dur:20, text:'Move awareness up through your legs. Let them relax.', narration:'Move awareness up through your legs. Let them relax.' },
+      { dur:20, text:'Scan your torso. Release tension from your chest and shoulders.', narration:'Scan your torso. Release tension from your chest and shoulders.' },
+      { dur:20, text:'Notice your arms and hands. They feel heavy and relaxed.', narration:'Notice your arms and hands. They feel heavy and relaxed.' },
+      { dur:20, text:'Bring awareness to your head. Relax your face and jaw.', narration:'Bring awareness to your head. Relax your face and jaw.' },
+      { dur:15, text:'Your whole body is now calm and at ease.', narration:'Your whole body is now calm and at ease.' },
+      { dur:10, text:'Slowly open your eyes. Take this peace with you.', narration:'Slowly open your eyes. Take this peace with you.' }
+    ]
+  },
+  { id:'m3', emoji:'☀️', title:'Morning Mindfulness', category:'focus', duration:5, xp:15, premium:false,
+    steps: [
+      { dur:15, text:'Sit upright in a comfortable position. Greet this new day.', narration:'Sit upright in a comfortable position. Greet this new day.' },
+      { dur:20, text:'Set an intention for today: clarity, kindness, or success.', narration:'Set an intention for today: clarity, kindness, or success.' },
+      { dur:20, text:'Take 5 deep breaths. Each breath fills you with energy.', narration:'Take 5 deep breaths. Each breath fills you with energy.' },
+      { dur:20, text:'Visualize your day unfolding smoothly and productively.', narration:'Visualize your day unfolding smoothly and productively.' },
+      { dur:20, text:'You are capable. You are ready. You are enough.', narration:'You are capable. You are ready. You are enough.' },
+      { dur:15, text:'Open your eyes. Carry this clarity into your day.', narration:'Open your eyes. Carry this clarity into your day.' }
+    ]
+  },
+  { id:'m4', emoji:'🧊', title:'Anxiety Reset', category:'stress', duration:5, xp:15, premium:false,
+    steps: [
+      { dur:15, text:'You are safe. Name three things you can see right now.', narration:'You are safe. Name three things you can see right now.' },
+      { dur:15, text:'Now name three things you can touch. Feel their texture.', narration:'Now name three things you can touch. Feel their texture.' },
+      { dur:15, text:'Name two things you can hear. Listen carefully.', narration:'Name two things you can hear. Listen carefully.' },
+      { dur:15, text:'Name one thing you can smell. Breathe it in.', narration:'Name one thing you can smell. Breathe it in.' },
+      { dur:15, text:'Ground yourself in this moment. You are present. You are safe.', narration:'Ground yourself in this moment. You are present. You are safe.' },
+      { dur:10, text:'Your anxiety is passing. You are in control.', narration:'Your anxiety is passing. You are in control.' }
+    ]
+  },
+  { id:'m5', emoji:'💨', title:'Mindful Breathing', category:'general', duration:3, xp:10, premium:false,
+    steps: [
+      { dur:10, text:'Sit quietly and focus on your natural breath.', narration:'Sit quietly and focus on your natural breath.' },
+      { dur:20, text:'Inhale for 4 counts. Exhale for 4 counts.', narration:'Inhale for 4 counts. Exhale for 4 counts.' },
+      { dur:20, text:'If your mind wanders, gently return to your breath.', narration:'If your mind wanders, gently return to your breath.' },
+      { dur:20, text:'Feel each breath bringing in calm, releasing tension.', narration:'Feel each breath bringing in calm, releasing tension.' },
+      { dur:10, text:'Rest in this simplicity. Breathing in. Breathing out.', narration:'Rest in this simplicity. Breathing in. Breathing out.' }
+    ]
+  },
+  // PREMIUM
+  { id:'m6', emoji:'🌙', title:'Sleep Wind-Down', category:'sleep', duration:10, xp:25, premium:true,
+    steps: [
+      { dur:30, text:'Prepare for sleep. Lie in bed, comfortable and warm.', narration:'Prepare for sleep. Lie in bed, comfortable and warm.' },
+      { dur:30, text:'Begin with slow, deep breaths. Release the day.', narration:'Begin with slow, deep breaths. Release the day.' },
+      { dur:30, text:'Progressively relax each part of your body, from toes to head.', narration:'Progressively relax each part of your body, from toes to head.' },
+      { dur:30, text:'Visualize a peaceful, dark space. Warm and safe.', narration:'Visualize a peaceful, dark space. Warm and safe.' },
+      { dur:30, text:'Your eyelids are heavy. Sleep is coming naturally.', narration:'Your eyelids are heavy. Sleep is coming naturally.' },
+      { dur:30, text:'Let go of thoughts. Drift into restful sleep.', narration:'Let go of thoughts. Drift into restful sleep.' }
+    ]
+  },
+  { id:'m7', emoji:'4️⃣', title:'4-7-8 Breathing', category:'sleep', duration:5, xp:15, premium:true,
+    steps: [
+      { dur:15, text:'A powerful technique for deep relaxation and sleep.', narration:'A powerful technique for deep relaxation and sleep.' },
+      { dur:20, text:'Inhale through your nose for 4 counts.', narration:'Inhale through your nose for 4 counts.' },
+      { dur:20, text:'Hold your breath for 7 counts.', narration:'Hold your breath for 7 counts.' },
+      { dur:20, text:'Exhale completely through your mouth for 8 counts.', narration:'Exhale completely through your mouth for 8 counts.' },
+      { dur:20, text:'Repeat this cycle 4 more times. Feel deep calm.', narration:'Repeat this cycle 4 more times. Feel deep calm.' }
+    ]
+  },
+  { id:'m8', emoji:'🌿', title:'Deep Relaxation Body Scan', category:'stress', duration:15, xp:35, premium:true,
+    steps: [
+      { dur:30, text:'Lie down. This meditation releases deep tension.', narration:'Lie down. This meditation releases deep tension.' },
+      { dur:30, text:'Starting with your left foot, tense and release. Feel the difference.', narration:'Starting with your left foot, tense and release. Feel the difference.' },
+      { dur:30, text:'Continue through left leg, then right foot and leg.', narration:'Continue through left leg, then right foot and leg.' },
+      { dur:30, text:'Tense and release your abdomen, chest, and back muscles.', narration:'Tense and release your abdomen, chest, and back muscles.' },
+      { dur:30, text:'Release tension from your left arm, then right arm.', narration:'Release tension from your left arm, then right arm.' },
+      { dur:30, text:'Scrunch your face, then release all facial tension.', narration:'Scrunch your face, then release all facial tension.' },
+      { dur:30, text:'Your entire body is now deeply relaxed and at peace.', narration:'Your entire body is now deeply relaxed and at peace.' },
+      { dur:30, text:'Rest here, feeling completely calm and rejuvenated.', narration:'Rest here, feeling completely calm and rejuvenated.' }
+    ]
+  },
+  { id:'m9', emoji:'🎯', title:'Focus & Clarity', category:'focus', duration:10, xp:25, premium:true,
+    steps: [
+      { dur:20, text:'You need clarity and focus. Settle your mind.', narration:'You need clarity and focus. Settle your mind.' },
+      { dur:20, text:'Close your eyes. Clear away all distracting thoughts.', narration:'Close your eyes. Clear away all distracting thoughts.' },
+      { dur:20, text:'Visualize a beam of clear light in your mind.', narration:'Visualize a beam of clear light in your mind.' },
+      { dur:20, text:'This light brings clarity to your purpose and goals.', narration:'This light brings clarity to your purpose and goals.' },
+      { dur:20, text:'You are focused. You are clear-headed and ready.', narration:'You are focused. You are clear-headed and ready.' },
+      { dur:20, text:'Open your eyes with purpose. You know what to do.', narration:'Open your eyes with purpose. You know what to do.' }
+    ]
+  },
+  { id:'m10', emoji:'🌅', title:'Morning Intention', category:'focus', duration:10, xp:25, premium:true,
+    steps: [
+      { dur:20, text:'A new day has arrived. You are grateful for it.', narration:'A new day has arrived. You are grateful for it.' },
+      { dur:20, text:'What is one thing you want to accomplish today?', narration:'What is one thing you want to accomplish today?' },
+      { dur:20, text:'Visualize yourself succeeding. Feel the satisfaction.', narration:'Visualize yourself succeeding. Feel the satisfaction.' },
+      { dur:20, text:'You have everything you need to make this happen.', narration:'You have everything you need to make this happen.' },
+      { dur:20, text:'Step into your day with confidence and purpose.', narration:'Step into your day with confidence and purpose.' }
+    ]
+  },
+  { id:'m11', emoji:'🙏', title:'Gratitude Practice', category:'mood', duration:10, xp:25, premium:true,
+    steps: [
+      { dur:20, text:'Gratitude shifts your perspective and lifts your mood.', narration:'Gratitude shifts your perspective and lifts your mood.' },
+      { dur:20, text:'Think of three people you are grateful for.', narration:'Think of three people you are grateful for.' },
+      { dur:20, text:'Now think of three things in your life you appreciate.', narration:'Now think of three things in your life you appreciate.' },
+      { dur:20, text:'Feel the warmth that gratitude brings to your heart.', narration:'Feel the warmth that gratitude brings to your heart.' },
+      { dur:20, text:'Carry this appreciation forward. You are blessed.', narration:'Carry this appreciation forward. You are blessed.' }
+    ]
+  },
+  { id:'m12', emoji:'🌋', title:'Stress Release', category:'stress', duration:15, xp:35, premium:true,
+    steps: [
+      { dur:25, text:'You are carrying stress. This meditation releases it.', narration:'You are carrying stress. This meditation releases it.' },
+      { dur:25, text:'Imagine your stress as a dark cloud above you.', narration:'Imagine your stress as a dark cloud above you.' },
+      { dur:25, text:'With each exhale, see the cloud dissolving.', narration:'With each exhale, see the cloud dissolving.' },
+      { dur:25, text:'Light is breaking through. You feel lighter.', narration:'Light is breaking through. You feel lighter.' },
+      { dur:25, text:'The cloud is gone. Sunlight fills your mind.', narration:'The cloud is gone. Sunlight fills your mind.' },
+      { dur:25, text:'You are free from stress. You are renewed.', narration:'You are free from stress. You are renewed.' }
+    ]
+  },
+  { id:'m13', emoji:'💛', title:'Emotional Healing', category:'mood', duration:15, xp:35, premium:true,
+    steps: [
+      { dur:25, text:'This meditation heals emotional wounds.', narration:'This meditation heals emotional wounds.' },
+      { dur:25, text:'Place your hand on your heart. You are safe here.', narration:'Place your hand on your heart. You are safe here.' },
+      { dur:25, text:'Send yourself compassion. You deserve kindness.', narration:'Send yourself compassion. You deserve kindness.' },
+      { dur:25, text:'Let old hurts dissolve. You are stronger now.', narration:'Let old hurts dissolve. You are stronger now.' },
+      { dur:25, text:'Your heart is healing. Love yourself fully.', narration:'Your heart is healing. Love yourself fully.' }
+    ]
+  },
+  { id:'m14', emoji:'🌧️', title:'RAIN Technique', category:'stress', duration:10, xp:25, premium:true,
+    steps: [
+      { dur:20, text:'RAIN: Recognize, Allow, Investigate, Nurture anxiety.', narration:'RAIN: Recognize, Allow, Investigate, Nurture anxiety.' },
+      { dur:20, text:'Recognize: What am I feeling right now?', narration:'Recognize: What am I feeling right now?' },
+      { dur:20, text:'Allow: Let the feeling be. Do not fight it.', narration:'Allow: Let the feeling be. Do not fight it.' },
+      { dur:20, text:'Investigate: Where do I feel this in my body?', narration:'Investigate: Where do I feel this in my body?' },
+      { dur:20, text:'Nurture: Treat yourself with kindness and compassion.', narration:'Nurture: Treat yourself with kindness and compassion.' }
+    ]
+  },
+  { id:'m15', emoji:'🏔️', title:'Mountain Meditation', category:'focus', duration:15, xp:35, premium:true,
+    steps: [
+      { dur:25, text:'Like a mountain, you are strong and stable.', narration:'Like a mountain, you are strong and stable.' },
+      { dur:25, text:'Visualize yourself as a majestic mountain.', narration:'Visualize yourself as a majestic mountain.' },
+      { dur:25, text:'You are grounded. Unshakeable. Solid.', narration:'You are grounded. Unshakeable. Solid.' },
+      { dur:25, text:'Storms pass, but the mountain remains.', narration:'Storms pass, but the mountain remains.' },
+      { dur:25, text:'You have this strength. You are resilient.', narration:'You have this strength. You are resilient.' }
+    ]
+  },
+  { id:'m16', emoji:'🔮', title:'Full Body Scan (20 min)', category:'general', duration:20, xp:40, premium:true,
+    steps: [
+      { dur:40, text:'Lie down. This deep scan releases all tension.', narration:'Lie down. This deep scan releases all tension.' },
+      { dur:40, text:'Starting with your feet, feel each sensation.', narration:'Starting with your feet, feel each sensation.' },
+      { dur:40, text:'Slowly scan up through your legs and hips.', narration:'Slowly scan up through your legs and hips.' },
+      { dur:40, text:'Notice your abdomen, chest, and entire back.', narration:'Notice your abdomen, chest, and entire back.' },
+      { dur:40, text:'Feel your arms, hands, shoulders, and neck.', narration:'Feel your arms, hands, shoulders, and neck.' },
+      { dur:40, text:'Complete the scan with your head and face.', narration:'Complete the scan with your head and face.' },
+      { dur:40, text:'Your entire body is completely relaxed and at ease.', narration:'Your entire body is completely relaxed and at ease.' }
+    ]
+  },
+  { id:'m17', emoji:'❤️', title:'Loving-Kindness', category:'mood', duration:10, xp:25, premium:true,
+    steps: [
+      { dur:20, text:'Start by directing kindness to yourself.', narration:'Start by directing kindness to yourself.' },
+      { dur:20, text:'May I be happy. May I be healthy. May I be at peace.', narration:'May I be happy. May I be healthy. May I be at peace.' },
+      { dur:20, text:'Now extend kindness to someone you love.', narration:'Now extend kindness to someone you love.' },
+      { dur:20, text:'May they be happy. May they be healthy. May they be at peace.', narration:'May they be happy. May they be healthy. May they be at peace.' },
+      { dur:20, text:'Extend this kindness to all beings everywhere.', narration:'Extend this kindness to all beings everywhere.' }
+    ]
+  },
+  { id:'m18', emoji:'🌠', title:'Visualization Journey', category:'focus', duration:10, xp:25, premium:true,
+    steps: [
+      { dur:20, text:'Close your eyes. Imagine yourself in a peaceful place.', narration:'Close your eyes. Imagine yourself in a peaceful place.' },
+      { dur:20, text:'See the colors, feel the air, hear the sounds.', narration:'See the colors, feel the air, hear the sounds.' },
+      { dur:20, text:'Walk slowly through this beautiful place.', narration:'Walk slowly through this beautiful place.' },
+      { dur:20, text:'This is your sanctuary. Your mind is at peace here.', narration:'This is your sanctuary. Your mind is at peace here.' },
+      { dur:20, text:'You can return here anytime you need calm.', narration:'You can return here anytime you need calm.' }
+    ]
+  },
+  { id:'m19', emoji:'⚓', title:'5-4-3-2-1 Grounding', category:'stress', duration:5, xp:15, premium:true,
+    steps: [
+      { dur:18, text:'Name 5 things you can see right now.', narration:'Name 5 things you can see right now.' },
+      { dur:18, text:'Name 4 things you can touch and feel.', narration:'Name 4 things you can touch and feel.' },
+      { dur:18, text:'Name 3 things you can hear.', narration:'Name 3 things you can hear.' },
+      { dur:18, text:'Name 2 things you can smell.', narration:'Name 2 things you can smell.' },
+      { dur:18, text:'Name 1 thing you can taste. You are grounded. You are present.', narration:'Name 1 thing you can taste. You are grounded. You are present.' }
+    ]
+  },
+  { id:'m20', emoji:'🕊️', title:'Mindful Movement', category:'general', duration:10, xp:25, premium:true,
+    steps: [
+      { dur:20, text:'Stand and move slowly with full awareness.', narration:'Stand and move slowly with full awareness.' },
+      { dur:20, text:'Stretch your arms overhead. Feel every muscle.', narration:'Stretch your arms overhead. Feel every muscle.' },
+      { dur:20, text:'Twist gently left and right. Notice the sensations.', narration:'Twist gently left and right. Notice the sensations.' },
+      { dur:20, text:'Roll your shoulders and neck. Release tension.', narration:'Roll your shoulders and neck. Release tension.' },
+      { dur:20, text:'You are present in your body. Connected and whole.', narration:'You are present in your body. Connected and whole.' }
+    ]
+  }
+];
+
+// Mental Health Tips (30+ tips)
+const MENTAL_HEALTH_TIPS = [
+  { category: 'stress', icon: '🌊', tip: 'Take 5 deep breaths before reacting. It activates your calm nervous system.', detail: 'Deep breathing signals to your body that you are safe, triggering the parasympathetic nervous system.' },
+  { category: 'stress', icon: '🏃', tip: 'Move your body for 10 minutes. Exercise reduces cortisol (stress hormone).', detail: 'Physical activity is one of the most effective stress relief techniques backed by science.' },
+  { category: 'stress', icon: '📝', tip: 'Write down your worries. Externalizing them reduces their grip on your mind.', detail: 'Journaling activates the logical part of your brain and provides perspective.' },
+  { category: 'stress', icon: '🧩', tip: 'Break tasks into smaller steps. Big goals feel less overwhelming.', detail: 'Chunking reduces anxiety and builds momentum through small wins.' },
+  { category: 'focus', icon: '🎯', tip: 'Remove distractions. Put your phone in another room for focused work.', detail: 'Your brain loses productivity with every notification check (up to 23 minutes to refocus).' },
+  { category: 'focus', icon: '⏱️', tip: 'Use the Pomodoro technique: 25 min work, 5 min break.', detail: 'Time-boxed sprints improve focus and prevent burnout.' },
+  { category: 'focus', icon: '☀️', tip: 'Start your day with your hardest task when energy is highest.', detail: 'Your willpower is strongest in the morning. Use it wisely.' },
+  { category: 'focus', icon: '🧠', tip: 'Eat protein within 1 hour of waking. It stabilizes focus all day.', detail: 'Protein regulates dopamine and prevents energy crashes.' },
+  { category: 'sleep', icon: '🌙', tip: 'Go to bed at the same time each night. Consistency is key for sleep.', detail: 'Your body has an internal clock. Regular sleep schedules boost sleep quality by 40%.' },
+  { category: 'sleep', icon: '💤', tip: 'Avoid screens 1 hour before bed. Blue light suppresses melatonin.', detail: 'Melatonin is the hormone that makes you sleepy. Screens delay it by 1-3 hours.' },
+  { category: 'sleep', icon: '🛁', tip: 'A warm shower before bed signals your body it\'s time to sleep.', detail: 'The drop in body temperature afterward triggers the sleep response.' },
+  { category: 'sleep', icon: '☕', tip: 'Avoid caffeine after 2 PM. It has a 10-hour half-life.', detail: '3 PM coffee still has 50% in your system at 1 AM.' },
+  { category: 'mood', icon: '☀️', tip: 'Get 15 minutes of natural sunlight daily. It boosts mood and vitamin D.', detail: 'Sunlight regulates serotonin and melatonin, your mood and sleep hormones.' },
+  { category: 'mood', icon: '🤝', tip: 'Spend time with people you love. Social connection is vital for mental health.', detail: 'Loneliness has the health impact of smoking 15 cigarettes per day.' },
+  { category: 'mood', icon: '🙏', tip: 'Practice gratitude daily. Name 3 things you\'re thankful for.', detail: 'Gratitude shifts your brain from threat-focus to opportunity-focus.' },
+  { category: 'mood', icon: '🎵', tip: 'Listen to music that makes you happy. It releases dopamine.', detail: 'Music activates reward centers in your brain similar to food or drugs.' },
+  { category: 'stress', icon: '🧘', tip: 'Meditate for just 5 minutes. Even brief meditation reduces anxiety.', detail: 'Regular meditation literally changes the structure of your brain over time.' },
+  { category: 'focus', icon: '💧', tip: 'Drink water regularly. Dehydration causes brain fog and poor focus.', detail: 'Your brain is 75% water. Even 2% dehydration impairs cognition.' },
+  { category: 'sleep', icon: '🚶', tip: 'Take a walk in the evening. It aids digestion and prepares you for sleep.', detail: 'Walking reduces cortisol and increases melatonin production.' },
+  { category: 'mood', icon: '💪', tip: 'Strength training boosts confidence and mood. Start with bodyweight exercises.', detail: 'Resistance training increases BDNF, a protein that supports brain health.' },
+  { category: 'stress', icon: '🎨', tip: 'Express yourself creatively. Art, writing, or music all reduce stress.', detail: 'Creative expression activates the parasympathetic nervous system.' },
+  { category: 'focus', icon: '📚', tip: 'Learn something new daily. It keeps your brain engaged and sharp.', detail: 'Neuroplasticity means your brain grows with challenge.' },
+  { category: 'mood', icon: '🌱', tip: 'Spend time in nature. Nature reduces stress by 47% in just 20 minutes.', detail: 'Forest bathing (shinrin-yoku) is proven to lower cortisol.' },
+  { category: 'stress', icon: '💬', tip: 'Talk to someone about your feelings. Shared burdens are lighter.', detail: 'Speaking worries aloud reduces their emotional weight.' },
+  { category: 'sleep', icon: '🛏️', tip: 'Keep your bedroom cool (60-67°F). Temperature affects sleep quality.', detail: 'A cool room helps your body enter sleep more easily.' },
+];
+
+// Current meditation session state
+let _currentMeditation = null;
+let _medTimer = null;
+let _medStep = 0;
+let _medElapsed = 0;
+let _medTotalSecs = 0;
+let _medPaused = false;
+let _medTTSEnabled = localStorage.getItem('medTTSEnabled') !== 'false';
+let _breathingActive = false;
+let _breathingTimer = null;
+let _currentBreathingType = 'box';
+
+// Breathing exercise configs
+const BREATHING_CONFIGS = {
+  box: { inhale: 4, hold: 4, exhale: 4, holdEmpty: 4, cycles: 6, label: 'Box Breathing' },
+  '478': { inhale: 4, hold: 7, exhale: 8, holdEmpty: 0, cycles: 4, label: '4-7-8 Breathing' },
+  coherent: { inhale: 5, hold: 0, exhale: 5, holdEmpty: 0, cycles: 6, label: 'Coherent Breathing' }
+};
+
+function loadMindfulnessPage() {
+  updateMindfulnessStats();
+  renderMeditationLibrary('all');
+  renderMentalHealthTips('all');
+  updateRecommendedMeditations();
+  loadMoodCheckIn();
+}
+
+function updateMindfulnessStats() {
+  const med = GlowData.meditation.all();
+  const today_key = GlowData.today();
+  const todayData = med[today_key] || {};
+  const weekData = GlowData.meditation.weekData();
+  const totalWeekMin = weekData.reduce((sum, d) => sum + (d.minutes || 0), 0);
+
+  setText('medStatsToday', (todayData.sessions?.length || 0).toString());
+  setText('medStatsWeek', totalWeekMin.toString());
+
+  // Streak calculation (simplified)
+  let streak = 0;
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    if (med[key]?.totalMinutes > 0) streak++;
+    else if (i > 0) break;
+  }
+  setText('medStatsStreak', streak > 0 ? '🔥 ' + streak : '0');
+}
+
+function renderMeditationLibrary(category) {
+  const user = GlowAuth.getUser();
+  const isPremium = user && user.isPremium;
+  const filtered = category === 'all' ? MEDITATIONS : MEDITATIONS.filter(m => m.category === category);
+
+  let html = '';
+  filtered.forEach(med => {
+    const locked = med.premium && !isPremium;
+    html += `
+      <div class="card-sm relative">
+        ${locked ? '<div class="premium-blur-overlay z-10"><span class="lock-badge">🔒 Premium</span></div>' : ''}
+        <div class="text-3xl mb-2">${med.emoji}</div>
+        <div class="font-bold text-sm mb-1">${med.title}</div>
+        <div class="text-xs text-gray-400 mb-2">${med.duration} min</div>
+        <div class="flex items-center gap-1 mb-3">
+          <span class="text-xs">⭐ ${med.xp} XP</span>
+        </div>
+        <button onclick="${locked ? 'openUpgrade()' : `startMeditation('${med.id}`)'}" class="btn-primary w-full text-xs py-1">
+          ${locked ? 'Unlock' : 'Start'}
+        </button>
+      </div>
+    `;
+  });
+
+  document.getElementById('meditationLibrary').innerHTML = html || '<div class="text-gray-400">No meditations found</div>';
+}
+
+function renderMentalHealthTips(category) {
+  const filtered = category === 'all' ? MENTAL_HEALTH_TIPS : MENTAL_HEALTH_TIPS.filter(t => t.category === category);
+  let html = '';
+  filtered.forEach((tip, idx) => {
+    html += `
+      <div class="card-sm cursor-pointer hover:bg-opacity-80 transition" onclick="toggleTipDetail(${idx})">
+        <div class="text-3xl mb-2">${tip.icon}</div>
+        <div class="text-sm font-bold mb-2">${tip.tip}</div>
+        <div id="tip-detail-${idx}" class="hidden text-xs text-gray-400 mt-2">${tip.detail}</div>
+      </div>
+    `;
+  });
+  document.getElementById('mentalHealthTips').innerHTML = html;
+}
+
+function toggleTipDetail(idx) {
+  const el = document.getElementById('tip-detail-' + idx);
+  if (el) el.classList.toggle('hidden');
+}
+
+function filterMeditations(cat) {
+  document.querySelectorAll('#meditationLibrary').forEach(btn => btn.classList.remove('bg-purple-600'));
+  event.target.classList.add('bg-purple-600');
+  renderMeditationLibrary(cat);
+}
+
+function filterTips(cat) {
+  renderMentalHealthTips(cat);
+}
+
+function updateRecommendedMeditations() {
+  const profile = GlowData.profile.get();
+  const answers = profile.answers || {};
+  const stress = answers.stress || 'Moderate manageable';
+  const goal = answers.mindfulness_goal || 'Reduce stress';
+
+  let recommended = [];
+  if (goal.includes('stress')) recommended.push('m1', 'm4', 'm12');
+  else if (goal.includes('sleep')) recommended.push('m6', 'm7', 'm2');
+  else if (goal.includes('focus')) recommended.push('m3', 'm9', 'm10');
+  else recommended.push('m1', 'm3', 'm11');
+
+  const recMeds = MEDITATIONS.filter(m => recommended.includes(m.id)).slice(0, 3);
+  let html = '';
+  recMeds.forEach(med => {
+    html += `<div class="card-sm text-center cursor-pointer hover:bg-opacity-80 transition" onclick="startMeditation('${med.id}')">
+      <div class="text-4xl mb-2">${med.emoji}</div>
+      <div class="font-bold text-sm">${med.title}</div>
+      <div class="text-xs text-gray-400 mt-1">${med.duration} min · ${med.xp} XP</div>
+    </div>`;
+  });
+  document.getElementById('recommendedMeditationsContainer').innerHTML = html || '<div class="text-gray-400">Loading...</div>';
+}
+
+function loadMoodCheckIn() {
+  const today = GlowData.moodLog.get();
+  if (today) {
+    document.querySelectorAll('[data-mood]').forEach(btn => {
+      if (parseInt(btn.dataset.mood) === today) {
+        btn.style.background = 'rgba(139,92,246,0.3)';
+        btn.style.borderColor = '#8b5cf6';
+      }
+    });
+  }
+}
+
+function setMoodCheck(score) {
+  GlowData.moodLog.set(score);
+  const moods = ['😔 Not great', '😐 Okay', '🙂 Good', '😊 Great', '😄 Excellent'];
+  document.getElementById('moodFeedback').textContent = 'You\'re feeling ' + moods[score - 1] + '. Keep going! 💜';
+  document.querySelectorAll('[data-mood]').forEach(btn => {
+    if (parseInt(btn.dataset.mood) === score) {
+      btn.style.background = 'rgba(139,92,246,0.3)';
+      btn.style.borderColor = '#8b5cf6';
+    } else {
+      btn.style.background = '';
+      btn.style.borderColor = '';
+    }
+  });
+}
+
+function startMeditation(medId) {
+  _currentMeditation = MEDITATIONS.find(m => m.id === medId);
+  if (!_currentMeditation) return;
+
+  document.getElementById('meditationPlayer').classList.remove('hidden');
+  _medStep = 0;
+  _medElapsed = 0;
+  _medTotalSecs = _currentMeditation.steps.reduce((sum, s) => sum + s.dur, 0);
+  _medPaused = false;
+
+  setText('medTitle', _currentMeditation.title);
+  setText('medSubtitle', _currentMeditation.duration + ' min · ' + _currentMeditation.category);
+
+  setMedAmbient(_currentMeditation.category);
+  updateMedStepDots();
+  advanceMedStep();
+
+  _medTimer = setInterval(updateMedTimer, 1000);
+  document.getElementById('medPlayPause').textContent = '⏸ Pause';
+}
+
+function setMedAmbient(cat) {
+  const ambients = {
+    stress: 'bg-gradient-to-br from-teal-900 to-blue-900',
+    focus: 'bg-gradient-to-br from-purple-900 to-indigo-900',
+    sleep: 'bg-gradient-to-br from-gray-900 to-black',
+    mood: 'bg-gradient-to-br from-rose-900 to-pink-800',
+    general: 'bg-gradient-to-br from-purple-900 to-violet-800'
+  };
+  document.getElementById('medAmbient').className = ambients[cat] || ambients.general;
+}
+
+function advanceMedStep() {
+  if (_medStep >= _currentMeditation.steps.length) {
+    completeMeditation();
+    return;
+  }
+  const step = _currentMeditation.steps[_medStep];
+  setText('medStepText', step.text);
+  if (_medTTSEnabled && window.speechSynthesis) {
+    const utterance = new SpeechSynthesisUtterance(step.narration);
+    utterance.rate = 0.9;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }
+  _medStep++;
+}
+
+function updateMedTimer() {
+  if (_medPaused) return;
+  _medElapsed++;
+
+  let sec = _medElapsed;
+  const mins = Math.floor(sec / 60);
+  sec = sec % 60;
+  const timeStr = (mins < 10 ? '0' : '') + mins + ':' + (sec < 10 ? '0' : '') + sec;
+  setText('medTimeDisplay', timeStr);
+
+  // Progress ring
+  const ring = document.getElementById('medTimerRing');
+  if (ring) {
+    const percent = (_medElapsed / _medTotalSecs) * 100;
+    const circumference = 283;
+    ring.style.strokeDashoffset = circumference * (1 - percent / 100);
+  }
+
+  // Check if step time elapsed
+  let elapsed = 0;
+  for (let i = 0; i < _medStep; i++) {
+    elapsed += _currentMeditation.steps[i].dur;
+  }
+  if (_medElapsed >= elapsed && _medStep < _currentMeditation.steps.length) {
+    advanceMedStep();
+  }
+
+  if (_medElapsed >= _medTotalSecs) {
+    completeMeditation();
+  }
+}
+
+function toggleMedPause() {
+  _medPaused = !_medPaused;
+  document.getElementById('medPlayPause').textContent = _medPaused ? '▶ Resume' : '⏸ Pause';
+}
+
+function closeMeditation() {
+  if (_medTimer) clearInterval(_medTimer);
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  document.getElementById('meditationPlayer').classList.add('hidden');
+  _currentMeditation = null;
+}
+
+function completeMeditation() {
+  if (!_currentMeditation) return;
+  closeMeditation();
+
+  // Log meditation
+  GlowData.meditation.log({
+    type: _currentMeditation.id,
+    title: _currentMeditation.title,
+    minutes: _currentMeditation.duration,
+    mood: GlowData.moodLog.get(),
+    completed: true
+  });
+
+  // Award XP
+  GlowData.xp.add(_currentMeditation.xp);
+
+  // Tick h8 habit if applicable
+  const h = GlowData.habits.get('h8');
+  if (h && !h.done) GlowData.habits.set('h8', true);
+
+  updateMindfulnessStats();
+  GlowUtils.toast(`✅ ${_currentMeditation.duration} min complete · +${_currentMeditation.xp} XP`);
+}
+
+function updateMedStepDots() {
+  let dots = '';
+  for (let i = 0; i < _currentMeditation.steps.length; i++) {
+    dots += `<div class="w-2 h-2 rounded-full ${i === 0 ? 'bg-purple-400' : 'bg-gray-600'}"></div>`;
+  }
+  document.getElementById('medStepDots').innerHTML = dots;
+}
+
+function toggleMedVoice() {
+  _medTTSEnabled = !_medTTSEnabled;
+  localStorage.setItem('medTTSEnabled', _medTTSEnabled);
+  document.getElementById('ttsToggle').textContent = (_medTTSEnabled ? '🔊' : '🔇') + ' Voice ' + (_medTTSEnabled ? 'On' : 'Off');
+}
+
+// Breathing exercises
+function switchBreathingExercise(type) {
+  _currentBreathingType = type;
+  document.querySelectorAll('#breathingExercise button').forEach(btn => btn.classList.remove('bg-purple-600'));
+  event.target.classList.add('bg-purple-600');
+}
+
+function startBreathingExercise() {
+  if (_breathingActive) return;
+  _breathingActive = true;
+  document.getElementById('startBreathingBtn').textContent = 'Breathing...';
+  document.getElementById('startBreathingBtn').disabled = true;
+
+  const config = BREATHING_CONFIGS[_currentBreathingType];
+  let cycle = 0;
+
+  const phases = [
+    { dur: config.inhale * 1000, text: 'Inhale', count: config.inhale },
+    { dur: config.hold * 1000, text: 'Hold', count: config.hold },
+    { dur: config.exhale * 1000, text: 'Exhale', count: config.exhale },
+    { dur: config.holdEmpty * 1000, text: 'Hold', count: config.holdEmpty }
+  ];
+
+  function runPhase(phaseIdx) {
+    if (cycle >= config.cycles && phaseIdx === 0) {
+      _breathingActive = false;
+      document.getElementById('startBreathingBtn').textContent = 'Start Breathing';
+      document.getElementById('startBreathingBtn').disabled = false;
+      setText('breathingText', 'Complete!');
+      GlowUtils.toast('✅ Breathing exercise complete');
+      return;
+    }
+
+    if (phaseIdx >= phases.length) {
+      cycle++;
+      runPhase(0);
+      return;
+    }
+
+    const phase = phases[phaseIdx];
+    if (phase.dur === 0) {
+      runPhase(phaseIdx + 1);
+      return;
+    }
+
+    setText('breathingText', phase.text);
+    let count = phase.count;
+    const countInterval = setInterval(() => {
+      setText('breathingCount', count);
+      count--;
+      if (count < 0) {
+        clearInterval(countInterval);
+        runPhase(phaseIdx + 1);
+      }
+    }, 1000);
+  }
+
+  runPhase(0);
 }
 </script>
 </body>
