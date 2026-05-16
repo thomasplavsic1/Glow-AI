@@ -3,7 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GlowAI — Your AI-Powered Glow Up</title>
+  <title>GlowAI — AI-Powered Health, Fitness & Wellness App</title>
+  <meta name="description" content="GlowAI is your personalised AI wellness coach. Track habits, nutrition, gym workouts, sleep and water. Get your free Glow Score and 90-day transformation plan. Free to start."/>
+  <meta name="keywords" content="AI health app, wellness tracker, habit tracker app, fitness app, glow up app, nutrition tracker, gym workout planner, sleep tracker, water tracker, personalised health plan, AI coach, glow score, 90 day transformation, health and wellness, fitness tracker Australia, wellness app Australia, free fitness app, body transformation, healthy habits, weight loss app, muscle building app, skincare routine, mental health app, daily habits, calorie tracker, macro tracker, protein tracker"/>
+  <meta name="author" content="GlowAI"/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://glow-ai-7078b.web.app/"/>
+  <!-- Open Graph (Facebook, LinkedIn) -->
+  <meta property="og:title" content="GlowAI — AI-Powered Health & Wellness App"/>
+  <meta property="og:description" content="Track habits, workouts, nutrition, sleep and water. Get your personalised Glow Score and 90-day transformation plan powered by AI. Free to start."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://glow-ai-7078b.web.app/"/>
+  <meta property="og:image" content="https://glow-ai-7078b.web.app/og-image.png"/>
+  <meta property="og:site_name" content="GlowAI"/>
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="GlowAI — AI-Powered Health & Wellness"/>
+  <meta name="twitter:description" content="Your personalised AI wellness coach. Track habits, nutrition, gym, sleep and water. Free Glow Score. Start your 90-day transformation today."/>
+  <meta name="twitter:image" content="https://glow-ai-7078b.web.app/og-image.png"/>
+  <!-- Structured Data -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"GlowAI","url":"https://glow-ai-7078b.web.app","description":"AI-powered personalised health and wellness tracker. Track habits, nutrition, gym workouts, sleep and water. Get your Glow Score.","applicationCategory":"HealthApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"},"author":{"@type":"Organization","name":"GlowAI"}}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="manifest" href="manifest.json"/>
@@ -341,7 +360,7 @@
 ================================================================ -->
 <nav class="nav-blur fixed top-0 left-0 right-0 z-50">
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="handleLogoClick()">
       <div class="w-8 h-8 rounded-lg grad-bg flex items-center justify-center text-base">✨</div>
       <span class="font-black text-xl tracking-tight">Glow<span class="grad-text-2">AI</span></span>
     </div>
@@ -352,7 +371,7 @@
       <a href="#pricing" class="text-sm text-gray-400 hover:text-white transition-colors">Pricing</a>
     </div>
     <div class="flex items-center gap-3">
-      <a href="onboarding.html?login=1" class="hidden md:block text-sm text-gray-400 hover:text-white transition-colors px-4 py-2">Log in</a>
+      <button onclick="openLoginModal()" class="hidden md:block text-sm text-gray-400 hover:text-white transition-colors px-4 py-2">Log in</button>
       <a href="onboarding.html"><button class="btn-glow text-sm py-2.5 px-5">Start Free ✨</button></a>
     </div>
   </div>
@@ -396,9 +415,14 @@
         <li class="flex items-center gap-2"><span class="text-purple-400 font-bold">✓</span> Syncs across all your devices — no data lost</li>
       </ul>
 
-      <div class="flex flex-wrap gap-4 mb-12">
+      <div class="flex flex-wrap gap-4 mb-8">
         <a href="onboarding.html"><button class="btn-glow flex items-center gap-2">✨ Start Free — No Card Needed</button></a>
         <a href="#how-it-works"><button class="btn-outline flex items-center gap-2">▶ How It Works</button></a>
+      </div>
+
+      <!-- Login link for existing users -->
+      <div class="mb-12 text-sm">
+        <button onclick="openLoginModal()" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">Already a member? Log in →</button>
       </div>
 
       <!-- Trust indicators -->
@@ -643,6 +667,54 @@
         <h3 class="text-lg font-bold mb-2">Personalised Skincare</h3>
         <p class="text-gray-400 text-sm leading-relaxed">Get a personalised AM and PM skincare routine based on your skin type and concerns. Evidence-based product guidance built around what your skin actually needs.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     GET THE APP
+================================================================ -->
+<section id="get-the-app" class="py-20 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <div class="section-chip">Always With You</div>
+      <h2 class="text-4xl md:text-5xl font-black mb-4">Get the app on your<br/><span class="grad-text">home screen.</span></h2>
+      <p class="text-gray-400 max-w-xl mx-auto">Install GlowAI as a native app on your phone for instant access, offline support, and push notifications.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+      <!-- iOS Card -->
+      <div class="glass p-8 rounded-2xl text-center hover:bg-opacity-10 transition" data-aos="fade-up" data-aos-delay="0">
+        <div class="text-5xl mb-4">📱</div>
+        <h3 class="text-2xl font-bold mb-3">iOS & iPadOS</h3>
+        <p class="text-gray-400 mb-6">Get GlowAI on your iPhone or iPad</p>
+        <ol class="text-sm text-gray-300 text-left space-y-2 mb-6 bg-gray-900 bg-opacity-50 p-4 rounded-lg">
+          <li><span class="font-semibold">1.</span> Open this page in Safari</li>
+          <li><span class="font-semibold">2.</span> Tap the <span class="font-mono">Share</span> button</li>
+          <li><span class="font-semibold">3.</span> Tap <span class="font-mono">Add to Home Screen</span></li>
+          <li><span class="font-semibold">4.</span> Name it "GlowAI" and tap <span class="font-mono">Add</span></li>
+        </ol>
+        <button onclick="showIOSInstructions()" class="btn-glow text-sm w-full">Show Instructions</button>
+      </div>
+
+      <!-- Android Card -->
+      <div class="glass p-8 rounded-2xl text-center hover:bg-opacity-10 transition" data-aos="fade-up" data-aos-delay="60">
+        <div class="text-5xl mb-4">🤖</div>
+        <h3 class="text-2xl font-bold mb-3">Android & Chrome</h3>
+        <p class="text-gray-400 mb-6">Add GlowAI to your home screen</p>
+        <ol class="text-sm text-gray-300 text-left space-y-2 mb-6 bg-gray-900 bg-opacity-50 p-4 rounded-lg">
+          <li><span class="font-semibold">1.</span> Open this page in Chrome</li>
+          <li><span class="font-semibold">2.</span> Tap the <span class="font-mono">⋮</span> menu (top-right)</li>
+          <li><span class="font-semibold">3.</span> Tap <span class="font-mono">Add to Home Screen</span></li>
+          <li><span class="font-semibold">4.</span> Confirm and it's installed!</li>
+        </ol>
+        <button id="installAppBtn" class="btn-glow text-sm w-full" style="display:none">Install App</button>
+        <button onclick="showAndroidInstructions()" class="btn-glow text-sm w-full" id="androidInstructionsBtn">Show Instructions</button>
+      </div>
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="text-gray-400 text-sm">💡 <span class="font-semibold">Tip:</span> The app works offline and sends you daily reminders so you never miss a habit.</p>
     </div>
   </div>
 </section>
@@ -1078,11 +1150,88 @@
   </div>
 </footer>
 
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onclick="if(event.target===this)closeLoginModal()">
+  <div class="bg-gray-900 rounded-2xl p-8 max-w-sm w-full border border-purple-500 border-opacity-20">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-black grad-text">Log In</h2>
+      <button onclick="closeLoginModal()" class="text-gray-500 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-4 mb-6">
+      <div>
+        <label class="text-sm text-gray-400 block mb-2">Email</label>
+        <input id="loginEmail" type="email" placeholder="your@email.com" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white outline-none focus:border-purple-500" />
+      </div>
+      <div>
+        <label class="text-sm text-gray-400 block mb-2">Password</label>
+        <input id="loginPassword" type="password" placeholder="••••••••" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white outline-none focus:border-purple-500" />
+      </div>
+    </div>
+    <button onclick="handleLogin()" class="btn-glow w-full py-3 text-sm font-bold mb-3">Log In</button>
+    <button onclick="handleGoogleLogin()" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm font-bold transition-colors mb-4">
+      <span>🔵 Sign in with Google</span>
+    </button>
+    <p class="text-center text-sm text-gray-400">
+      Don't have an account? <a href="onboarding.html" class="text-purple-400 hover:text-purple-300">Create one</a>
+    </p>
+  </div>
+</div>
+
 <script>
   // Redirect logged-in users to dashboard
   GlowAuth.onReady(user => {
     if (user && user.onboardingDone) window.location.href = 'dashboard.html';
   });
+
+  function handleLogoClick() {
+    const user = GlowAuth.getUser();
+    if (user && user.onboardingDone) {
+      window.location.href = 'dashboard.html';
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function openLoginModal() {
+    document.getElementById('loginModal').classList.remove('hidden');
+    document.getElementById('loginEmail').focus();
+  }
+
+  function closeLoginModal() {
+    document.getElementById('loginModal').classList.add('hidden');
+  }
+
+  async function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!email || !password) {
+      alert('Please enter your email and password');
+      return;
+    }
+    try {
+      const result = await GlowAuth.login(email, password);
+      if (result.error) {
+        alert('Login failed: ' + result.error);
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    } catch (e) {
+      alert('Login error: ' + e.message);
+    }
+  }
+
+  async function handleGoogleLogin() {
+    try {
+      const result = await GlowAuth.signInWithGoogle();
+      if (result.error) {
+        alert('Google login failed: ' + result.error);
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    } catch (e) {
+      alert('Google login error: ' + e.message);
+    }
+  }
 
   AOS.init({ duration: 700, once: true, easing: 'ease-out-cubic', offset: 60 });
 
@@ -1092,6 +1241,89 @@
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
     if (!wasOpen) item.classList.add('open');
   }
+
+  // Mobile app install helpers
+  function isMobile() {
+    return /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  function showIOSInstructions() {
+    alert('📱 iOS Installation:\n\n1. Tap the Share button (⬆️ from bottom)\n2. Scroll down and tap "Add to Home Screen"\n3. Rename to "GlowAI" if desired\n4. Tap "Add" in top-right\n\nTap the new app icon on your home screen to open GlowAI!');
+  }
+
+  function showAndroidInstructions() {
+    alert('🤖 Android Installation:\n\n1. Tap the menu button (⋮) in top-right\n2. Tap "Add to Home Screen"\n3. You can rename it if desired\n4. Tap "Install"\n\nYour GlowAI app will appear on your home screen!');
+  }
+
+  // Mobile app download banner
+  let deferredPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Show install button for Android users
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn && isMobile()) {
+      installBtn.style.display = 'block';
+    }
+  });
+
+  async function installApp() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response: ${outcome}`);
+      deferredPrompt = null;
+    }
+  }
+
+  // Show sticky banner on mobile only
+  function initAppDownloadBanner() {
+    if (!isMobile()) return;
+
+    const bannerDismissed = localStorage.getItem('appDownloadBannerDismissed');
+    if (bannerDismissed) return;
+
+    // The banner is shown via CSS and initially visible
+    // Dismiss functionality will be added if banner HTML is added
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initAppDownloadBanner);
 </script>
+
+<!-- Mobile App Download Banner (sticky bottom) -->
+<div id="appDownloadBanner" class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-gradient-to-r from-purple-600 to-pink-600 p-4 shadow-lg" style="display:none">
+  <div class="flex items-center justify-between gap-3">
+    <div class="flex-1">
+      <div class="font-bold text-sm">📱 Add to Home Screen</div>
+      <div class="text-xs opacity-90">Quick access to GlowAI</div>
+    </div>
+    <button onclick="dismissAppDownloadBanner()" class="flex-shrink-0 text-xl font-bold opacity-70 hover:opacity-100">×</button>
+  </div>
+</div>
+
+<script>
+  function dismissAppDownloadBanner() {
+    localStorage.setItem('appDownloadBannerDismissed', 'true');
+    document.getElementById('appDownloadBanner').style.display = 'none';
+  }
+
+  // Show banner on mobile if not dismissed
+  function showAppDownloadBanner() {
+    if (!isMobile()) return;
+    if (localStorage.getItem('appDownloadBannerDismissed')) return;
+    const banner = document.getElementById('appDownloadBanner');
+    if (banner) banner.style.display = 'flex';
+  }
+
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showAppDownloadBanner);
+  } else {
+    showAppDownloadBanner();
+  }
+</script>
+
 </body>
 </html>
