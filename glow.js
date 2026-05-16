@@ -193,18 +193,22 @@ const GlowData = (() => {
     set: d => { const k = uid('p'); if (k) _sv(k, Object.assign(_ld(k, {}), d)); }
   };
 
-  // Habit definitions — shared across dashboard
+  // Habit definitions — 8 pre-set habits (free: view 2, premium: manage all)
   const HABIT_DEFS = [
-    { id:'h1', text:'Morning workout',              xp:20, category:'Fitness' },
-    { id:'h2', text:'Morning hydration (500ml)',    xp:5,  category:'Water' },
-    { id:'h3', text:'Log breakfast macros',         xp:10, category:'Nutrition' },
-    { id:'h4', text:'No social media before 9am',   xp:15, category:'Discipline' },
-    { id:'h5', text:'Evening walk (10 min)',         xp:10, category:'Movement' },
-    { id:'h6', text:'Read for 20 mins before bed',  xp:10, category:'Sleep hygiene' }
+    { id:'h1', text:'Morning workout',              xp:20, category:'Fitness', premium:false },
+    { id:'h2', text:'Morning hydration (500ml)',    xp:5,  category:'Water', premium:false },
+    { id:'h3', text:'Log breakfast macros',         xp:10, category:'Nutrition', premium:false },
+    { id:'h4', text:'No social media before 9am',   xp:15, category:'Discipline', premium:true },
+    { id:'h5', text:'Evening walk (10 min)',         xp:10, category:'Movement', premium:true },
+    { id:'h6', text:'Read for 20 mins before bed',  xp:10, category:'Sleep hygiene', premium:true },
+    { id:'h7', text:'Strength training session',    xp:25, category:'Fitness', premium:true },
+    { id:'h8', text:'Meditate for 10 mins',         xp:12, category:'Wellness', premium:true }
   ];
 
   const habits = {
     defs:  () => HABIT_DEFS,
+    freeHabits: () => HABIT_DEFS.filter(h => !h.premium).slice(0, 2),
+    allHabits:  () => HABIT_DEFS,
     today: () => _ld(uid('h_' + today()), {}),
     set:   (id, done) => { const k = uid('h_' + today()); if (!k) return; const h = _ld(k, {}); h[id] = done; _sv(k, h); },
     weekData: () => { const out = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const key = d.toISOString().slice(0,10); const h = _ld(uid('h_' + key), {}); out.push({ date: key, day: d.toLocaleDateString('en-AU', { weekday: 'short' }), done: Object.values(h).filter(Boolean).length }); } return out; },
@@ -245,7 +249,37 @@ const GlowData = (() => {
 
   const gym    = { all: () => _ld(uid('gym'),{}), saveToday: data => { const k = uid('gym'); if (!k) return; const l = _ld(k,{}); l[today()]=data; _sv(k,l); } };
   const chat   = { history: () => _ld(uid('ch'),[]), add: (role,text) => { const k = uid('ch'); if (!k) return; const h = _ld(k,[]); h.push({role,text,ts:Date.now()}); if (h.length>200) h.splice(0,h.length-200); _sv(k,h); }, todayCount: () => { const t=today(); return chat.history().filter(m=>m.role==='user'&&new Date(m.ts).toISOString().startsWith(t)).length; } };
-  const settings = { get: () => Object.assign({dailyReminders:true,waterReminders:true,bedtimeReminder:false}, _ld(uid('cfg'),{})), set: s => _sv(uid('cfg'),s) };
+  const settings = {
+    get: () => Object.assign({
+      dailyReminders:true,
+      waterReminders:true,
+      bedtimeReminder:false,
+      calorieGoal:2100,
+      proteinGoal:150,
+      carbsGoal:240,
+      fatGoal:75,
+      waterGoal:3000
+    }, _ld(uid('cfg'),{})),
+    set: s => _sv(uid('cfg'),s),
+    updateGoals: (goals) => { const s = settings.get(); Object.assign(s, goals); settings.set(s); }
+  };
+
+  const meditation = {
+    all:      () => _ld(uid('med'), {}),
+    log:      (entry) => { const k = uid('med'); if (!k) return; const l = _ld(k, {}); const d = today(); if (!l[d]) l[d] = { sessions: [], totalMinutes: 0 }; l[d].sessions = l[d].sessions || []; l[d].sessions.push(entry); l[d].totalMinutes = (l[d].totalMinutes || 0) + (entry.minutes || 0); _sv(k, l); },
+    today:    () => { const l = meditation.all(); return l[today()] || null; },
+    save:     (date, data) => { const k = uid('med'); if (!k) return; const l = _ld(k, {}); l[date] = data; _sv(k, l); },
+    weekData: () => { const l = meditation.all(); const out = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate()-i); const key = d.toISOString().slice(0,10); out.push({ date: key, day: d.toLocaleDateString('en-AU', {weekday:'short'}), minutes: l[key]?.totalMinutes || 0 }); } return out; },
+    totalSessions: () => { const l = meditation.all(); return Object.values(l).reduce((sum, d) => sum + (d.sessions?.length || 0), 0); },
+    totalMinutes: () => { const l = meditation.all(); return Object.values(l).reduce((sum, d) => sum + (d.totalMinutes || 0), 0); }
+  };
+
+  const moodLog = {
+    all:      () => _ld(uid('mood'), {}),
+    set:      (score, d) => { const k = uid('mood'); if (!k) return; const l = _ld(k, {}); l[d || today()] = score; _sv(k, l); },
+    get:      (d) => { const l = moodLog.all(); return l[d || today()] || null; },
+    weekData: () => { const l = moodLog.all(); const out = []; for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate()-i); const key = d.toISOString().slice(0,10); out.push({ date: key, day: d.toLocaleDateString('en-AU', {weekday:'short'}), score: l[key] || null }); } return out; }
+  };
 
   const dayNumber = () => { const u = GlowAuth.getUser(); if (!u||!u.createdAt) return 1; return Math.max(1,Math.floor((Date.now()-new Date(u.createdAt).getTime())/86400000)+1); };
 
@@ -277,7 +311,7 @@ const GlowData = (() => {
     return newScore;
   };
 
-  return { today, profile, habits, streak, xp, water, sleep, food, gym, chat, settings, dayNumber, calcGlowScore, recordCheckin };
+  return { today, profile, habits, streak, xp, water, sleep, food, gym, chat, settings, meditation, moodLog, dayNumber, calcGlowScore, recordCheckin };
 })();
 
 // ============================================================
