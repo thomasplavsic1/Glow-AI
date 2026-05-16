@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlowAI — AI-Powered Health, Fitness & Wellness App</title>
+  <meta name="description" content="GlowAI is your personalised AI wellness coach. Track habits, nutrition, gym workouts, sleep and water. Get your free Glow Score and 90-day transformation plan. Free to start."/>
+  <meta name="keywords" content="AI health app, wellness tracker, habit tracker app, fitness app, glow up app, nutrition tracker, gym workout planner, sleep tracker, water tracker, personalised health plan, AI coach, glow score, 90 day transformation, health and wellness, fitness tracker Australia, wellness app Australia, free fitness app, body transformation, healthy habits, weight loss app, muscle building app, skincare routine, mental health app, daily habits, calorie tracker, macro tracker, protein tracker"/>
+  <meta name="author" content="GlowAI"/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://glow-ai-7078b.web.app/"/>
+  <!-- Open Graph (Facebook, LinkedIn) -->
+  <meta property="og:title" content="GlowAI — AI-Powered Health & Wellness App"/>
+  <meta property="og:description" content="Track habits, workouts, nutrition, sleep and water. Get your personalised Glow Score and 90-day transformation plan powered by AI. Free to start."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://glow-ai-7078b.web.app/"/>
+  <meta property="og:image" content="https://glow-ai-7078b.web.app/og-image.png"/>
+  <meta property="og:site_name" content="GlowAI"/>
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="GlowAI — AI-Powered Health & Wellness"/>
+  <meta name="twitter:description" content="Your personalised AI wellness coach. Track habits, nutrition, gym, sleep and water. Free Glow Score. Start your 90-day transformation today."/>
+  <meta name="twitter:image" content="https://glow-ai-7078b.web.app/og-image.png"/>
+  <!-- Structured Data -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"GlowAI","url":"https://glow-ai-7078b.web.app","description":"AI-powered personalised health and wellness tracker. Track habits, nutrition, gym workouts, sleep and water. Get your Glow Score.","applicationCategory":"HealthApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"AUD"},"author":{"@type":"Organization","name":"GlowAI"}}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#7c3aed"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="glow.js"></script>
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    :root {
+      --purple: #8B5CF6;
+      --purple-dark: #7C3AED;
+      --pink: #EC4899;
+      --bg: #050508;
+      --surface: #0f0f18;
+      --surface2: #16162a;
+      --border: rgba(139,92,246,0.2);
+    }
+    body { background: var(--bg); color: #fff; overflow-x: hidden; }
+
+    /* ---- GRADIENTS ---- */
+    .grad-text {
+      background: linear-gradient(135deg, #a78bfa, #ec4899, #f97316);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .grad-text-2 {
+      background: linear-gradient(135deg, #c4b5fd, #f0abfc);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .grad-bg { background: linear-gradient(135deg, #7c3aed, #ec4899); }
+    .grad-border { border: 1px solid transparent; background-clip: padding-box; }
+
+    /* ---- GLASS ---- */
+    .glass {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(139,92,246,0.15);
+      border-radius: 20px;
+    }
+    .glass-strong {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(30px);
+      border: 1px solid rgba(139,92,246,0.25);
+      border-radius: 20px;
+    }
+
+    /* ---- BUTTONS ---- */
+    .btn-glow {
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      border-radius: 50px;
+      padding: 14px 32px;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 30px rgba(139,92,246,0.4), 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .btn-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 50px rgba(139,92,246,0.6), 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .btn-glow::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .btn-glow:hover::before { opacity: 1; }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(139,92,246,0.5);
+      border-radius: 50px;
+      padding: 13px 32px;
+      font-weight: 600;
+      font-size: 16px;
+      color: #c4b5fd;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-outline:hover {
+      background: rgba(139,92,246,0.1);
+      border-color: rgba(139,92,246,0.8);
+      transform: translateY(-2px);
+    }
+
+    /* ---- HERO BG ---- */
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139,92,246,0.3), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 50%, rgba(236,72,153,0.15), transparent),
+        radial-gradient(ellipse 50% 60% at 10% 80%, rgba(124,58,237,0.2), transparent);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(139,92,246,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139,92,246,0.07) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+    }
+
+    /* ---- ANIMATIONS ---- */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+    @keyframes float2 {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,0.3); }
+      50% { box-shadow: 0 0 40px rgba(139,92,246,0.6), 0 0 60px rgba(236,72,153,0.2); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+    @keyframes gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes orbit {
+      from { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+      to { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+    }
+
+    .float-1 { animation: float 6s ease-in-out infinite; }
+    .float-2 { animation: float2 8s ease-in-out infinite; }
+    .float-3 { animation: float 7s ease-in-out infinite 1s; }
+    .pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+    .gradient-animated {
+      background: linear-gradient(270deg, #a78bfa, #ec4899, #f97316, #8b5cf6);
+      background-size: 300% 300%;
+      animation: gradient-shift 4s ease infinite;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ---- FEATURE CARDS ---- */
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid rgba(139,92,246,0.12);
+      border-radius: 20px;
+      padding: 28px;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(139,92,246,0.08), transparent);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .feature-card:hover {
+      border-color: rgba(139,92,246,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(139,92,246,0.1);
+    }
+    .feature-card:hover::before { opacity: 1; }
+
+    .icon-wrap {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(236,72,153,0.1));
+      border: 1px solid rgba(139,92,246,0.3);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    /* ---- TESTIMONIALS ---- */
+    .testimonial-card {
+      background: var(--surface2);
+      border: 1px solid rgba(139,92,246,0.15);
+      border-radius: 20px;
+      padding: 28px;
+    }
+    .stars { color: #f59e0b; letter-spacing: 2px; }
+
+    /* ---- PRICING ---- */
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid rgba(139,92,246,0.2);
+      border-radius: 24px;
+      padding: 36px;
+      transition: all 0.4s ease;
+    }
+    .pricing-card.featured {
+      background: linear-gradient(180deg, rgba(139,92,246,0.15), rgba(236,72,153,0.08));
+      border: 1px solid rgba(139,92,246,0.5);
+      transform: scale(1.03);
+      box-shadow: 0 0 60px rgba(139,92,246,0.2);
+    }
+    .pricing-card:hover { transform: translateY(-4px) scale(1.01); }
+    .pricing-card.featured:hover { transform: translateY(-4px) scale(1.04); }
+
+    /* ---- FAQ ---- */
+    .faq-item {
+      border-bottom: 1px solid rgba(139,92,246,0.15);
+    }
+    .faq-q {
+      width: 100%; text-align: left; background: none; border: none;
+      color: #fff; font-size: 17px; font-weight: 600;
+      padding: 22px 0; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .faq-a { display: none; padding-bottom: 18px; color: #9ca3af; line-height: 1.7; }
+    .faq-item.open .faq-a { display: block; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-icon { transition: transform 0.3s; font-size: 22px; color: #8b5cf6; }
+
+    /* ---- STEPS ---- */
+    .step-line {
+      position: absolute; left: 25px; top: 60px; bottom: -20px;
+      width: 2px; background: linear-gradient(180deg, #8b5cf6, transparent);
+    }
+
+    /* ---- STATS ---- */
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid rgba(139,92,246,0.15);
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+    }
+
+    /* ---- SCROLL BAR ---- */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 3px; }
+
+    /* ---- NAV ---- */
+    .nav-blur {
+      background: rgba(5,5,8,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(139,92,246,0.1);
+    }
+
+    /* ---- MOCKUP ---- */
+    .phone-mockup {
+      background: linear-gradient(180deg, #1a1a2e, #0f0f1a);
+      border: 2px solid rgba(139,92,246,0.3);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 60px rgba(139,92,246,0.15);
+    }
+    .phone-screen {
+      background: linear-gradient(180deg, #0d0d1a, #141428);
+      padding: 20px 16px;
+    }
+    .mini-card {
+      background: rgba(139,92,246,0.1);
+      border: 1px solid rgba(139,92,246,0.2);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+
+    /* ---- PROGRESS RINGS ---- */
+    .ring-wrap { position: relative; display: inline-block; }
+    .ring-wrap svg { transform: rotate(-90deg); }
+
+    /* ---- SECTION TITLE ---- */
+    .section-chip {
+      display: inline-block;
+      background: rgba(139,92,246,0.15);
+      border: 1px solid rgba(139,92,246,0.3);
+      border-radius: 50px;
+      padding: 6px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #c4b5fd;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* mobile */
+    @media (max-width: 768px) {
+      .pricing-card.featured { transform: scale(1); }
+    }
+
+    /* Orbit animation for floating elements */
+    .orbit-el {
+      position: absolute;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+    }
+
+    /* Noise texture overlay */
+    .noise::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; opacity: 0.4;
+    }
+
+    .badge-new {
+      background: linear-gradient(135deg, #7c3aed, #ec4899);
+      border-radius: 50px; padding: 3px 12px; font-size: 12px; font-weight: 700;
+    }
+    .check-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .check-icon { color: #8b5cf6; font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+
+    /* Ticker */
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-track { display: flex; animation: ticker 20s linear infinite; width: max-content; }
+    .ticker-item { white-space: nowrap; padding: 0 40px; color: #6b7280; font-size: 14px; font-weight: 500; }
+    .ticker-item span { color: #8b5cf6; }
+  </style>
+</head>
+<body>
+
+<!-- ================================================================
+     NAVIGATION
+================================================================ -->
+<nav class="nav-blur fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="handleLogoClick()">
+      <div class="w-8 h-8 rounded-lg grad-bg flex items-center justify-center text-base">✨</div>
+      <span class="font-black text-xl tracking-tight">Glow<span class="grad-text-2">AI</span></span>
+    </div>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#features" class="text-sm text-gray-400 hover:text-white transition-colors">Features</a>
+      <a href="#how-it-works" class="text-sm text-gray-400 hover:text-white transition-colors">How It Works</a>
+      <a href="#science" class="text-sm text-gray-400 hover:text-white transition-colors">Science</a>
+      <a href="#pricing" class="text-sm text-gray-400 hover:text-white transition-colors">Pricing</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="openLoginModal()" class="hidden md:block text-sm text-gray-400 hover:text-white transition-colors px-4 py-2">Log in</button>
+      <a href="onboarding.html"><button class="btn-glow text-sm py-2.5 px-5">Start Free ✨</button></a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================================================================
+     HERO
+================================================================ -->
+<section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <!-- Floating orbs -->
+  <div class="absolute top-1/4 left-10 w-64 h-64 rounded-full blur-[100px] opacity-20" style="background:radial-gradient(#7c3aed, transparent)"></div>
+  <div class="absolute bottom-1/4 right-10 w-48 h-48 rounded-full blur-[80px] opacity-15" style="background:radial-gradient(#ec4899, transparent)"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center py-20">
+
+    <!-- LEFT -->
+    <div>
+      <div class="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-8" style="border-radius:50px">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        <span class="text-sm text-gray-300">AI-powered · Personalised · Science-backed</span>
+      </div>
+
+      <h1 class="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.05] mb-6">
+        Your personalised<br/>
+        <span class="gradient-animated">glow up plan</span><br/>
+        <span style="color:#e5e7eb">powered by AI.</span>
+      </h1>
+
+      <p class="text-lg text-gray-400 leading-relaxed mb-6 max-w-xl">
+        Build better habits, transform your body and mind, and become your best self — with a daily AI-powered system designed <em>specifically for you</em>. Not generic. Not overwhelming. Just your perfect daily plan.
+      </p>
+
+      <!-- Benefit bullets -->
+      <ul class="space-y-2 mb-10 text-sm text-gray-300 max-w-sm">
+        <li class="flex items-center gap-2"><span class="text-purple-400 font-bold">✓</span> Personalised habit plan built from your quiz</li>
+        <li class="flex items-center gap-2"><span class="text-purple-400 font-bold">✓</span> Track water, sleep, nutrition & workouts in one place</li>
+        <li class="flex items-center gap-2"><span class="text-purple-400 font-bold">✓</span> XP, streaks & Glow Score that grows with you</li>
+        <li class="flex items-center gap-2"><span class="text-purple-400 font-bold">✓</span> Syncs across all your devices — no data lost</li>
+      </ul>
+
+      <div class="flex flex-wrap gap-4 mb-8">
+        <a href="onboarding.html"><button class="btn-glow flex items-center gap-2">✨ Start Free — No Card Needed</button></a>
+        <a href="#how-it-works"><button class="btn-outline flex items-center gap-2">▶ How It Works</button></a>
+      </div>
+
+      <!-- Login link for existing users -->
+      <div class="mb-12 text-sm">
+        <button onclick="openLoginModal()" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">Already a member? Log in →</button>
+      </div>
+
+      <!-- Trust indicators -->
+      <div class="flex flex-wrap items-center gap-6">
+        <div class="flex -space-x-3">
+          <div class="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center text-lg" style="background:linear-gradient(135deg,#a78bfa,#ec4899)">💪</div>
+          <div class="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center text-lg" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">🌟</div>
+          <div class="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center text-lg" style="background:linear-gradient(135deg,#ec4899,#f97316)">🔥</div>
+          <div class="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center text-lg" style="background:linear-gradient(135deg,#10b981,#06b6d4)">✨</div>
+          <div class="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center text-lg" style="background:linear-gradient(135deg,#f59e0b,#ec4899)">😊</div>
+        </div>
+        <div>
+          <div class="text-yellow-400 text-sm">★★★★½</div>
+          <div class="text-gray-400 text-xs">Loved by our growing community</div>
+        </div>
+        <div class="h-8 w-px bg-gray-700"></div>
+        <div class="text-sm text-gray-400"><span class="text-white font-semibold">Science-backed</span> habits system</div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Phone Mockups -->
+    <div class="relative flex justify-center items-center">
+      <!-- Main phone -->
+      <div class="phone-mockup w-64 float-1 pulse-glow relative z-10">
+        <div class="bg-black px-6 py-3 flex justify-center">
+          <div class="w-24 h-5 bg-black rounded-full border border-gray-800"></div>
+        </div>
+        <div class="phone-screen">
+          <!-- Dashboard preview -->
+          <div class="text-center mb-4">
+            <div class="text-xs text-gray-400 mb-1">Friday • Day 12 of 90</div>
+            <div class="text-lg font-black grad-text">Your Glow Score</div>
+            <div class="text-5xl font-black text-white mt-1">78<span class="text-2xl text-gray-400">/100</span></div>
+          </div>
+          <!-- Progress rings row -->
+          <div class="flex justify-center gap-4 mb-4">
+            <div class="text-center">
+              <div class="relative w-12 h-12">
+                <svg viewBox="0 0 44 44" class="w-12 h-12" style="transform:rotate(-90deg)">
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#1f2937" stroke-width="4"/>
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#8b5cf6" stroke-width="4"
+                    stroke-dasharray="113" stroke-dashoffset="28" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-bold">75%</div>
+              </div>
+              <div class="text-xs text-gray-400 mt-1">Habits</div>
+            </div>
+            <div class="text-center">
+              <div class="relative w-12 h-12">
+                <svg viewBox="0 0 44 44" class="w-12 h-12" style="transform:rotate(-90deg)">
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#1f2937" stroke-width="4"/>
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#ec4899" stroke-width="4"
+                    stroke-dasharray="113" stroke-dashoffset="40" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-bold">65%</div>
+              </div>
+              <div class="text-xs text-gray-400 mt-1">Sleep</div>
+            </div>
+            <div class="text-center">
+              <div class="relative w-12 h-12">
+                <svg viewBox="0 0 44 44" class="w-12 h-12" style="transform:rotate(-90deg)">
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#1f2937" stroke-width="4"/>
+                  <circle cx="22" cy="22" r="18" fill="none" stroke="#06b6d4" stroke-width="4"
+                    stroke-dasharray="113" stroke-dashoffset="22" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-bold">80%</div>
+              </div>
+              <div class="text-xs text-gray-400 mt-1">Water</div>
+            </div>
+          </div>
+          <!-- Today's tasks -->
+          <div class="mini-card">
+            <div class="text-xs text-gray-400 mb-2">Today's Focus</div>
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2 text-xs">
+                <div class="w-4 h-4 rounded-full border border-purple-500 flex items-center justify-center bg-purple-500 text-white text-xs">✓</div>
+                <span class="line-through text-gray-400">Morning workout</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <div class="w-4 h-4 rounded-full border border-purple-500 flex items-center justify-center bg-purple-500 text-white text-xs">✓</div>
+                <span class="line-through text-gray-400">Drink 2L water</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <div class="w-4 h-4 rounded-full border border-gray-600 flex-shrink-0"></div>
+                <span class="text-white">10 min meditation</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <div class="w-4 h-4 rounded-full border border-gray-600 flex-shrink-0"></div>
+                <span class="text-white">Log dinner macros</span>
+              </div>
+            </div>
+          </div>
+          <!-- Streak -->
+          <div class="mini-card flex items-center justify-between">
+            <div>
+              <div class="text-xs text-gray-400">Current Streak</div>
+              <div class="text-xl font-black text-white">🔥 12 days</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-gray-400">XP Today</div>
+              <div class="text-lg font-bold grad-text">+85 XP</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side card - floating left -->
+      <div class="glass absolute -left-8 top-16 w-44 float-2 hidden lg:block" style="padding:14px">
+        <div class="text-xs text-gray-400 mb-2">AI Insight 🤖</div>
+        <div class="text-xs text-white leading-relaxed">"Based on your sleep data, push your workout to 10am for 23% better performance today."</div>
+      </div>
+
+      <!-- Side card - floating right -->
+      <div class="glass absolute -right-8 bottom-20 w-44 float-3 hidden lg:block" style="padding:14px">
+        <div class="text-xs text-gray-400 mb-1">Weekly Progress</div>
+        <div class="text-2xl font-black grad-text mb-1">↑ 34%</div>
+        <div class="text-xs text-gray-400">vs last week</div>
+        <div class="mt-2 flex gap-1">
+          <div class="flex-1 h-8 bg-purple-900 rounded-sm flex items-end"><div class="w-full bg-purple-500 rounded-sm" style="height:60%"></div></div>
+          <div class="flex-1 h-8 bg-purple-900 rounded-sm flex items-end"><div class="w-full bg-purple-500 rounded-sm" style="height:75%"></div></div>
+          <div class="flex-1 h-8 bg-purple-900 rounded-sm flex items-end"><div class="w-full bg-purple-500 rounded-sm" style="height:50%"></div></div>
+          <div class="flex-1 h-8 bg-purple-900 rounded-sm flex items-end"><div class="w-full bg-purple-500 rounded-sm" style="height:90%"></div></div>
+          <div class="flex-1 h-8 bg-purple-900 rounded-sm flex items-end"><div class="w-full bg-pink-500 rounded-sm" style="height:100%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+    <div class="text-xs text-gray-400">Scroll to explore</div>
+    <div class="w-5 h-8 border border-gray-600 rounded-full flex items-start justify-center pt-1.5">
+      <div class="w-1 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     TICKER
+================================================================ -->
+<div class="py-5 border-y overflow-hidden" style="border-color:rgba(139,92,246,0.1)">
+  <div class="ticker-track">
+    <span class="ticker-item">🏋️ AI Workout Plans</span>
+    <span class="ticker-item">🥗 Nutrition Tracking</span>
+    <span class="ticker-item">😴 Sleep Optimisation</span>
+    <span class="ticker-item">💧 Hydration Reminders</span>
+    <span class="ticker-item">🧠 AI Coaching</span>
+    <span class="ticker-item">📊 Progress Analytics</span>
+    <span class="ticker-item">🔬 Science-Backed Plans</span>
+    <span class="ticker-item">🫧 Personalised Skincare</span>
+    <span class="ticker-item">🎯 Habit Streaks & XP</span>
+    <span class="ticker-item">🏋️ AI Workout Plans</span>
+    <span class="ticker-item">🥗 Nutrition Tracking</span>
+    <span class="ticker-item">😴 Sleep Optimisation</span>
+    <span class="ticker-item">💧 Hydration Reminders</span>
+    <span class="ticker-item">🧠 AI Coaching</span>
+    <span class="ticker-item">📊 Progress Analytics</span>
+    <span class="ticker-item">🔬 Science-Backed Plans</span>
+    <span class="ticker-item">🫧 Personalised Skincare</span>
+    <span class="ticker-item">🎯 Habit Streaks & XP</span>
+  </div>
+</div>
+
+<!-- ================================================================
+     STATS
+================================================================ -->
+<section class="py-20 px-6">
+  <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div class="stat-card" data-aos="fade-up" data-aos-delay="0">
+      <div class="text-4xl font-black grad-text mb-2">4.5★</div>
+      <div class="text-gray-400 text-sm">Rated by users around the world</div>
+    </div>
+    <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+      <div class="text-4xl font-black grad-text mb-2">🌍</div>
+      <div class="text-gray-400 text-sm">Users from many countries using GlowAI</div>
+    </div>
+    <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+      <div class="text-4xl font-black grad-text mb-2">90</div>
+      <div class="text-gray-400 text-sm">Day transformation program</div>
+    </div>
+    <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+      <div class="text-4xl font-black grad-text mb-2">All-in-1</div>
+      <div class="text-gray-400 text-sm">Fitness, sleep, nutrition, habits & mindset</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     FEATURES GRID
+================================================================ -->
+<section id="features" class="py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <div class="section-chip">Everything You Need</div>
+      <h2 class="text-4xl md:text-5xl font-black mb-4">One app. Every dimension<br/>of your <span class="grad-text">glow up.</span></h2>
+      <p class="text-gray-400 max-w-xl mx-auto">GlowAI combines AI-powered planning, habit science, and real-time tracking into one seamless, addictive daily system.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
+        <div class="icon-wrap">🤖</div>
+        <h3 class="text-lg font-bold mb-2">AI-Personalised Plans</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Your 90-day transformation roadmap generated entirely from your quiz answers. Adapts every week based on your real progress, mood, and check-ins.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="60">
+        <div class="icon-wrap">🏋️</div>
+        <h3 class="text-lg font-bold mb-2">Smart Gym Planning</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Push/Pull/Legs, Upper/Lower, or Full Body programs. Track sets, reps, and weights. Progressive overload built in. Exercise library with demos.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="120">
+        <div class="icon-wrap">🥗</div>
+        <h3 class="text-lg font-bold mb-2">Nutrition Tracking</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Barcode scanner, photo recognition, 2M+ food database. Track macros, calories, protein goals. AI meal suggestions that fit your targets.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
+        <div class="icon-wrap">😴</div>
+        <h3 class="text-lg font-bold mb-2">Sleep Optimisation</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Log sleep daily, track consistency, get AI-powered bedtime suggestions. GlowAI uses your sleep data to optimise your workout and energy timing.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="60">
+        <div class="icon-wrap">💧</div>
+        <h3 class="text-lg font-bold mb-2">Water & Hydration</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Smart daily goals based on your weight and activity. Quick-add buttons. Streak tracking and reminders that adapt to your routine and schedule.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="120">
+        <div class="icon-wrap">🎯</div>
+        <h3 class="text-lg font-bold mb-2">Habit Systems</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Daily evolving habits that drip in gradually — never overwhelming. XP, streaks, and progress rings that make consistency genuinely addictive.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
+        <div class="icon-wrap">💬</div>
+        <h3 class="text-lg font-bold mb-2">GlowAI Coach</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Your personal AI coach available 24/7. Knows your history, progress, and goals. Answers nutrition, gym, sleep, productivity, and mindset questions.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="60">
+        <div class="icon-wrap">🔬</div>
+        <h3 class="text-lg font-bold mb-2">Science & Research</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Every recommendation is evidence-based. Browse the research library: sleep science, habit psychology, nutrition studies, training methodology.</p>
+      </div>
+      <div class="feature-card" data-aos="fade-up" data-aos-delay="120">
+        <div class="icon-wrap">🫧</div>
+        <h3 class="text-lg font-bold mb-2">Personalised Skincare</h3>
+        <p class="text-gray-400 text-sm leading-relaxed">Get a personalised AM and PM skincare routine based on your skin type and concerns. Evidence-based product guidance built around what your skin actually needs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     GET THE APP
+================================================================ -->
+<section id="get-the-app" class="py-20 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <div class="section-chip">Always With You</div>
+      <h2 class="text-4xl md:text-5xl font-black mb-4">Get the app on your<br/><span class="grad-text">home screen.</span></h2>
+      <p class="text-gray-400 max-w-xl mx-auto">Install GlowAI as a native app on your phone for instant access, offline support, and push notifications.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+      <!-- iOS Card -->
+      <div class="glass p-8 rounded-2xl text-center hover:bg-opacity-10 transition" data-aos="fade-up" data-aos-delay="0">
+        <div class="text-5xl mb-4">📱</div>
+        <h3 class="text-2xl font-bold mb-3">iOS & iPadOS</h3>
+        <p class="text-gray-400 mb-6">Get GlowAI on your iPhone or iPad</p>
+        <ol class="text-sm text-gray-300 text-left space-y-2 mb-6 bg-gray-900 bg-opacity-50 p-4 rounded-lg">
+          <li><span class="font-semibold">1.</span> Open this page in Safari</li>
+          <li><span class="font-semibold">2.</span> Tap the <span class="font-mono">Share</span> button</li>
+          <li><span class="font-semibold">3.</span> Tap <span class="font-mono">Add to Home Screen</span></li>
+          <li><span class="font-semibold">4.</span> Name it "GlowAI" and tap <span class="font-mono">Add</span></li>
+        </ol>
+        <button onclick="showIOSInstructions()" class="btn-glow text-sm w-full">Show Instructions</button>
+      </div>
+
+      <!-- Android Card -->
+      <div class="glass p-8 rounded-2xl text-center hover:bg-opacity-10 transition" data-aos="fade-up" data-aos-delay="60">
+        <div class="text-5xl mb-4">🤖</div>
+        <h3 class="text-2xl font-bold mb-3">Android & Chrome</h3>
+        <p class="text-gray-400 mb-6">Add GlowAI to your home screen</p>
+        <ol class="text-sm text-gray-300 text-left space-y-2 mb-6 bg-gray-900 bg-opacity-50 p-4 rounded-lg">
+          <li><span class="font-semibold">1.</span> Open this page in Chrome</li>
+          <li><span class="font-semibold">2.</span> Tap the <span class="font-mono">⋮</span> menu (top-right)</li>
+          <li><span class="font-semibold">3.</span> Tap <span class="font-mono">Add to Home Screen</span></li>
+          <li><span class="font-semibold">4.</span> Confirm and it's installed!</li>
+        </ol>
+        <button id="installAppBtn" class="btn-glow text-sm w-full" style="display:none">Install App</button>
+        <button onclick="showAndroidInstructions()" class="btn-glow text-sm w-full" id="androidInstructionsBtn">Show Instructions</button>
+      </div>
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="text-gray-400 text-sm">💡 <span class="font-semibold">Tip:</span> The app works offline and sends you daily reminders so you never miss a habit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     HOW IT WORKS
+================================================================ -->
+<section id="how-it-works" class="py-20 px-6" style="background: linear-gradient(180deg, transparent, rgba(139,92,246,0.05), transparent)">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <div class="section-chip">How It Works</div>
+      <h2 class="text-4xl md:text-5xl font-black mb-4">Your transformation<br/>starts in <span class="grad-text">4 minutes.</span></h2>
+    </div>
+
+    <div class="space-y-8">
+      <div class="flex gap-8 items-start" data-aos="fade-right">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 grad-bg rounded-2xl flex items-center justify-center font-black text-lg">1</div>
+        </div>
+        <div class="glass p-6 flex-1">
+          <h3 class="text-xl font-bold mb-2">Take the Personalisation Quiz</h3>
+          <p class="text-gray-400 leading-relaxed">Answer 30 questions about your goals, lifestyle, fitness level, nutrition, sleep, and habits. Every answer shapes your plan. Takes 3–4 minutes.</p>
+        </div>
+      </div>
+      <div class="flex gap-8 items-start" data-aos="fade-right" data-aos-delay="100">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 grad-bg rounded-2xl flex items-center justify-center font-black text-lg">2</div>
+        </div>
+        <div class="glass p-6 flex-1">
+          <h3 class="text-xl font-bold mb-2">Get Your AI-Generated Glow Plan</h3>
+          <p class="text-gray-400 leading-relaxed">GlowAI analyses your answers and generates your personalised 90-day roadmap — fitness schedule, nutrition targets, habit stack, sleep protocol, and daily task flow.</p>
+        </div>
+      </div>
+      <div class="flex gap-8 items-start" data-aos="fade-right" data-aos-delay="200">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 grad-bg rounded-2xl flex items-center justify-center font-black text-lg">3</div>
+        </div>
+        <div class="glass p-6 flex-1">
+          <h3 class="text-xl font-bold mb-2">Follow Your Daily System</h3>
+          <p class="text-gray-400 leading-relaxed">Each day, your dashboard shows only what matters today — 5–7 focused actions. Complete them, track your habits, log food, and check in on your metrics.</p>
+        </div>
+      </div>
+      <div class="flex gap-8 items-start" data-aos="fade-right" data-aos-delay="300">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 grad-bg rounded-2xl flex items-center justify-center font-black text-lg">4</div>
+        </div>
+        <div class="glass p-6 flex-1">
+          <h3 class="text-xl font-bold mb-2">The AI Adapts & Evolves Your Plan</h3>
+          <p class="text-gray-400 leading-relaxed">Weekly check-ins let GlowAI analyse your real progress and adjust everything — difficulty, focus areas, nutrition goals, and upcoming milestones. Your plan is never stale.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     BEFORE / AFTER
+================================================================ -->
+<section class="py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <div class="section-chip">Transformation</div>
+      <h2 class="text-4xl md:text-5xl font-black mb-4">Real results in <span class="grad-text">90 days.</span></h2>
+      <p class="text-gray-400 max-w-xl mx-auto">These aren't unrealistic before/afters. These are real habits, real discipline, real change — backed by a system that works.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="glass p-6" data-aos="fade-up" data-aos-delay="0">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center font-bold">S</div>
+          <div>
+            <div class="font-semibold">Sophie, 21</div>
+            <div class="text-xs text-gray-400">Day 90 ✅</div>
+          </div>
+        </div>
+        <div class="space-y-3 mb-4">
+          <div><div class="text-xs text-gray-400 mb-1">Body Fat %</div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-800 rounded-full"><div class="h-2 bg-purple-500 rounded-full" style="width:40%"></div></div><span class="text-xs text-gray-300">−6%</span></div></div>
+          <div><div class="text-xs text-gray-400 mb-1">Sleep Quality</div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-800 rounded-full"><div class="h-2 bg-pink-500 rounded-full" style="width:75%"></div></div><span class="text-xs text-gray-300">+75%</span></div></div>
+          <div><div class="text-xs text-gray-400 mb-1">Daily Energy</div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-800 rounded-full"><div class="h-2 bg-cyan-500 rounded-full" style="width:80%"></div></div><span class="text-xs text-gray-300">+80%</span></div></div>
+        </div>
+        <p class="text-sm text-gray-400 italic">"The daily task system finally made habits feel doable. I didn't feel overwhelmed once."</p>
+      </div>
+
+      <div class="glass p-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center font-bold">M</div>
+          <div>
+            <div class="font-semibold">Marcus, 19</div>
+            <div class="text-xs text-gray-400">Day 90 ✅</div>
+          </div>
+        </div>
+        <div class="space-y-3 mb-4">
+          <div><div class="text-xs text-gray-400 mb-1">Muscle Gained</div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-800 rounded-full"><div class="h-2 bg-purple-500 rounded-full" style="width:65%"></div></div><span class="text-xs text-gray-300">+8kg</span></div></div>
+          <div><div class="text-xs text-gray-400 mb-1">Bench Press</div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-800 rounded-full"><div class="h-2 bg-pink-500 rounded-full" style="width:55%"></div></div><span class="text-xs text-gray-300">+35kg</span></div></div>
+          <div><div class="text-xs text-gray-400 mb-1">Habit Streak</div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-800 rounded-full"><div class="h-2 bg-orange-500 rounded-full" style="width:90%"></div></div><span class="text-xs text-gray-300">68 days</span></div></div>
+        </div>
+        <p class="text-sm text-gray-400 italic">"The AI coach actually gave me useful gym advice, not just generic stuff. My lifts went up fast."</p>
+      </div>
+
+      <div class="glass p-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center font-bold">J</div>
+          <div>
+            <div class="font-semibold">Jess, 23</div>
+            <div class="text-xs text-gray-400">Day 90 ✅</div>
+          </div>
+        </div>
+        <div class="space-y-3 mb-4">
+          <div><div class="text-xs text-gray-400 mb-1">Stress Levels</div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-800 rounded-full"><div class="h-2 bg-purple-500 rounded-full" style="width:60%"></div></div><span class="text-xs text-gray-300">−60%</span></div></div>
+          <div><div class="text-xs text-gray-400 mb-1">Productivity</div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-800 rounded-full"><div class="h-2 bg-pink-500 rounded-full" style="width:70%"></div></div><span class="text-xs text-gray-300">+70%</span></div></div>
+          <div><div class="text-xs text-gray-400 mb-1">Confidence</div><div class="flex items-center gap-2"><div class="flex-1 h-2 bg-gray-800 rounded-full"><div class="h-2 bg-cyan-500 rounded-full" style="width:85%"></div></div><span class="text-xs text-gray-300">+85%</span></div></div>
+        </div>
+        <p class="text-sm text-gray-400 italic">"I went from anxious and exhausted to having an actual morning routine I love. Life-changing."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     SCIENCE SECTION
+================================================================ -->
+<section id="science" class="py-20 px-6" style="background: linear-gradient(180deg, transparent, rgba(139,92,246,0.04), transparent)">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+    <div data-aos="fade-right">
+      <div class="section-chip">Science-Backed</div>
+      <h2 class="text-4xl md:text-5xl font-black mb-6">Not wellness fluff.<br/><span class="grad-text">Actual science.</span></h2>
+      <p class="text-gray-400 leading-relaxed mb-8">Every recommendation GlowAI makes is grounded in peer-reviewed research on habit formation, circadian biology, progressive overload, nutrition science, and cognitive performance.</p>
+      <div class="space-y-4">
+        <div class="check-item"><span class="check-icon">◆</span><div><div class="font-semibold text-sm">Habit Loop Theory (Clear, Fogg)</div><div class="text-xs text-gray-400">Habits structured around cue → routine → reward to maximise adherence</div></div></div>
+        <div class="check-item"><span class="check-icon">◆</span><div><div class="font-semibold text-sm">Progressive Overload Periodisation</div><div class="text-xs text-gray-400">Workout plans follow scientific progression protocols for optimal strength gains</div></div></div>
+        <div class="check-item"><span class="check-icon">◆</span><div><div class="font-semibold text-sm">Circadian Rhythm Optimisation</div><div class="text-xs text-gray-400">Workouts, meals, and sleep scheduled based on your personal circadian window</div></div></div>
+        <div class="check-item"><span class="check-icon">◆</span><div><div class="font-semibold text-sm">Protein Timing & Hypertrophy Research</div><div class="text-xs text-gray-400">Nutrition recommendations based on latest muscle protein synthesis studies</div></div></div>
+      </div>
+    </div>
+    <div data-aos="fade-left" class="glass p-8">
+      <div class="mb-6">
+        <div class="text-sm text-gray-400 mb-1">Research Library</div>
+        <div class="text-2xl font-black grad-text">127 Articles</div>
+      </div>
+      <div class="space-y-4">
+        <div class="feature-card" style="padding:16px">
+          <div class="flex items-start gap-3">
+            <div class="text-2xl">🧠</div>
+            <div><div class="font-semibold text-sm mb-1">The Science of Habit Formation</div><div class="text-xs text-gray-400">Why 66 days beats 21 days and how to engineer your environment</div></div>
+          </div>
+        </div>
+        <div class="feature-card" style="padding:16px">
+          <div class="flex items-start gap-3">
+            <div class="text-2xl">💪</div>
+            <div><div class="font-semibold text-sm mb-1">Progressive Overload Explained</div><div class="text-xs text-gray-400">The exact mechanism that drives muscle growth, backed by 40+ studies</div></div>
+          </div>
+        </div>
+        <div class="feature-card" style="padding:16px">
+          <div class="flex items-start gap-3">
+            <div class="text-2xl">😴</div>
+            <div><div class="font-semibold text-sm mb-1">Sleep & Body Composition</div><div class="text-xs text-gray-400">How sleep quality directly impacts fat loss, muscle retention, and cortisol</div></div>
+          </div>
+        </div>
+        <div class="feature-card" style="padding:16px">
+          <div class="flex items-start gap-3">
+            <div class="text-2xl">🥗</div>
+            <div><div class="font-semibold text-sm mb-1">Protein: How Much Do You Need?</div><div class="text-xs text-gray-400">Current evidence on optimal protein intake for muscle gain and fat loss</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     TESTIMONIALS
+================================================================ -->
+<section class="py-20 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <div class="section-chip">Testimonials</div>
+      <h2 class="text-4xl md:text-5xl font-black mb-4">People are actually<br/><span class="grad-text">transforming.</span></h2>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="testimonial-card" data-aos="fade-up" data-aos-delay="0">
+        <div class="stars mb-3">★★★★★</div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4">"I've tried every wellness app and they all feel the same. GlowAI is the first one that actually changes what it tells me to do based on how I'm actually going. Obsessed."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center font-bold text-sm">A</div>
+          <div><div class="text-sm font-semibold">Ava, 20</div><div class="text-xs text-gray-400">University student</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-aos="fade-up" data-aos-delay="80">
+        <div class="stars mb-3">★★★★★</div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4">"The AI coach is unreal. I asked it about my plateau in the gym and it gave me a completely personalised answer referencing my actual training history. That's wild."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center font-bold text-sm">L</div>
+          <div><div class="text-sm font-semibold">Liam, 22</div><div class="text-xs text-gray-400">Personal trainer</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-aos="fade-up" data-aos-delay="160">
+        <div class="stars mb-3">★★★★★</div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4">"I lost 8kg in 90 days while actually building muscle. The nutrition tracking is way better than MyFitnessPal and the AI meal suggestions actually match my goals."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center font-bold text-sm">K</div>
+          <div><div class="text-sm font-semibold">Kayla, 24</div><div class="text-xs text-gray-400">Marketing exec</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-aos="fade-up" data-aos-delay="0">
+        <div class="stars mb-3">★★★★★</div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4">"The onboarding quiz is lowkey kind of scary how accurate the analysis is. It told me exactly why I keep failing at habits and then showed me how to fix it."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-green-400 to-teal-400 flex items-center justify-center font-bold text-sm">R</div>
+          <div><div class="text-sm font-semibold">Riley, 18</div><div class="text-xs text-gray-400">High school student</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-aos="fade-up" data-aos-delay="80">
+        <div class="stars mb-3">★★★★★</div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4">"I went from sleeping 5 hours to 7.5 consistently. The sleep AI suggestions were simple but I'd never actually done them before. Game changer for my productivity."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-yellow-400 to-orange-400 flex items-center justify-center font-bold text-sm">T</div>
+          <div><div class="text-sm font-semibold">Tyler, 26</div><div class="text-xs text-gray-400">Founder</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card" data-aos="fade-up" data-aos-delay="160">
+        <div class="stars mb-3">★★★★★</div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4">"It genuinely feels like having a personal trainer, dietitian, and therapist in one app. At $4.99/month that's insane value. I'd pay way more for this."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-br from-red-400 to-pink-400 flex items-center justify-center font-bold text-sm">N</div>
+          <div><div class="text-sm font-semibold">Natalie, 21</div><div class="text-xs text-gray-400">Nursing student</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     PRICING
+================================================================ -->
+<section id="pricing" class="py-20 px-6" style="background: linear-gradient(180deg, transparent, rgba(139,92,246,0.05), transparent)">
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <div class="section-chip">Pricing</div>
+      <h2 class="text-4xl md:text-5xl font-black mb-4">Less than your daily<br/><span class="grad-text">coffee.</span></h2>
+      <p class="text-gray-400 max-w-xl mx-auto">Start free, upgrade when you're ready. Cancel anytime. No strings attached.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 items-start">
+      <!-- Free -->
+      <div class="pricing-card" data-aos="fade-up" data-aos-delay="0">
+        <div class="text-sm font-semibold text-gray-400 mb-1">Free Forever</div>
+        <div class="text-4xl font-black mb-1">$0</div>
+        <div class="text-gray-400 text-sm mb-6">No credit card required</div>
+        <a href="onboarding.html"><button class="btn-outline w-full mb-6">Get Started Free</button></a>
+        <div class="space-y-3 text-sm">
+          <div class="check-item"><span class="text-green-400">✓</span><span class="text-gray-300">Onboarding quiz & analysis</span></div>
+          <div class="check-item"><span class="text-green-400">✓</span><span class="text-gray-300">Basic dashboard</span></div>
+          <div class="check-item"><span class="text-green-400">✓</span><span class="text-gray-300">3 daily habits</span></div>
+          <div class="check-item"><span class="text-green-400">✓</span><span class="text-gray-300">Water tracking</span></div>
+          <div class="check-item"><span class="text-green-400">✓</span><span class="text-gray-300">5 AI coach messages/day</span></div>
+          <div class="check-item"><span class="text-gray-600">✗</span><span class="text-gray-600">Full AI plans</span></div>
+          <div class="check-item"><span class="text-gray-600">✗</span><span class="text-gray-600">Nutrition tracking</span></div>
+          <div class="check-item"><span class="text-gray-600">✗</span><span class="text-gray-600">Gym tracking</span></div>
+        </div>
+      </div>
+
+      <!-- Monthly - Featured -->
+      <div class="pricing-card featured" data-aos="fade-up" data-aos-delay="100">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="text-sm font-semibold text-purple-300">Monthly</div>
+          <span class="badge-new text-white text-xs">Most Popular</span>
+        </div>
+        <div class="text-4xl font-black mb-1 grad-text">$4.99</div>
+        <div class="text-gray-400 text-sm mb-6">per month · cancel anytime</div>
+        <a href="onboarding.html"><button class="btn-glow w-full mb-6">✨ Get Started Free</button></a>
+        <div class="space-y-3 text-sm">
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Everything in Free</span></div>
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Full 90-day AI plan</span></div>
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Unlimited AI coach</span></div>
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Nutrition + barcode tracker</span></div>
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Gym planning & tracking</span></div>
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Sleep optimisation</span></div>
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Advanced analytics</span></div>
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Personalised skincare plan</span></div>
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Weekly AI check-ins</span></div>
+          <div class="check-item"><span class="text-purple-400">✓</span><span class="text-gray-200">Full research library</span></div>
+        </div>
+      </div>
+
+      <!-- Annual -->
+      <div class="pricing-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="flex items-center gap-2 mb-1">
+          <div class="text-sm font-semibold text-gray-400">Annual</div>
+          <span class="text-xs bg-green-900 text-green-300 border border-green-700 rounded-full px-2 py-0.5 font-semibold">Save 42%</span>
+        </div>
+        <div class="text-4xl font-black mb-1">$34.99</div>
+        <div class="text-gray-400 text-sm mb-1">per year · $2.92/month</div>
+        <div class="text-xs text-gray-500 mb-6">Equivalent to 7 months free</div>
+        <a href="onboarding.html"><button class="btn-outline w-full mb-6">Get Annual Plan</button></a>
+        <div class="space-y-3 text-sm">
+          <div class="check-item"><span class="text-green-400">✓</span><span class="text-gray-300">Everything in Monthly</span></div>
+          <div class="check-item"><span class="text-green-400">✓</span><span class="text-gray-300">Priority AI processing</span></div>
+          <div class="check-item"><span class="text-green-400">✓</span><span class="text-gray-300">Early access to new features</span></div>
+          <div class="check-item"><span class="text-green-400">✓</span><span class="text-gray-300">Annual transformation report</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-10 text-sm text-gray-500">
+      🔒 Secure payments via Square · Cancel anytime
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     FAQ
+================================================================ -->
+<section class="py-20 px-6">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-16" data-aos="fade-up">
+      <div class="section-chip">FAQ</div>
+      <h2 class="text-4xl font-black mb-4">Got questions?<br/><span class="grad-text">We've got answers.</span></h2>
+    </div>
+
+    <div class="space-y-1" data-aos="fade-up">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Is the AI plan actually personalised to me?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Yes — 100%. Your plan is generated from your unique quiz answers covering your goals, current fitness level, sleep patterns, diet, and habits. No two plans are the same. The AI also updates your plan weekly based on your real progress and check-ins.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>What if I'm a complete beginner?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">GlowAI is built for beginners. The quiz captures your starting point and generates a plan that starts simple and scales gradually. You won't be overwhelmed — each day shows 5–7 focused actions, not a 40-item list.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Do I need a gym membership?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">No. GlowAI generates workouts based on your equipment access — gym, home with equipment, or bodyweight only. You'll get an effective plan regardless of your setup.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>How is this different from MyFitnessPal or other apps?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">GlowAI is an all-in-one transformation system — not just a tracker. It actively tells you what to do each day, adapts based on your progress, and connects all dimensions (fitness, nutrition, sleep, habits, mental health) into one coherent plan. No other app does this.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Can I cancel my subscription?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Absolutely. Cancel anytime from your account settings with zero hassle. If you cancel, you keep access until the end of your billing period.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Does it work on Android?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">GlowAI is a mobile-first web app that works perfectly on all Android and iOS devices. You can add it to your home screen for an app-like experience. Native iOS and Android apps are planned for the future.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     CTA SECTION
+================================================================ -->
+<section class="py-24 px-6">
+  <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
+    <div class="glass-strong p-12 md:p-16 relative overflow-hidden">
+      <div class="absolute inset-0 opacity-10" style="background: radial-gradient(ellipse at center, #7c3aed, transparent)"></div>
+      <div class="relative z-10">
+        <div class="text-6xl mb-4">✨</div>
+        <h2 class="text-4xl md:text-5xl font-black mb-4">
+          Ready to start your<br/><span class="gradient-animated">90-day glow up?</span>
+        </h2>
+        <p class="text-gray-400 text-lg mb-8 max-w-xl mx-auto">Take the 4-minute quiz. Get your personalised plan. Start today — for free.</p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="onboarding.html"><button class="btn-glow text-lg px-8 py-4">✨ Start Your Glow Up — Free</button></a>
+        </div>
+        <p class="text-gray-600 text-sm mt-5">No credit card · Takes 4 minutes · Results instant</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     FOOTER
+================================================================ -->
+<footer class="py-12 px-6 border-t" style="border-color:rgba(139,92,246,0.1)">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-4 gap-8 mb-10">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 rounded-lg grad-bg flex items-center justify-center text-white font-black text-sm">G</div>
+          <span class="font-black text-xl">Glow<span class="grad-text-2">AI</span></span>
+        </div>
+        <p class="text-gray-400 text-sm leading-relaxed">The AI-powered wellness platform built for Gen Z. Science-backed. Fully personalised. Actually works.</p>
+      </div>
+      <div>
+        <div class="font-semibold text-sm mb-4 text-gray-300">Product</div>
+        <div class="space-y-2 text-sm text-gray-500">
+          <div><a href="#features" class="hover:text-white transition-colors">Features</a></div>
+          <div><a href="#pricing" class="hover:text-white transition-colors">Pricing</a></div>
+          <div><a href="#science" class="hover:text-white transition-colors">Science</a></div>
+          <div><a href="#how-it-works" class="hover:text-white transition-colors">How It Works</a></div>
+        </div>
+      </div>
+      <div>
+        <div class="font-semibold text-sm mb-4 text-gray-300">App</div>
+        <div class="space-y-2 text-sm text-gray-500">
+          <div><a href="onboarding.html" class="hover:text-white transition-colors">Get Started</a></div>
+          <div><a href="onboarding.html?login=1" class="hover:text-white transition-colors">Log In</a></div>
+          <div><a href="#features" class="hover:text-white transition-colors">Research Library</a></div>
+        </div>
+      </div>
+      <div>
+        <div class="font-semibold text-sm mb-4 text-gray-300">Company</div>
+        <div class="space-y-2 text-sm text-gray-500">
+          <div><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></div>
+          <div><a href="#" class="hover:text-white transition-colors">Terms of Service</a></div>
+          <div><a href="#" class="hover:text-white transition-colors">Support</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="border-t pt-6 flex flex-col md:flex-row justify-between items-center gap-4" style="border-color:rgba(139,92,246,0.1)">
+      <div class="text-sm text-gray-600">© 2025 GlowAI. All rights reserved.</div>
+      <div class="text-sm text-gray-600">Made with ✨ for the glow up generation</div>
+    </div>
+  </div>
+</footer>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onclick="if(event.target===this)closeLoginModal()">
+  <div class="bg-gray-900 rounded-2xl p-8 max-w-sm w-full border border-purple-500 border-opacity-20">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-black grad-text">Log In</h2>
+      <button onclick="closeLoginModal()" class="text-gray-500 hover:text-white text-2xl">×</button>
+    </div>
+    <div class="space-y-4 mb-6">
+      <div>
+        <label class="text-sm text-gray-400 block mb-2">Email</label>
+        <input id="loginEmail" type="email" placeholder="your@email.com" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white outline-none focus:border-purple-500" />
+      </div>
+      <div>
+        <label class="text-sm text-gray-400 block mb-2">Password</label>
+        <input id="loginPassword" type="password" placeholder="••••••••" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white outline-none focus:border-purple-500" />
+      </div>
+    </div>
+    <button onclick="handleLogin()" class="btn-glow w-full py-3 text-sm font-bold mb-3">Log In</button>
+    <button onclick="handleGoogleLogin()" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm font-bold transition-colors mb-4">
+      <span>🔵 Sign in with Google</span>
+    </button>
+    <p class="text-center text-sm text-gray-400">
+      Don't have an account? <a href="onboarding.html" class="text-purple-400 hover:text-purple-300">Create one</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  // Redirect logged-in users to dashboard
+  GlowAuth.onReady(user => {
+    if (user && user.onboardingDone) window.location.href = 'dashboard.html';
+  });
+
+  function handleLogoClick() {
+    const user = GlowAuth.getUser();
+    if (user && user.onboardingDone) {
+      window.location.href = 'dashboard.html';
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function openLoginModal() {
+    document.getElementById('loginModal').classList.remove('hidden');
+    document.getElementById('loginEmail').focus();
+  }
+
+  function closeLoginModal() {
+    document.getElementById('loginModal').classList.add('hidden');
+  }
+
+  async function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!email || !password) {
+      alert('Please enter your email and password');
+      return;
+    }
+    try {
+      const result = await GlowAuth.login(email, password);
+      if (result.error) {
+        alert('Login failed: ' + result.error);
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    } catch (e) {
+      alert('Login error: ' + e.message);
+    }
+  }
+
+  async function handleGoogleLogin() {
+    try {
+      const result = await GlowAuth.signInWithGoogle();
+      if (result.error) {
+        alert('Google login failed: ' + result.error);
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    } catch (e) {
+      alert('Google login error: ' + e.message);
+    }
+  }
+
+  AOS.init({ duration: 700, once: true, easing: 'ease-out-cubic', offset: 60 });
+
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  // Mobile app install helpers
+  function isMobile() {
+    return /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
+  function showIOSInstructions() {
+    alert('📱 iOS Installation:\n\n1. Tap the Share button (⬆️ from bottom)\n2. Scroll down and tap "Add to Home Screen"\n3. Rename to "GlowAI" if desired\n4. Tap "Add" in top-right\n\nTap the new app icon on your home screen to open GlowAI!');
+  }
+
+  function showAndroidInstructions() {
+    alert('🤖 Android Installation:\n\n1. Tap the menu button (⋮) in top-right\n2. Tap "Add to Home Screen"\n3. You can rename it if desired\n4. Tap "Install"\n\nYour GlowAI app will appear on your home screen!');
+  }
+
+  // Mobile app download banner
+  let deferredPrompt = null;
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // Show install button for Android users
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn && isMobile()) {
+      installBtn.style.display = 'block';
+    }
+  });
+
+  async function installApp() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response: ${outcome}`);
+      deferredPrompt = null;
+    }
+  }
+
+  // Show sticky banner on mobile only
+  function initAppDownloadBanner() {
+    if (!isMobile()) return;
+
+    const bannerDismissed = localStorage.getItem('appDownloadBannerDismissed');
+    if (bannerDismissed) return;
+
+    // The banner is shown via CSS and initially visible
+    // Dismiss functionality will be added if banner HTML is added
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initAppDownloadBanner);
+</script>
+
+<!-- Mobile App Download Banner (sticky bottom) -->
+<div id="appDownloadBanner" class="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-gradient-to-r from-purple-600 to-pink-600 p-4 shadow-lg" style="display:none">
+  <div class="flex items-center justify-between gap-3">
+    <div class="flex-1">
+      <div class="font-bold text-sm">📱 Add to Home Screen</div>
+      <div class="text-xs opacity-90">Quick access to GlowAI</div>
+    </div>
+    <button onclick="dismissAppDownloadBanner()" class="flex-shrink-0 text-xl font-bold opacity-70 hover:opacity-100">×</button>
+  </div>
+</div>
+
+<script>
+  function dismissAppDownloadBanner() {
+    localStorage.setItem('appDownloadBannerDismissed', 'true');
+    document.getElementById('appDownloadBanner').style.display = 'none';
+  }
+
+  // Show banner on mobile if not dismissed
+  function showAppDownloadBanner() {
+    if (!isMobile()) return;
+    if (localStorage.getItem('appDownloadBannerDismissed')) return;
+    const banner = document.getElementById('appDownloadBanner');
+    if (banner) banner.style.display = 'flex';
+  }
+
+  // Wait for DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showAppDownloadBanner);
+  } else {
+    showAppDownloadBanner();
+  }
+</script>
+
+</body>
+</html>
