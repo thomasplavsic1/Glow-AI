@@ -4370,7 +4370,7 @@ function renderMeditationLibrary(category) {
         <div class="flex items-center gap-1 mb-3">
           <span class="text-xs">⭐ ${med.xp} XP</span>
         </div>
-        <button onclick="${locked ? 'openUpgrade()' : `startMeditation('${med.id}`)'}" class="btn-primary w-full text-xs py-1">
+        <button onclick="${locked ? 'openUpgrade()' : `startMeditation('${med.id}')`}" class="btn-primary w-full text-xs py-1">
           ${locked ? 'Unlock' : 'Start'}
         </button>
       </div>
